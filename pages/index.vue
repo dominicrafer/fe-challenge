@@ -1,5 +1,7 @@
 <template>
-<span class="text-[99px]">testtest</span>
+<div class="test">
+  <span class="test__span">test</span>
+</div>
   
 </template>
 
@@ -11,6 +13,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="postcss" scoped>
+.test {
+  @apply bg-gray-400 p-[32px];
+  &__span {
+    @apply text-blue-400;
+  }
+}
 </style>
