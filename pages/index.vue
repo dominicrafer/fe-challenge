@@ -1,23 +1,22 @@
 <template>
-<div class="test">
-  <span class="test__span">test</span>
-</div>
-  
+  <div class="page">
+    <PageHeader title="Test Page"/>
+    <div class="page__body">
+      <div>CONTENT</div>
+      <div>CONTENT</div>
+      <div>CONTENT</div>
+    </div>
+  </div>
 </template>
 
 <script>
+definePageMeta({
+  layout: "default",
+});
 export default {
-  setup() {
-    console.log('TEST?')
-  }
-}
+  setup() {},
+};
 </script>
 
 <style lang="postcss" scoped>
-.test {
-  @apply bg-gray-400 p-[32px];
-  &__span {
-    @apply text-blue-400;
-  }
-}
 </style>

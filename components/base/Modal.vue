@@ -1,14 +1,89 @@
 <template>
+  <Transition appear name="fade">
+    <div class="modal" v-if="show">
+      <div class="modal__content" :style="{ width: `${width}px` }">
+        <div class="modal__header">
+          {{ title }}
+          <Icon
+            name="mdi:close-circle-outline"
+            width="40"
+            height="40"
+            style="color: #29335c"
+          />
+        </div>
+        <div :class="`modal__body`" ref="modal" v-click-outside="clickOutside">
+          <slot name="body"></slot>
+        </div>
+        <div class="modal__footer" v-if="$slots.footer">
+          <slot name="footer"></slot>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script>
+import { onClickOutside } from "@vueuse/core";
 export default {
-  setup(props) {
-    
-  }
-}
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    width: {
+      type: String,
+      default: "450",
+    },
+  },
+  setup(props, { attrs, slots, emit, expose }) {
+    const modal = ref(null);
+    onClickOutside(modal, () => emit("close"));
+
+    return { modal };
+  },
+};
 </script>
 
 <style lang="postcss" scoped>
+.modal {
+  @apply fixed h-screen w-screen;
+  @apply flex items-center justify-center;
+  @apply top-0 left-0 z-[60];
+  background: rgba(30, 28, 28, 0.88);
 
+  &__content {
+    @apply absolute;
+    @apply bg-white;
+    @apply rounded-xl;
+    @apply min-w-[320px];
+    @apply min-h-[320px];
+    .modal__header {
+      @apply flex flex-row items-center justify-between;
+      @apply border-b border-baking-soda;
+      @apply font-bold text-primary text-lg;
+      @apply px-[16px] py-[12px];
+      .modal__close-button {
+        @apply cursor-pointer;
+      }
+    }
+    .modal__body {
+      z-index: 1;
+      @apply max-h-[80vh];
+      @apply w-full h-full;
+      @apply overflow-y-auto;
+      @apply text-sm text-currant;
+    }
+    .modal__footer {
+      @apply border-t border-baking-soda;
+      @apply flex flex-row justify-end items-center;
+      @apply p-[16px] rounded-b-xl;
+      gap: 12px;
+      background: #f8f8f8;
+    }
+  }
+}
 </style>

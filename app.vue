@@ -1,11 +1,8 @@
 <template>
-  <div>
+  <NuxtLayout>
     <NuxtPage />
-  </div>
+  </NuxtLayout>
 </template>
 <script>
-
-export default {
- 
-};
+export default {};
 </script>

@@ -21,7 +21,9 @@ module.exports = {
         cucumber: '#F1FAEE',
         soap: '#407B95',
         bubbles: '#E6F6FF',
-        currant: '#413C3C'
+        currant: '#413C3C',
+        flour: '#F8F8F8',
+        'baking-soda': '#E5E5E5',
       },
     },
   },

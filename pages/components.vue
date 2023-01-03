@@ -19,17 +19,31 @@
         <span class="component__name">Alerts</span>
 
         <div class="component__samples">
-          <Alert type="success" title="Success">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="danger" title="Danger">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="info" title="Info">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="warning" title="Warning">Lorem ipsum dolor sit amet, consectetur.</Alert>
+          <Alert type="success" title="Success"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="danger" title="Danger"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="info" title="Info"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="warning" title="Warning"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
         </div>
       </div>
       <div class="list__component">
         <span class="component__name">Toasts / Pop-up Alerts</span>
 
         <div class="component__samples">
-          <a href="https://sweetalert2.github.io/" class="text-blue-500" target="_blank"> https://sweetalert2.github.io/</a>
+          <a
+            href="https://sweetalert2.github.io/"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://sweetalert2.github.io/</a
+          >
         </div>
       </div>
       <div class="list__component">
@@ -48,7 +62,12 @@
           >
             <template #label> Input Icon </template>
           </InputField>
-          <InputField name="disabled" type="text" placeholder="Disabled" disabled>
+          <InputField
+            name="disabled"
+            type="text"
+            placeholder="Disabled"
+            disabled
+          >
             <template #label> Disabled </template>
           </InputField>
         </div>
@@ -100,26 +119,71 @@
             reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
             pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
             culpa qui officia deserunt mollit anim id est laborum.
-            
-              <template #footer>Footer</template>
-            </Card
-          >
+
+            <template #footer>Footer</template>
+          </Card>
         </div>
       </div>
       <div class="list__component">
         <span class="component__name">Drawer</span>
-        <div class="component__samples"></div>
+        <div class="component__samples">
+          <Button @click="leftDrawerVisible = true">Left Drawer</Button>
+          <Button @click="rightDrawerVisible = true">Right Drawer</Button>
+        </div>
       </div>
       <div class="list__component">
         <span class="component__name">Modal</span>
-        <div class="component__samples"></div>
+        <div class="component__samples">
+          <Button @click="modalVisible = true">Modal Button</Button>
+        </div>
+      </div>
+      <div class="list__component">
+        <span class="component__name">Date / Time Picker</span>
+        <div class="component__samples">
+           <a
+            href="https://vue3datepicker.com/props/modes/"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://vue3datepicker.com/props/modes/</a
+          >
+        </div>
       </div>
     </div>
+    <Modal title="Modal" :show="modalVisible" @close="modalVisible = false" />
+    <Drawer
+      title="Left Drawer Title"
+      :show="leftDrawerVisible"
+      position="left"
+      @close="leftDrawerVisible = false"
+    >
+      <template #footer>Footer</template></Drawer
+    >
+    <Drawer
+      title="Right Drawer Title"
+      :show="rightDrawerVisible"
+      position="right"
+      @close="rightDrawerVisible = false"
+    >
+      <template #footer>Footer</template></Drawer
+    >
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  setup() {
+    const leftDrawerVisible = ref(false);
+    const rightDrawerVisible = ref(false);
+    const modalVisible = ref(false);
+
+    return {
+      leftDrawerVisible,
+      rightDrawerVisible,
+      modalVisible,
+    };
+  },
+};
 </script>
 
 <style lang="postcss" scoped>

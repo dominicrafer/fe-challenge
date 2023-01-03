@@ -13,5 +13,10 @@
     "nuxt": "3.0.0",
     "nuxt-icon": "^0.1.8",
     "postcss": "^8.4.20"
+  },
+  "dependencies": {
+    "@vuepic/vue-datepicker": "^3.6.4",
+    "@vueuse/core": "^9.9.0",
+    "v-click-outside": "^3.2.0"
   }
 }
