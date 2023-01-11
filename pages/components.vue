@@ -1,8 +1,7 @@
 <template>
-  <div class="components">
-    <span class="components__header">Components</span>
-
-    <div class="components__list">
+  <div class="components page">
+     <PageHeader title="Components"/>
+    <div class="components__list page__body">
       <div class="list__component">
         <span class="component__name">Button</span>
 

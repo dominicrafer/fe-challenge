@@ -17,6 +17,7 @@
   "dependencies": {
     "@vuepic/vue-datepicker": "^3.6.4",
     "@vueuse/core": "^9.9.0",
+    "lodash": "^4.17.21",
     "v-click-outside": "^3.2.0"
   }
 }
