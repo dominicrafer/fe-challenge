@@ -86,6 +86,12 @@ export default {
           },
         ],
       },
+      {
+        name: "Campaigns",
+        icon: "mdi:calendar",
+        path: "/campaigns",
+        roles: ["admin"],
+      },
     ];
 
     // Get active menu on page load
