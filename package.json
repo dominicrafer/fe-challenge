@@ -15,9 +15,11 @@
     "postcss": "^8.4.20"
   },
   "dependencies": {
+    "@vee-validate/rules": "^4.7.3",
     "@vuepic/vue-datepicker": "^3.6.4",
     "@vueuse/core": "^9.9.0",
     "lodash": "^4.17.21",
-    "v-click-outside": "^3.2.0"
+    "v-click-outside": "^3.2.0",
+    "vee-validate": "^4.7.3"
   }
 }

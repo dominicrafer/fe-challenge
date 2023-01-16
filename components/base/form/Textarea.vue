@@ -1,24 +1,54 @@
 <template>
   <div class="textarea">
     <label class="textarea__label" :for="name" resize>{{ label }}</label>
-    <textarea class="textarea__input" :id="name"></textarea>
+    <Field
+      v-slot="{ field, meta }"
+      @input="updateValue"
+      :value="modelValue"
+      :name="name"
+      :rules="rules"
+    >
+      <textarea v-bind="field" class="textarea__input" :class="!meta.valid ? 'has-error' : null " :id="name"></textarea>
+    </Field>
+    <ErrorMessage :name="name" v-slot="{ message }">
+      <div class="textarea__error">
+        {{ message }}
+      </div>
+    </ErrorMessage>
   </div>
 </template>
 
 <script>
+import { Field, ErrorMessage } from 'vee-validate'
 export default {
   props: {
     label: {
       type: String,
-      required: true,
+      required: true
     },
     name: {
       type: String,
-      required: true,
+      required: true
     },
+    rules: {
+      type: String
+    },
+    modelValue: {
+      type: [String, Number],
+      default: 'required'
+    }
   },
-  setup(props) {},
-};
+  components: {
+    Field,
+    ErrorMessage
+  },
+  setup (props, { emit }) {
+    const updateValue = event => {
+      emit('update:modelValue', event.target.value)
+    }
+    return { updateValue }
+  }
+}
 </script>
 
 <style lang="postcss" scoped>
@@ -32,10 +62,17 @@ export default {
     @apply border border-slate-400 rounded-md;
     @apply outline-none resize;
 
+    &.has-error {
+      @apply border-paprika;
+    }
     &:hover {
       @apply border-primary;
       box-shadow: 0px 0px 8px 0px #d1e3cb;
     }
+
+  }
+  &__error {
+    @apply text-paprika;
   }
 }
 </style>

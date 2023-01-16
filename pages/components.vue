@@ -1,6 +1,6 @@
 <template>
   <div class="components page">
-     <PageHeader title="Components"/>
+    <PageHeader title="Components" />
     <div class="components__list page__body">
       <div class="list__component">
         <span class="component__name">Button</span>
@@ -45,32 +45,48 @@
           >
         </div>
       </div>
-      <div class="list__component">
-        <span class="component__name">Input</span>
-        <div class="component__samples">
-          <InputField name="default-input" placeholder="Enter Text">
-            <template #label> Text Input </template>
-          </InputField>
-          <InputField name="number" type="number" placeholder="Enter Number">
-            <template #label> Number Input </template>
-          </InputField>
-          <InputField
-            name="password"
-            placeholder="Enter Password"
-            type="password"
-          >
-            <template #label> Input Icon </template>
-          </InputField>
-          <InputField
-            name="disabled"
-            type="text"
-            placeholder="Disabled"
-            disabled
-          >
-            <template #label> Disabled </template>
-          </InputField>
+      <Form v-slot="{errors}">
+        {{errors}}
+        <div class="list__component">
+          <span class="component__name">Input</span>
+          <div class="component__samples">
+            <InputField
+              name="default-input"
+              placeholder="Enter Text"
+              rules="alpha"
+              v-model="test"
+            >
+              <template #label> Text Input </template>
+            </InputField>
+            <InputField
+              name="number"
+              type="number"
+              placeholder="Enter Number"
+              v-model="test"
+              rules="digits:3"
+            >
+              <template #label> Number Input </template>
+            </InputField>
+            <InputField
+              name="password"
+              placeholder="Enter Password"
+              v-model="test"
+              type="password"
+            >
+              <template #label> Input Icon </template>
+            </InputField>
+            <InputField
+              name="disabled"
+              type="text"
+              placeholder="Disabled"
+              v-model="test"
+              disabled
+            >
+              <template #label> Disabled </template>
+            </InputField>
+          </div>
         </div>
-      </div>
+      </Form>
       <div class="list__component">
         <span class="component__name">Checkbox</span>
         <div class="component__samples">
@@ -83,12 +99,14 @@
           <RadioButton name="default-radio-button" label="Radio Input" />
         </div>
       </div>
+      <Form>
       <div class="list__component">
         <span class="component__name">Textarea</span>
         <div class="component__samples">
-          <Textarea name="default-textarea" label="Textarea Input" />
+          <Textarea name="default-textarea" label="Textarea Input" v-model="textArea"           rules="digits:3"/>
         </div>
       </div>
+      </Form>
       <div class="list__component">
         <span class="component__name">Card</span>
         <div class="component__samples">
@@ -139,12 +157,24 @@
       <div class="list__component">
         <span class="component__name">Date / Time Picker</span>
         <div class="component__samples">
-           <a
+          <a
             href="https://vue3datepicker.com/props/modes/"
             class="text-blue-500"
             target="_blank"
           >
             https://vue3datepicker.com/props/modes/</a
+          >
+        </div>
+      </div>
+      <div class="list__component">
+        <span class="component__name">Icons</span>
+        <div class="component__samples">
+          <a
+            href="https://icon-sets.iconify.design/"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://icon-sets.iconify.design/</a
           >
         </div>
       </div>
@@ -170,17 +200,25 @@
 </template>
 
 <script>
+import { Form, useForm } from "vee-validate";
 export default {
   setup() {
     const leftDrawerVisible = ref(false);
     const rightDrawerVisible = ref(false);
     const modalVisible = ref(false);
 
+    const test = ref(null);
+    const textArea = ref('textArea');
     return {
       leftDrawerVisible,
       rightDrawerVisible,
       modalVisible,
+      test,
+      textArea
     };
+  },
+  components: {
+    Form,
   },
 };
 </script>
@@ -201,7 +239,7 @@ export default {
       }
       .component__samples {
         @apply mt-[12px];
-        @apply flex flex-row items-center gap-[10px];
+        @apply flex flex-row items-start gap-[10px];
       }
     }
   }

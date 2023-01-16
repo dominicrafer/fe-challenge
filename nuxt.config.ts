@@ -1,8 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   modules: ["@nuxtjs/tailwindcss", "nuxt-icon"],
   css: ["@/assets/css/main.css"],
-  plugins: ["@/plugins/v-click-outside.js"],
+  plugins: ["@/plugins/v-click-outside", '@/plugins/vee-validate'],
   build: {
     postcss: {
       plugins: {
@@ -10,6 +11,9 @@ export default defineNuxtConfig({
         autoprefixer: {},
       },
     },
+    transpile: [
+      "vee-validate/dist/rules"
+    ],
   },
   tailwindcss: {
     cssPath: "~/assets/css/tailwind.css",
