@@ -1,21 +1,124 @@
 <template>
-  <div class="campaigns">
-    <Container class="campagins__card-form" title="Campaign Details">
-      <Form>
-        <div>
-          <div class="component__samples">
+  <Form>
+    <div class="campaigns">
+      <Container>
+        <div class="campaigns__card-container">
+          <SectionTitle title="Campaign Details" />
+          <InputField
+            name="default-input"
+            placeholder="Enter Text"
+            rules="alpha"
+          >
+            <template #label> Title </template>
+          </InputField>
+          <InputField
+            name="default-input"
+            placeholder="Enter Text"
+            rules="alpha"
+          >
+            <template #label> Campaign Code </template>
+          </InputField>
+          <Textarea
+            name="default-textarea"
+            label="Description"
+            placeholder="Enter Text"
+            rules="digits:3"
+          />
+          <SectionTitle title="Campaign Settings" />
+          <div class="card-container__campaign-col">
             <InputField
               name="default-input"
-              placeholder="Enter Text"
+              placeholder="Temp. Convert to dropdown"
               rules="alpha"
             >
-              <template #label> Text Input </template>
+              <template #label> Discount Access </template>
+            </InputField>
+            <InputField
+              name="default-input"
+              placeholder="Temp. Convert to dropdown"
+              rules="alpha"
+            >
+              <template #label> Available Channels </template>
+            </InputField>
+          </div>
+          <div class="card-container__campaign-col">
+            <InputField
+              name="default-input"
+              placeholder="Temp. Convert to dropdown"
+              rules="alpha"
+            >
+              <template #label> Discount Type </template>
+            </InputField>
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label> Discount Value </template>
+            </InputField>
+          </div>
+          <div class="card-container__campaign-col">
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label> Maximum Conversion Value </template>
+            </InputField>
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label>Minimum Miles Redemption </template>
+            </InputField>
+          </div>
+          <div class="card-container__campaign-col">
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label> Maximum Customer Redemption </template>
+            </InputField>
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label>Maximum Global Redemption </template>
+            </InputField>
+          </div>
+          <div class="card-container__campaign-col">
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label> Maximum Daily Redemption </template>
+            </InputField>
+          </div>
+          <SectionTitle title="Campaign Duration" />
+          <div class="card-container__campaign-col">
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label> Starts At </template>
+            </InputField>
+            <InputField
+              name="default-input"
+              placeholder="Enter text"
+              rules="alpha"
+            >
+              <template #label>Ends At </template>
             </InputField>
           </div>
         </div>
-      </Form>
-    </Container>
-  </div>
+      </Container>
+    </div>
+  </Form>
 </template>
 
 <script>
@@ -33,11 +136,13 @@ export default {
 
 <style lang="postcss" scoped>
 .campaigns {
-  @apply flex flex-row justify-center;
-  @apply w-full;
-  gap: 40px;
-  &__card-form {
-    @apply flex flex-col;
+  @apply flex justify-center;
+  &__card-container {
+    @apply flex flex-col gap-[24px];
+  }
+
+  .card-container__campaign-col {
+    @apply grid grid-cols-2 gap-[10px];
   }
 }
 </style>

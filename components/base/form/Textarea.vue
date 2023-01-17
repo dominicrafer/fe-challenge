@@ -8,7 +8,13 @@
       :name="name"
       :rules="rules"
     >
-      <textarea v-bind="field" class="textarea__input" :class="!meta.valid ? 'has-error' : null " :id="name"></textarea>
+      <textarea
+        v-bind="field"
+        class="textarea__input"
+        :placeholder="placeholder"
+        :class="!meta.valid ? 'has-error' : null"
+        :id="name"
+      ></textarea>
     </Field>
     <ErrorMessage :name="name" v-slot="{ message }">
       <div class="textarea__error">
@@ -19,36 +25,39 @@
 </template>
 
 <script>
-import { Field, ErrorMessage } from 'vee-validate'
+import { Field, ErrorMessage } from "vee-validate";
 export default {
   props: {
     label: {
       type: String,
-      required: true
+      required: true,
     },
     name: {
       type: String,
-      required: true
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      default: null,
     },
     rules: {
-      type: String
+      type: String,
     },
     modelValue: {
       type: [String, Number],
-      default: 'required'
-    }
+    },
   },
   components: {
     Field,
-    ErrorMessage
+    ErrorMessage,
   },
-  setup (props, { emit }) {
-    const updateValue = event => {
-      emit('update:modelValue', event.target.value)
-    }
-    return { updateValue }
-  }
-}
+  setup(props, { emit }) {
+    const updateValue = (event) => {
+      emit("update:modelValue", event.target.value);
+    };
+    return { updateValue };
+  },
+};
 </script>
 
 <style lang="postcss" scoped>
@@ -69,7 +78,6 @@ export default {
       @apply border-primary;
       box-shadow: 0px 0px 8px 0px #d1e3cb;
     }
-
   }
   &__error {
     @apply text-paprika;

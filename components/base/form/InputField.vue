@@ -18,7 +18,9 @@
           :id="name"
           :name="name"
           :type="showPassword ? 'text' : type"
-          :class="`${type === 'password' || $slots.icon ? 'has-icon' : null} ${!meta.valid ? 'has-error' : null}`"
+          :class="`${type === 'password' || $slots.icon ? 'has-icon' : null} ${
+            !meta.valid ? 'has-error' : null
+          }`"
           :disabled="disabled"
         />
       </Field>
@@ -74,7 +76,6 @@ export default {
     },
     modelValue: {
       type: [String, Number],
-      default: "required",
     },
   },
   components: {
@@ -102,6 +103,7 @@ export default {
   &__input-container {
     @apply relative;
     .input-container__input {
+      @apply w-full;
       @apply border border-slate-400 rounded-md;
       @apply py-[6px] px-[12px];
       @apply outline-none;

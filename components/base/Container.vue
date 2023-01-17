@@ -39,7 +39,7 @@ export default {
 
 <style lang="postcss" scoped>
 .container {
-  @apply p-[12px] min-w-[250px];
+  @apply p-[24px] min-w-[250px];
   @apply bg-white;
   @apply rounded-xl;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
