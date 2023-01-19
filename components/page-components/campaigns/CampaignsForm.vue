@@ -100,20 +100,20 @@
           </div>
           <SectionTitle title="Campaign Duration" />
           <div class="card-container__campaign-col">
-            <InputField
-              name="default-input"
-              placeholder="Enter text"
-              rules="alpha"
+            <DatePicker
+              name="campaign-start-date"
+              enableTimePicker
+              rules="required"
             >
               <template #label> Starts At </template>
-            </InputField>
-            <InputField
-              name="default-input"
-              placeholder="Enter text"
-              rules="alpha"
+            </DatePicker>
+            <DatePicker
+              name="campaign-end-date"
+              enableTimePicker
+              rules="required"
             >
-              <template #label>Ends At </template>
-            </InputField>
+              <template #label> Ends At </template>
+            </DatePicker>
           </div>
         </div>
       </Container>
