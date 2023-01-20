@@ -85,10 +85,10 @@ export default {
   },
   setup(props, { emit }) {
     const showPassword = ref(false);
-
     const updateValue = (event) => {
       emit("update:modelValue", event.target.value);
     };
+
     return {
       showPassword,
       updateValue,

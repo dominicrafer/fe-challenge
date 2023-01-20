@@ -77,14 +77,15 @@ export default {
         name: "Partners",
         icon: "mdi:account-multiple-outline",
         roles: ["admin"],
-        submenus: [
-          {
-            name: "Partners",
-            path: "/partners",
-            icon: "mdi:account-multiple-outline",
-            roles: ["admin"],
-          },
-        ],
+        path: "/partners",
+        // submenus: [
+        //   {
+        //     name: "Partners",
+        //     path: "/partners",
+        //     icon: "mdi:account-multiple-outline",
+        //     roles: ["admin"],
+        //   },
+        // ],
       },
       {
         name: "Campaigns",

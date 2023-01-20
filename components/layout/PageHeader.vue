@@ -1,7 +1,7 @@
 <template>
   <div class="page-header">
     <div class="page-header__left-panel">
-      <router-link :to="backRoute">
+      <router-link v-if="backRoute" :to="backRoute">
         <Icon name="mdi:arrow-left" width="24" height="24" />
       </router-link>
       <span class="page-header__title">
@@ -25,7 +25,7 @@ export default {
     },
     backRoute: {
       type: [String, Object],
-      default: "/",
+      default: null,
     },
   },
   components: {

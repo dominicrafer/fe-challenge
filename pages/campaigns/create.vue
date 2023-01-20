@@ -1,8 +1,8 @@
 <template>
   <div class="page">
-    <PageHeader title="Campaigns">
+    <PageHeader backRoute="/campaigns" title="Campaigns">
       <template #right-panel>
-        <Button>Create</Button>
+        <Button>Save</Button>
       </template>
     </PageHeader>
     <div class="page__body">

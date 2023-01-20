@@ -1,8 +1,8 @@
 <template>
   <Form>
     <div class="campaigns">
-      <Container>
-        <div class="campaigns__card-container">
+      <Container padding="p-[16px]">
+        <div class="campaigns__form">
           <SectionTitle title="Campaign Details" />
           <InputField
             name="default-input"
@@ -25,7 +25,7 @@
             rules="digits:3"
           />
           <SectionTitle title="Campaign Settings" />
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <InputField
               name="default-input"
               placeholder="Temp. Convert to dropdown"
@@ -41,7 +41,7 @@
               <template #label> Available Channels </template>
             </InputField>
           </div>
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <InputField
               name="default-input"
               placeholder="Temp. Convert to dropdown"
@@ -57,7 +57,7 @@
               <template #label> Discount Value </template>
             </InputField>
           </div>
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <InputField
               name="default-input"
               placeholder="Enter text"
@@ -73,7 +73,7 @@
               <template #label>Minimum Miles Redemption </template>
             </InputField>
           </div>
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <InputField
               name="default-input"
               placeholder="Enter text"
@@ -89,7 +89,7 @@
               <template #label>Maximum Global Redemption </template>
             </InputField>
           </div>
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <InputField
               name="default-input"
               placeholder="Enter text"
@@ -99,7 +99,7 @@
             </InputField>
           </div>
           <SectionTitle title="Campaign Duration" />
-          <div class="card-container__campaign-col">
+          <div class="form__col">
             <DatePicker
               name="campaign-start-date"
               enableTimePicker
@@ -137,11 +137,11 @@ export default {
 <style lang="postcss" scoped>
 .campaigns {
   @apply flex justify-center;
-  &__card-container {
+  &__form {
     @apply flex flex-col gap-[24px];
   }
 
-  .card-container__campaign-col {
+  .form__col {
     @apply grid grid-cols-2 gap-[10px];
   }
 }

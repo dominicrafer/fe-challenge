@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <PageHeader title="Test Page"/>
+    <PageHeader title="Partners"/>
     <div class="page__body">
       <div>PARTNERS</div>
       <div>PARTNERS</div>

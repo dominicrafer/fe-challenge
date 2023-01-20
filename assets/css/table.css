@@ -1,0 +1,27 @@
+.table__data {
+    width: 100%;
+}
+
+thead {
+    padding: 1rem;
+    border-bottom-width: 1px;
+    border-color: #E5E5E5;
+
+}
+
+thead>tr>th {
+    padding: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(65, 60, 60, 1)
+}
+
+tbody {
+    height: 100%;
+}
+
+tbody>tr>td {
+    padding: 6px;
+    font-size: 14px;
+    color: rgba(65, 60, 60, 1)
+}
