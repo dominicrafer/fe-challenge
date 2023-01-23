@@ -1,10 +1,10 @@
 <template>
   <div class="page">
-    <PageHeader title="Campaigns">
+    <PageHeader title="Partners">
       <template #right-panel>
         <router-link
           :to="{
-            path: '/campaigns/create',
+            path: '/partners/create',
           }"
         >
           <Button>Create</Button>
@@ -26,30 +26,24 @@
           <table class="table__data">
             <thead>
               <tr>
-                <th align="left">Campaign Title</th>
-                <th align="left">Campaign Code</th>
+                <th align="left">Partner Name</th>
                 <th align="left">Status</th>
-                <th align="left">Channels</th>
-                <th align="left">Discount Access</th>
-                <th align="left">Starts On</th>
-                <th align="left">Ends On</th>
+                <th align="left">Contract From</th>
+                <th align="left">Contract To</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(campaign, index) in data" :key="index">
                 <td align="left">Campaign Title</td>
-                <td align="left">Campaign Code</td>
                 <td align="left">Status</td>
-                <td align="left">Channels</td>
-                <td align="left">Discount Access</td>
-                <td align="left">Starts On</td>
-                <td align="left">Ends On</td>
+                <td align="left">Contract From</td>
+                <td align="left">Contract To</td>
                 <td align="center">
                   <div class="table__data-actions">
                     <router-link
                       :to="{
-                        name: 'campaigns-id',
+                        name: 'partners-id',
                         params: { id: campaign.id },
                       }"
                     >

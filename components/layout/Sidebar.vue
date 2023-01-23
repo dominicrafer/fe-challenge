@@ -93,6 +93,12 @@ export default {
         path: "/campaigns",
         roles: ["admin"],
       },
+      {
+        name: "Transactions",
+        icon: "material-symbols:component-exchange",
+        path: "/transactions",
+        roles: ["admin"],
+      },
     ];
 
     // Get active menu on page load

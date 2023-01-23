@@ -1,22 +1,15 @@
 <template>
   <Form>
-    <div class="campaigns">
+    <div class="partners">
       <Container :loading="isLoading" padding="p-[16px]">
-        <div class="campaigns__form">
-          <SectionTitle title="Campaign Details" />
+        <div class="partners__form">
+          <SectionTitle title="Partner Details" />
           <InputField
             name="default-input"
             placeholder="Enter Text"
             rules="alpha"
           >
-            <template #label> Title </template>
-          </InputField>
-          <InputField
-            name="default-input"
-            placeholder="Enter Text"
-            rules="alpha"
-          >
-            <template #label> Campaign Code </template>
+            <template #label> Partner Name </template>
           </InputField>
           <Textarea
             name="default-textarea"
@@ -24,53 +17,37 @@
             placeholder="Enter Text"
             rules="digits:3"
           />
-          <SectionTitle title="Campaign Settings" />
+          <SectionTitle title="Partner Settings" />
           <div class="form__col">
             <InputField
               name="default-input"
-              placeholder="Temp. Convert to dropdown"
+              placeholder="Enter Text"
               rules="alpha"
             >
-              <template #label> Discount Access </template>
+              <template #label> Miles To Points </template>
             </InputField>
             <InputField
               name="default-input"
-              placeholder="Temp. Convert to dropdown"
+              placeholder="Enter Text"
               rules="alpha"
             >
-              <template #label> Available Channels </template>
+              <template #label> Points To Miles </template>
             </InputField>
           </div>
           <div class="form__col">
             <InputField
               name="default-input"
-              placeholder="Temp. Convert to dropdown"
+              placeholder="Enter Text"
               rules="alpha"
             >
-              <template #label> Discount Type </template>
+              <template #label> Maximum Miles To Points </template>
             </InputField>
             <InputField
               name="default-input"
               placeholder="Enter text"
               rules="alpha"
             >
-              <template #label> Discount Value </template>
-            </InputField>
-          </div>
-          <div class="form__col">
-            <InputField
-              name="default-input"
-              placeholder="Enter text"
-              rules="alpha"
-            >
-              <template #label> Maximum Conversion Value </template>
-            </InputField>
-            <InputField
-              name="default-input"
-              placeholder="Enter text"
-              rules="alpha"
-            >
-              <template #label>Minimum Miles Redemption </template>
+              <template #label> Maximum Points To Miles </template>
             </InputField>
           </div>
           <div class="form__col">
@@ -79,26 +56,17 @@
               placeholder="Enter text"
               rules="alpha"
             >
-              <template #label> Maximum Customer Redemption </template>
+              <template #label> Maximum Daily Conversion </template>
             </InputField>
             <InputField
               name="default-input"
               placeholder="Enter text"
               rules="alpha"
             >
-              <template #label>Maximum Global Redemption </template>
+              <template #label>Cost Per Mile </template>
             </InputField>
           </div>
-          <div class="form__col">
-            <InputField
-              name="default-input"
-              placeholder="Enter text"
-              rules="alpha"
-            >
-              <template #label> Maximum Daily Redemption </template>
-            </InputField>
-          </div>
-          <SectionTitle title="Campaign Duration" />
+          <SectionTitle title="Partner Contract Duration" />
           <div class="form__col">
             <DatePicker
               name="campaign-start-date"
@@ -141,7 +109,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.campaigns {
+.partners {
   @apply flex justify-center;
   &__form {
     @apply flex flex-col gap-[24px];

@@ -1,5 +1,5 @@
 <template>
-  <Container>
+  <Container :loading="isLoading">
     <div class="table">
       <div class="table__header">
         <div class="header__left-panel">
@@ -41,6 +41,10 @@ import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
 export default {
   props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
     searchable: {
       type: Boolean,
       default: true,

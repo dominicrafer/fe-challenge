@@ -1,10 +1,13 @@
 <template>
   <div class="page-header">
     <div class="page-header__left-panel">
-      <router-link v-if="backRoute" :to="backRoute">
+      <div class="left-panel__tabs" v-if="$slots['left-panel']">
+        <slot name="left-panel"></slot>
+      </div>
+      <router-link v-if="backRoute && !$slots['left-panel']" :to="backRoute">
         <Icon name="mdi:arrow-left" width="24" height="24" />
       </router-link>
-      <span class="page-header__title">
+      <span class="page-header__title" v-if="!$slots['left-panel']">
         {{ title }}
       </span>
     </div>
