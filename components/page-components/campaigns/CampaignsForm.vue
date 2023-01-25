@@ -5,52 +5,54 @@
         <div class="campaigns__form">
           <SectionTitle title="Campaign Details" />
           <InputField
-            name="default-input"
+            name="campign-title"
             placeholder="Enter Text"
             rules="alpha"
           >
             <template #label> Title </template>
           </InputField>
           <InputField
-            name="default-input"
+            name="campaign-code"
             placeholder="Enter Text"
             rules="alpha"
           >
             <template #label> Campaign Code </template>
           </InputField>
           <Textarea
-            name="default-textarea"
+            name="campaign-description"
             label="Description"
             placeholder="Enter Text"
             rules="digits:3"
           />
           <SectionTitle title="Campaign Settings" />
           <div class="form__col">
-            <InputField
-              name="default-input"
-              placeholder="Temp. Convert to dropdown"
+            <Select
+              name="campaign-discount-access"
+              placeholder="Select discount access"
               rules="alpha"
+              searchable
             >
               <template #label> Discount Access </template>
-            </InputField>
-            <InputField
-              name="default-input"
-              placeholder="Temp. Convert to dropdown"
+            </Select>
+            <Select
+              name="campaign-channels"
+              placeholder="Select Channels"
               rules="alpha"
+              multiple
             >
               <template #label> Available Channels </template>
-            </InputField>
+            </Select>
           </div>
           <div class="form__col">
-            <InputField
-              name="default-input"
-              placeholder="Temp. Convert to dropdown"
+            <Select
+              name="campaign-discount-type"
+              placeholder="Select discount type"
               rules="alpha"
             >
               <template #label> Discount Type </template>
-            </InputField>
+            </Select>
             <InputField
-              name="default-input"
+              name="campaign-discount-value"
               placeholder="Enter text"
               rules="alpha"
             >

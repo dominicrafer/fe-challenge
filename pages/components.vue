@@ -167,6 +167,18 @@
         </div>
       </div>
       <div class="list__component">
+        <span class="component__name">Select / Multi Select</span>
+        <div class="component__samples">
+          <a
+            href="https://vue-multiselect.js.org/#sub-props"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://vue-multiselect.js.org/#sub-props</a
+          >
+        </div>
+      </div>
+      <div class="list__component">
         <span class="component__name">Icons</span>
         <div class="component__samples">
           <a

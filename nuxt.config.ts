@@ -2,7 +2,12 @@
 export default defineNuxtConfig({
   ssr: false,
   modules: ["@nuxtjs/tailwindcss", "nuxt-icon"],
-  css: ["@/assets/css/main.css", "@/assets/css/date-picker.css", "@/assets/css/table.css"],
+  css: [
+    "@/assets/css/main.css",
+    "@/assets/css/date-picker.css",
+    "@/assets/css/table.css",
+    "@/assets/css/select.css"
+  ],
   plugins: ["@/plugins/v-click-outside", '@/plugins/vee-validate'],
   build: {
     postcss: {

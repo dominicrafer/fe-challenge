@@ -1,0 +1,12 @@
+.multiselect>.multiselect__tags {
+    min-height: 0px;
+    height: 38px;
+    padding: 6px 40px 0 8px;
+    border-color: rgb(148 163 184) !important;
+    font-size: 14px;
+}
+
+.has-error>.multiselect__tags {
+    border-color: red !important;
+    /* box-shadow: 0px 0px 8px 0px #d1e3cb; */
+}
