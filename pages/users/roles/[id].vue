@@ -1,0 +1,31 @@
+<template>
+  <div class="page">
+    <PageHeader backRoute="/users/roles" title="Roles">
+      <template #right-panel>
+        <Button>Edit</Button>
+      </template>
+    </PageHeader>
+    <div class="page__body"></div>
+  </div>
+</template>
+
+<script>
+definePageMeta({
+  layout: "default",
+});
+export default {
+  props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props) {},
+};
+</script>
+
+<style lang="postcss" scoped>
+.page__body {
+  @apply w-full;
+}
+</style>

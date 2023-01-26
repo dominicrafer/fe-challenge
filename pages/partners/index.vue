@@ -39,7 +39,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(campaign, index) in data" :key="index">
+              <tr v-for="(partner, index) in data" :key="index">
                 <td align="left">Campaign Title</td>
                 <td align="left">Status</td>
                 <td align="left">Contract From</td>
@@ -49,7 +49,7 @@
                     <router-link
                       :to="{
                         name: 'partners-id',
-                        params: { id: campaign.id },
+                        params: { id: partner.id },
                       }"
                     >
                       <Icon

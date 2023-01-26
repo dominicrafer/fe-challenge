@@ -1,8 +1,14 @@
 <template>
   <div class="page">
-    <PageHeader title="Transactions">
-      <template #left-panel>
-        <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
+    <PageHeader title="Roles">
+      <template #right-panel>
+        <router-link
+          :to="{
+            path: '/users/policies/create',
+          }"
+        >
+          <Button>Create</Button>
+        </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
@@ -25,29 +31,44 @@
           <table class="table__data">
             <thead>
               <tr>
-                <th align="left">Partner Name</th>
-                <th align="left">MML Member Id</th>
-                <th align="left">Convertion Type</th>
-                <th align="left">Points</th>
-                <th align="left">Miles</th>
-                <th align="left">Created At</th>
+                <th align="left">Policy</th>
+                <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(campaign, index) in data" :key="index">
-                <td align="left">Partner Name</td>
-                <td align="left">MML Member Id</td>
-                <td align="left">Convertion Type</td>
-                <td align="left">Points</td>
-                <td align="left">Miles</td>
-                <td align="left">Created At</td>
+              <tr v-for="(policy, index) in data" :key="index">
+                <td align="left">Policy</td>
+                <td align="center">
+                  <div class="table__data-actions">
+                    <router-link
+                      :to="{
+                        name: 'users-policies-id',
+                        params: { id: policy.id },
+                      }"
+                    >
+                      <Icon
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                      />
+                    </router-link>
+                    <div>
+                      <Icon
+                        width="20"
+                        height="20"
+                        name="material-symbols:delete-outline"
+                      />
+                    </div>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </template>
       </Table>
     </div>
-    <TransactionsFilterDrawer
+    <UsersFilterDrawer
       :show="showFilterDrawer"
       @close="
         () => {
@@ -55,7 +76,7 @@
         }
       "
     />
-    <TransactionsSortDrawer
+    <UsersSortDrawer
       :show="showSortDrawer"
       @close="
         () => {
@@ -85,34 +106,13 @@ export default {
     ];
     const tabs = [
       {
-        label: "pending_otp",
+        label: "active",
       },
       {
-        label: "verified",
+        label: "inactive",
       },
       {
-        label: "completed",
-      },
-      {
-        label: "voided",
-      },
-      {
-        label: "cancelled",
-      },
-      {
-        label: "source_credited",
-      },
-      {
-        label: "source_debited",
-      },
-      {
-        label: "destination_cancelled",
-      },
-      {
-        label: "destination_debited",
-      },
-      {
-        label: "reversal_failed",
+        label: "deleted",
       },
     ];
 

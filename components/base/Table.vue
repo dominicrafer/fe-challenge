@@ -20,7 +20,7 @@
           </Button>
           <Button v-if="filterable" @click="$emit('filter')">
             <template #icon-start
-              ><Icon name="material-symbols:filter-alt-outline" /></template
+              ><Icon name="mdi:filter-cog-outline" /></template
             >Filter By
           </Button>
         </div>

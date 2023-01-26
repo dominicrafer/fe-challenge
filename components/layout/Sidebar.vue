@@ -37,7 +37,13 @@
                 name="mdi:chevron-down"
                 width="24"
                 height="24"
-                v-if="menuDetails?.submenus"
+                v-if="submenuDetails?.submenus"
+              />
+              <Icon
+                :name="submenuDetails.icon"
+                width="24"
+                height="24"
+                v-else
               />
               {{ submenuDetails.name }}
             </div>
@@ -69,13 +75,32 @@ export default {
     const menus = [
       {
         name: "Users",
-        path: "/",
         icon: "mdi:account-multiple-outline",
         roles: ["admin"],
+        submenus: [
+          {
+            name: "Users",
+            path: "/users",
+            icon: "mdi:account-multiple-outline",
+            roles: ["admin"],
+          },
+          {
+            name: "Roles",
+            path: "/users/roles",
+            icon: "mdi:badge-account-horizontal-outline",
+            roles: ["admin"],
+          },
+          {
+            name: "Policies",
+            path: "/users/policies",
+            icon: "mdi:shield-account-variant-outline",
+            roles: ["admin"],
+          },
+        ],
       },
       {
         name: "Partners",
-        icon: "mdi:account-multiple-outline",
+        icon: "mdi:handshake-outline",
         roles: ["admin"],
         path: "/partners",
         // submenus: [
@@ -95,7 +120,7 @@ export default {
       },
       {
         name: "Transactions",
-        icon: "material-symbols:component-exchange",
+        icon: "mdi:swap-horizontal",
         path: "/transactions",
         roles: ["admin"],
       },

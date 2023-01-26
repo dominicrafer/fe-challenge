@@ -1,8 +1,17 @@
 <template>
   <div class="page">
-    <PageHeader title="Transactions">
+    <PageHeader title="Users">
       <template #left-panel>
         <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
+      </template>
+      <template #right-panel>
+        <router-link
+          :to="{
+            path: '/users/create',
+          }"
+        >
+          <Button>Create</Button>
+        </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
@@ -25,29 +34,52 @@
           <table class="table__data">
             <thead>
               <tr>
-                <th align="left">Partner Name</th>
-                <th align="left">MML Member Id</th>
-                <th align="left">Convertion Type</th>
-                <th align="left">Points</th>
-                <th align="left">Miles</th>
-                <th align="left">Created At</th>
+                <th align="left">Name</th>
+                <th align="left">Email</th>
+                <th align="left">Mobile Number</th>
+                <th align="left">Role</th>
+                <th align="left">Status</th>
+                <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(campaign, index) in data" :key="index">
-                <td align="left">Partner Name</td>
-                <td align="left">MML Member Id</td>
-                <td align="left">Convertion Type</td>
-                <td align="left">Points</td>
-                <td align="left">Miles</td>
-                <td align="left">Created At</td>
+              <tr v-for="(user, index) in data" :key="index">
+                <td align="left">Name</td>
+                <td align="left">Email</td>
+                <td align="left">Mobile Number</td>
+                <td align="left">Role</td>
+                <td align="left">Status</td>
+                <td align="center">
+                  <div class="table__data-actions">
+                    <router-link
+                      :to="{
+                        name: 'users-id',
+                        params: { id: user.id },
+                      }"
+                    >
+                      <Icon
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                      />
+                    </router-link>
+                    <div>
+                      <Icon
+                        width="20"
+                        height="20"
+                        name="material-symbols:delete-outline"
+                      />
+                    </div>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </template>
       </Table>
     </div>
-    <TransactionsFilterDrawer
+    <UsersFilterDrawer
       :show="showFilterDrawer"
       @close="
         () => {
@@ -55,7 +87,7 @@
         }
       "
     />
-    <TransactionsSortDrawer
+    <UsersSortDrawer
       :show="showSortDrawer"
       @close="
         () => {
@@ -85,34 +117,13 @@ export default {
     ];
     const tabs = [
       {
-        label: "pending_otp",
+        label: "active",
       },
       {
-        label: "verified",
+        label: "inactive",
       },
       {
-        label: "completed",
-      },
-      {
-        label: "voided",
-      },
-      {
-        label: "cancelled",
-      },
-      {
-        label: "source_credited",
-      },
-      {
-        label: "source_debited",
-      },
-      {
-        label: "destination_cancelled",
-      },
-      {
-        label: "destination_debited",
-      },
-      {
-        label: "reversal_failed",
+        label: "deleted",
       },
     ];
 

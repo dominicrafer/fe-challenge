@@ -17,6 +17,18 @@
             placeholder="Enter Text"
             rules="digits:3"
           />
+          <div class="form__col">
+            <InputField
+              name="default-input"
+              placeholder="Enter Text"
+              rules="alpha"
+            >
+              <template #label> Partner Key </template>
+            </InputField>
+            <div class="col__button">
+              <Button>Generate</Button>
+            </div>
+          </div>
           <SectionTitle title="Partner Settings" />
           <div class="form__col">
             <InputField
@@ -117,6 +129,10 @@ export default {
 
   .form__col {
     @apply grid grid-cols-2 gap-[10px];
+  }
+
+  .col__button {
+    @apply mt-[28px];
   }
 }
 </style>
