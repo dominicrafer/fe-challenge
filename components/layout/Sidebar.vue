@@ -119,7 +119,6 @@ export default {
           !_has(menuDetails, "submenus") &&
           menuDetails.path === route.path
         ) {
-          console.log("im here2");
           activeMenu.value =
             menuDetails.path === route.path ? menuDetails.name : null;
           return false;

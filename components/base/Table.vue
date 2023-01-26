@@ -1,9 +1,9 @@
 <template>
-  <Container :loading="isLoading">
+  <Container :loading="loading">
     <div class="table">
       <div class="table__header">
         <div class="header__left-panel">
-          <form v-if="searchable">
+          <form v-if="searchable" @submit.prevent="$emit('search')">
             <InputField name="search" placeholder="Search by name here...">
               <template #icon>
                 <Icon name="mdi:magnify" />
@@ -41,7 +41,7 @@ import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
 export default {
   props: {
-    isLoading: {
+    loading: {
       type: Boolean,
       default: false,
     },

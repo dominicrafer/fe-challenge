@@ -1,7 +1,10 @@
 <template>
   <div class="header">
-    <div class="cursor-pointer header__sidebar-button" @click="$emit('collapse-sidebar')">
-      <Icon name="mdi:menu" width="20" height="20"/>
+    <div
+      class="cursor-pointer header__sidebar-button"
+      @click="$emit('collapse-sidebar')"
+    >
+      <Icon name="mdi:menu" width="20" height="20" />
       Hide Menu
     </div>
   </div>
@@ -13,7 +16,6 @@ export default {
     title: {
       type: String,
       default: "Header",
-      required: true,
     },
   },
 };

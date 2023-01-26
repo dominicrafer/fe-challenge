@@ -20,13 +20,13 @@
             width="40"
             height="40"
             style="color: #29335c"
+            @click="$emit('close')"
           />
         </div>
         <div class="content__body">
           <slot></slot>
         </div>
         <div class="content__footer" v-if="$slots.footer">
-
           <slot name="footer"></slot>
         </div>
       </div>
@@ -56,10 +56,10 @@ export default {
     },
   },
   setup(props, { attrs, slots, emit, expose }) {
-    const drawer = ref(null)
+    const drawer = ref(null);
     onClickOutside(drawer, () => emit("close"));
 
-    return {drawer}
+    return { drawer };
   },
 };
 </script>

@@ -13,14 +13,19 @@
     </PageHeader>
     <div class="page__body">
       <Table
-        :isLoading="false"
-        searchable
-        exportable
+        :loading="isLoading"
+        @search="searchAction"
         @export="exportAction"
-        sortable
-        @sort="sortAction"
-        filterable
-        @filter="filterAction"
+        @sort="
+          () => {
+            showSortDrawer = !showSortDrawer;
+          }
+        "
+        @filter="
+          () => {
+            showFilterDrawer = !showFilterDrawer;
+          }
+        "
       >
         <template #table-data>
           <table class="table__data">
@@ -75,6 +80,22 @@
         </template>
       </Table>
     </div>
+    <CampaignsFilterDrawer
+      :show="showFilterDrawer"
+      @close="
+        () => {
+          showFilterDrawer = false;
+        }
+      "
+    />
+    <CampaignsSortDrawer
+      :show="showSortDrawer"
+      @close="
+        () => {
+          showSortDrawer = false;
+        }
+      "
+    />
   </div>
 </template>
 
@@ -96,8 +117,25 @@ export default {
       },
     ];
 
+    const isLoading = ref(false);
+    const showFilterDrawer = ref(false);
+    const showSortDrawer = ref(false);
+    const filters = ref({});
+
+    const searchAction = (e) => {
+      console.log("search");
+    };
+    const exportAction = (e) => {
+      console.log("export");
+    };
+
     return {
       data,
+      isLoading,
+      showFilterDrawer,
+      showSortDrawer,
+      searchAction,
+      exportAction,
     };
   },
 };
