@@ -5,7 +5,9 @@
         <Button>Edit</Button>
       </template>
     </PageHeader>
-    <div class="page__body"></div>
+    <div class="page__body">
+      <UsersForm />
+    </div>
   </div>
 </template>
 

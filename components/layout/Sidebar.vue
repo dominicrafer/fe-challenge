@@ -135,7 +135,6 @@ export default {
             path: route.path,
           })
         ) {
-          console.log("im here");
           activeMenu.value = _find(menuDetails.submenus, {
             path: route.path,
           }).name;

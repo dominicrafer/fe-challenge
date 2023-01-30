@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :class="padding">
+  <div class="container" :class="`${padding} ${width} ${height}`">
     <div class="container__loader-body" v-if="loading">
       <div class="loader-body__loader">
         <Spinner :spinnerSize="spinnerSize" />
@@ -15,6 +15,14 @@ export default {
   props: {
     padding: {
       type: String,
+    },
+    width: {
+      type: String,
+      default: "w-full",
+    },
+    height: {
+      type: String,
+      default: "h-full",
     },
     loading: {
       type: Boolean,
@@ -36,10 +44,9 @@ export default {
 <style lang="postcss" scoped>
 .container {
   @apply relative;
-  @apply min-w-[250px];
   @apply rounded-xl;
   @apply bg-white;
-  min-height: 600px;
+  @apply h-min;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
 
   &__loader-body {

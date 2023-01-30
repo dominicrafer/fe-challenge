@@ -6,6 +6,7 @@
       </template>
     </PageHeader>
     <div class="page__body">
+      <UsersPolicyForm />
     </div>
   </div>
 </template>

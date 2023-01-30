@@ -14,6 +14,7 @@
     <div class="page__body">
       <Table
         :loading="isLoading"
+        @paginate="paginateAction"
         @search="searchAction"
         @export="exportAction"
         @sort="
@@ -94,46 +95,51 @@ definePageMeta({
 export default {
   setup(props, { emit }) {
     const data = [
-      {
-        id: 1,
-      },
-      {
-        id: 2,
-      },
-      {
-        id: 3,
-      },
-    ];
-    const tabs = [
-      {
-        label: "active",
-      },
-      {
-        label: "inactive",
-      },
-      {
-        label: "deleted",
-      },
-    ];
+        {
+          id: 1,
+        },
+        {
+          id: 2,
+        },
+        {
+          id: 3,
+        },
+      ],
+      isLoading = ref(false),
+      showFilterDrawer = ref(false),
+      showSortDrawer = ref(false),
+      queryStringParamaters = ref({
+        search: "",
+        filters: "",
+        sorts: "",
+        page: 1,
+        page_size: 10,
+      });
 
-    const isLoading = ref(false);
-    const showFilterDrawer = ref(false);
-    const showSortDrawer = ref(false);
-    const filters = ref({});
-
-    const searchAction = (e) => {
-      console.log("search");
-    };
-    const exportAction = (e) => {
-      console.log("export");
-    };
+    function paginateAction(event) {
+      queryStringParamaters.value = {
+        ...queryStringParamaters.value,
+        page: event,
+      };
+      console.log("paginate", queryStringParamaters.value);
+    }
+    function searchAction(event) {
+      queryStringParamaters.value = {
+        ...queryStringParamaters.value,
+        search: event,
+      };
+      console.log("search", queryStringParamaters.value);
+    }
+    function exportAction(event) {
+      console.log("export", event);
+    }
 
     return {
       data,
-      tabs,
       isLoading,
       showFilterDrawer,
       showSortDrawer,
+      paginateAction,
       searchAction,
       exportAction,
     };

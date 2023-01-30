@@ -3,8 +3,15 @@
     <div class="table">
       <div class="table__header">
         <div class="header__left-panel">
-          <form v-if="searchable" @submit.prevent="$emit('search')">
-            <InputField name="search" placeholder="Search by name here...">
+          <form
+            v-if="searchable"
+            @submit.prevent="$emit('search', searchValue)"
+          >
+            <InputField
+              v-model="searchValue"
+              name="search"
+              placeholder="Search by name here..."
+            >
               <template #icon>
                 <Icon name="mdi:magnify" />
               </template>
@@ -29,7 +36,12 @@
         <slot name="table-data"></slot>
       </div>
       <div class="table__footer">
-        <v-pagination :pages="10" :range-size="1" active-color="#29335C" />
+        <v-pagination
+          v-model="page"
+          :pages="pages"
+          :range-size="1"
+          @update:modelValue="$emit('paginate', page)"
+        />
       </div>
     </div>
   </Container>
@@ -44,6 +56,14 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    activatePage: {
+      type: Number,
+      default: 1,
+    },
+    pages: {
+      type: Number,
+      default: 10,
     },
     searchable: {
       type: Boolean,
@@ -62,7 +82,14 @@ export default {
       default: true,
     },
   },
-  setup(props) {},
+  setup(props) {
+    let page = ref(props.activatePage);
+    let searchValue = ref("");
+    return {
+      page,
+      searchValue,
+    };
+  },
   components: {
     VPagination,
   },
