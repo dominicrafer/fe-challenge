@@ -131,7 +131,7 @@ export default {
       isLoading = ref(false),
       showFilterDrawer = ref(false),
       showSortDrawer = ref(false),
-      queryStringParamaters = ref({
+      queryStringParameters = reactive({
         search: "",
         filters: "",
         sorts: "",
@@ -140,21 +140,21 @@ export default {
       });
 
     function paginateAction(event) {
-      queryStringParamaters.value = {
-        ...queryStringParamaters.value,
+      queryStringParameters.value = {
+        ...queryStringParameters.value,
         page: event,
       };
-      console.log("paginate", queryStringParamaters.value);
+      console.log("paginate", queryStringParameters.value);
     }
     function changeTabAction(event) {
       activeTab.value = event;
     }
     function searchAction(event) {
-      queryStringParamaters.value = {
-        ...queryStringParamaters.value,
+      queryStringParameters.value = {
+        ...queryStringParameters.value,
         search: event,
       };
-      console.log("search", queryStringParamaters.value);
+      console.log("search", queryStringParameters.value);
     }
     function exportAction(event) {
       console.log("export", event);

@@ -1,6 +1,6 @@
 <template>
-  <div class="container" :class="`${padding} ${width} ${height}`">
-    <div class="container__loader-body" v-if="loading">
+  <div class="container-component" :class="`${padding} ${width} ${height}`">
+    <div class="container-component__loader-body" v-if="loading">
       <div class="loader-body__loader">
         <Spinner :spinnerSize="spinnerSize" />
         {{ loaderMessage }}
@@ -42,7 +42,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.container {
+.container-component {
   @apply relative;
   @apply rounded-xl;
   @apply bg-white;
