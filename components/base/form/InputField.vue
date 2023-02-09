@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import { Icon } from "@iconify/vue";
 import { Field, ErrorMessage } from "vee-validate";
 export default {
   props: {
@@ -79,7 +78,6 @@ export default {
     },
   },
   components: {
-    Icon,
     Field,
     ErrorMessage,
   },

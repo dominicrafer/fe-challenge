@@ -8,7 +8,6 @@ export default defineNuxtConfig({
     "@/assets/css/table.css",
     "@/assets/css/select.css"
   ],
-  plugins: ["@/plugins/v-click-outside", '@/plugins/vee-validate'],
   build: {
     postcss: {
       plugins: {
@@ -16,9 +15,7 @@ export default defineNuxtConfig({
         autoprefixer: {},
       },
     },
-    transpile: [
-      "vee-validate/dist/rules"
-    ],
+    transpile: ["vee-validate/dist/rules"],
   },
   tailwindcss: {
     cssPath: "~/assets/css/tailwind.css",
