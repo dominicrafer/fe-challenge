@@ -39,12 +39,7 @@
                 height="24"
                 v-if="submenuDetails?.submenus"
               />
-              <Icon
-                :name="submenuDetails.icon"
-                width="24"
-                height="24"
-                v-else
-              />
+              <Icon :name="submenuDetails.icon" width="24" height="24" v-else />
               {{ submenuDetails.name }}
             </div>
           </router-link>
@@ -56,12 +51,6 @@
 </template>
 
 <script>
-import {
-  find as _find,
-  filter as _filter,
-  has as _has,
-  forEach as _forEach,
-} from "lodash";
 export default {
   props: {
     collapsed: {
@@ -128,19 +117,20 @@ export default {
 
     // Get active menu on page load
     onMounted(() => {
-      _forEach(menus, (menuDetails) => {
+      const { $_ } = useNuxtApp();
+      $_.forEach(menus, (menuDetails) => {
         if (
-          _has(menuDetails, "submenus") &&
-          _find(menuDetails.submenus, {
+          $_.has(menuDetails, "submenus") &&
+          $_.find(menuDetails.submenus, {
             path: route.path,
           })
         ) {
-          activeMenu.value = _find(menuDetails.submenus, {
+          activeMenu.value = $_.find(menuDetails.submenus, {
             path: route.path,
           }).name;
           return false;
         } else if (
-          !_has(menuDetails, "submenus") &&
+          !$_.has(menuDetails, "submenus") &&
           menuDetails.path === route.path
         ) {
           activeMenu.value =
@@ -149,6 +139,7 @@ export default {
         }
       });
     });
+
     return {
       menus,
       activeMenu,

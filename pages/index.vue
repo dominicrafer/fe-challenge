@@ -1,10 +1,10 @@
 <template>
   <div class="page">
-    <PageHeader title="Test Page"/>
+    <PageHeader title="Test Page" />
     <div class="page__body">
       <div>CONTENT</div>
       <div>CONTENT</div>
-      <div>CONTENT</div>
+      <div></div>
     </div>
   </div>
 </template>
@@ -14,7 +14,11 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  setup() {},
+  setup() {
+    const { $api } = useNuxtApp();
+    console.log($api.branches.getBranches('test'));
+    // console.log(this.api.orders)
+  },
 };
 </script>
 
