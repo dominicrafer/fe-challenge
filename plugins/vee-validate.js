@@ -2,6 +2,7 @@ import { defineRule, configure } from "vee-validate";
 import AllRules from "@vee-validate/rules";
 
 export default defineNuxtPlugin((nuxtApp) => {
+  console.log(nuxtApp)
   Object.keys(AllRules)
     .filter((k) => k !== "default")
     .forEach((rule) => {
