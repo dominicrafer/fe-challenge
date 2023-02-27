@@ -1,16 +1,21 @@
 <template>
   <div class="header">
-    <div
-      class="cursor-pointer header__sidebar-button"
-      @click="$emit('collapse-sidebar')"
-    >
-      <Icon name="mdi:menu" width="20" height="20" />
-      Hide Menu
+    <div class="header__left-panel">
+    </div>
+    <div class="header__right-panel">
+      <div class="right-panel__profile">
+        <Icon name="mdi:account-circle" color="white" width="30" height="30" />
+        <div class="profile__details">
+          <span class="details__name">{{ authStore.userDetails.name }}</span>
+          <span class="details__role">{{ authStore.roles[0] }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { useAuthStore } from '@/store/auth';
 export default {
   props: {
     title: {
@@ -18,15 +23,40 @@ export default {
       default: "Header",
     },
   },
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore }
+  }
 };
 </script>
 
 <style lang="postcss" scoped>
 .header {
-  @apply px-[12px] py-[20px] bg-white w-full text-sm text-primary border-b border-baking-soda;
+  @apply flex flex-row justify-between items-center;
+  @apply px-5 py-[20px] bg-primary w-full text-sm text-primary border-b border-baking-soda;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
+
   &__sidebar-button {
     @apply flex flex-row items-center gap-[4px];
   }
-}
-</style>
+
+  &__right-panel {
+    @apply flex flex-row items-center gap-3;
+
+    .right-panel__profile {
+      @apply flex flex-row gap-2 items-center;
+
+      .profile__details {
+        @apply flex flex-col leading-3 uppercase;
+
+        .details__name {
+          @apply text-white font-medium text-sm;
+        }
+
+        .details__role {
+          @apply text-[10px] text-gray-200;
+        }
+      }
+    }
+  }
+}</style>

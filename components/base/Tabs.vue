@@ -4,8 +4,8 @@
       class="tabs__option"
       v-for="(tab, index) in tabs"
       :key="index"
-      :class="index == active ? 'active' : null"
-      @click="$emit('changeTab', index)"
+      :class="tab.label == active || tab.value == active ? 'active' : null"
+      @click="$emit('changeTab', tab?.value || tab?.label)"
     >
       <span class="option__label" :class="index == active ? 'active' : null">
         {{ tab.label }}
@@ -13,7 +13,7 @@
       <span
         class="option__counter"
         v-if="tab.counter !== 'undefined'"
-        :class="index == active ? 'active' : null"
+        :class="tab.label == active || tab.value == active ? 'active' : null"
       >
         {{ tab.counter }}
       </span>
@@ -39,20 +39,20 @@ export default {
 
 <style lang="postcss" scoped>
 .tabs {
-  @apply flex flex-row items-center;
+  @apply flex flex-row items-center bg-[#f3f4f6] border-l border-r border-t border-gray-200;
   &__option {
-    @apply text-center whitespace-nowrap;
+    @apply text-center whitespace-nowrap uppercase;
     @apply cursor-pointer;
-    @apply px-2;
+    @apply px-5 py-3 ;
     &.active {
-      @apply border-b-2 border-primary;
+      @apply bg-white;
+      @apply  text-black  border-primary;
     }
   }
   .option__label {
-    @apply text-sm font-semibold;
-    color: rgba(65, 60, 60, 0.7);
+    @apply text-sm font-semibold text-gray-400;
     &.active {
-      @apply font-bold text-currant;
+      @apply text-primary;
     }
   }
 }

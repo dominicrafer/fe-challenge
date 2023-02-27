@@ -25,6 +25,7 @@ export default {
 .default {
   @apply w-[100vw] h-[100vh];
   @apply flex flex-row;
+
   &__content {
     @apply w-full h-full flex flex-col;
   }

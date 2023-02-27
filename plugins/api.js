@@ -1,6 +1,4 @@
-import Orders from '@/api/orders';
 import Branches from '@/api/branches';
-import Users from '@/api/users';
 // function clientConfig() {
 //     return {
 //         onRequest({ request, options }) {
@@ -22,17 +20,9 @@ import Users from '@/api/users';
 // }
 
 export default defineNuxtPlugin(() => {
-    // const api = {
-    //     orders: Orders(clientConfig()),
-    //     branches: Branches(clientConfig()),
-    //     users: Users(clientConfig()),
-    // };
     const api = {
-        orders: Orders(),
         branches: Branches(),
-        users: Users(),
     };
-
     return {
         provide: {
             api,

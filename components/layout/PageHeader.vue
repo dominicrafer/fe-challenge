@@ -40,9 +40,9 @@ export default {
 <style lang="postcss" scoped>
 .page-header {
   @apply flex flex-row justify-between items-center;
-  @apply bg-white px-[12px] py-[20px];
+  @apply bg-white px-5 py-[10px];
   @apply text-xl text-primary font-bold;
-  box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
+  box-shadow: 0 2px 6px rgb(41 68 37 / 10%);
   &__left-panel {
     @apply flex flex-row items-center;
     @apply gap-[16px];

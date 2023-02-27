@@ -1,0 +1,13 @@
+.Pagination > li {
+    /* @apply p-2 !important; */
+}
+.Pagination > li >button {
+    @apply text-primary !important;
+    &.Page-active {
+        @apply border border-primary !important;
+    }
+    /* @apply p-3 !important; */
+}
+.Control-active {
+    @apply fill-primary !important;
+}

@@ -1,27 +1,20 @@
 <template>
   <div class="page">
-    <PageHeader title="Transactions">
-      <template #left-panel>
-        <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
-      </template>
-    </PageHeader>
+    <PageHeader title="Transactions" />
+    <!-- <template #left-panel>
+        <Tabs  :active="activeTab" @changeTab="changeTabAction" />
+      </template> -->
     <div class="page__body">
-      <Table
-        :loading="isLoading"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
+      <Table :loading="isLoading" :tabs="tabs" :activeTab="activeTab" @changeTab="changeTab" @paginate="paginateAction"
+        @search="searchAction" @export="exportAction" @sort="
           () => {
             showSortDrawer = !showSortDrawer;
           }
-        "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
-      >
+        " @filter="
+  () => {
+    showFilterDrawer = !showFilterDrawer;
+  }
+">
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -48,22 +41,16 @@
         </template>
       </Table>
     </div>
-    <TransactionsFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <TransactionsSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
+    <TransactionsFilterDrawer :show="showFilterDrawer" @close="
+      () => {
+        showFilterDrawer = false;
+      }
+    " />
+    <TransactionsSortDrawer :show="showSortDrawer" @close="
+      () => {
+        showSortDrawer = false;
+      }
+    " />
   </div>
 </template>
 
@@ -74,16 +61,16 @@ definePageMeta({
 export default {
   setup(props) {
     const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
+      {
+        id: 1,
+      },
+      {
+        id: 2,
+      },
+      {
+        id: 3,
+      },
+    ],
       tabs = [
         {
           label: "pending_otp",
@@ -116,7 +103,7 @@ export default {
           label: "reversal_failed",
         },
       ],
-      activeTab = ref(0),
+      activeTab = ref('pending_otp'),
       isLoading = ref(false),
       showFilterDrawer = ref(false),
       showSortDrawer = ref(false),
@@ -150,6 +137,12 @@ export default {
       console.log("export", event);
     }
 
+    function changeTab(tab) {
+      console.log(tab, 'TAB')
+      activeTab.value = tab;
+      console.log(activeTab.value, 'ACTIVE TAB')
+    }
+
     return {
       data,
       tabs,
@@ -157,6 +150,7 @@ export default {
       isLoading,
       showFilterDrawer,
       showSortDrawer,
+      changeTab,
       paginateAction,
       changeTabAction,
       searchAction,

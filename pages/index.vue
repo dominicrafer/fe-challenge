@@ -16,8 +16,6 @@ definePageMeta({
 export default {
   setup() {
     const { $api } = useNuxtApp();
-    console.log($api.branches.getBranches('test'));
-    // console.log(this.api.orders)
   },
 };
 </script>

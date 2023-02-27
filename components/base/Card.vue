@@ -39,7 +39,7 @@ export default {
 
 <style lang="postcss" scoped>
 .card {
-  @apply p-[12px] min-w-[250px] max-w-[500px];
+  @apply  min-w-[250px] max-w-[500px] p-[12px];
   @apply bg-white;
   @apply rounded-xl;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
@@ -57,6 +57,7 @@ export default {
     }
   }
   &__body {
+    
     @apply py-[8px];
   }
   &__footer {

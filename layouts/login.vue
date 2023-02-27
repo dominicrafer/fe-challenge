@@ -10,14 +10,8 @@ export default {};
 
 <style lang="postcss" scoped>
 .login-layout {
-  @apply flex flex-col justify-center w-screen h-screen bg-no-repeat bg-cover;
-  @apply bg-[#2593cc];
-  @apply pl-[10%] pr-[60%];
+  @apply flex flex-col justify-center items-center w-screen h-screen bg-no-repeat bg-cover;
+  @apply bg-gainsboro;
 }
 
-@media screen and (max-width: 768px) {
-  .login-layout {
-    @apply pl-[5%] pr-[25%];
-  }
-}
 </style>

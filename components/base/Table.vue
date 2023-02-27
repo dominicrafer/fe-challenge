@@ -1,50 +1,48 @@
 <template>
-  <Container :loading="loading">
-    <div class="table">
-      <div class="table__header">
-        <div class="header__left-panel">
-          <form
-            v-if="searchable"
-            @submit.prevent="$emit('search', searchValue)"
-          >
-            <InputField
-              v-model="searchValue"
-              name="search"
-              placeholder="Search by name here..."
-            >
-              <template #icon>
-                <Icon name="mdi:magnify" />
-              </template>
-            </InputField>
-          </form>
-        </div>
-        <div class="header__right-panel">
-          <Button v-if="exportable" @click="$emit('export')">
-            <template #icon-start><Icon name="mdi:export" /></template>Export
-          </Button>
-          <Button v-if="sortable" @click="$emit('sort')">
-            <template #icon-start><Icon name="mdi:sort" /></template>Sort By
-          </Button>
-          <Button v-if="filterable" @click="$emit('filter')">
-            <template #icon-start
-              ><Icon name="mdi:filter-cog-outline" /></template
-            >Filter By
-          </Button>
-        </div>
-      </div>
-      <div class="table__body">
-        <slot name="table-data"></slot>
-      </div>
-      <div class="table__footer">
-        <v-pagination
-          v-model="page"
-          :pages="pages"
-          :range-size="1"
-          @update:modelValue="$emit('paginate', page)"
-        />
-      </div>
+  <div class="table">
+    <div class="table__tabs" v-if="tabs">
+      <Tabs :tabs="tabs" :active="activeTab" @changeTab="(tab) => $emit('changeTab', tab)" />
     </div>
-  </Container>
+    <Container :loading="loading">
+      <div class="table__content">
+        <div class="content__header">
+          <div class="header__left-panel">
+            <form v-if="searchable" @submit.prevent="$emit('search', searchValue)">
+              <InputField class="left-panel__search" v-model="searchValue" name="search"
+                placeholder="Search by name here...">
+                <template #icon>
+                  <Icon name="mdi:magnify" />
+                </template>
+              </InputField>
+            </form>
+          </div>
+          <div class="header__right-panel">
+            <Button v-if="exportable" @click="$emit('export')" variant="primary-outline">
+              <template #icon-start>
+                <Icon name="mdi:export" width="20" height="20" />
+              </template>Export
+            </Button>
+            <Button v-if="sortable" @click="$emit('sort')" variant="primary-outline">
+              <template #icon-start>
+                <Icon name="mdi:sort" width="20" height="20" />
+              </template>Sort By
+            </Button>
+            <Button v-if="filterable" @click="$emit('filter')" variant="primary-outline">
+              <template #icon-start>
+                <Icon name="mdi:filter-cog-outline" width="20" height="20" />
+              </template>Filter By
+            </Button>
+          </div>
+        </div>
+        <div class="content__body">
+          <slot name="table-data"></slot>
+        </div>
+        <div class="content__footer">
+          <v-pagination v-model="page" :pages="pages" :range-size="1" @update:modelValue="$emit('paginate', page)" />
+        </div>
+      </div>
+    </Container>
+  </div>
 </template>
 
 <script>
@@ -59,6 +57,14 @@ export default {
     },
     activatePage: {
       type: Number,
+      default: 1,
+    },
+    tabs: {
+      type: Array,
+      default: []
+    },
+    activeTab: {
+      type: [Number, String],
       default: 1,
     },
     pages: {
@@ -82,9 +88,10 @@ export default {
       default: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     let page = ref(props.activatePage);
     let searchValue = ref("");
+   
     return {
       page,
       searchValue,
@@ -98,33 +105,51 @@ export default {
 
 <style lang="postcss" scoped>
 .table {
-  @apply w-full relative;
-  @apply flex flex-col;
-  &__header {
-    @apply w-full;
-    @apply p-2;
-    @apply flex flex-row items-center justify-between;
-    @apply border-b border-baking-soda;
+  @apply w-full;
 
-    .header__left-panel {
-      @apply flex flex-row items-center;
-      @apply float-right;
-      @apply ml-2;
-      @apply gap-2;
-    }
-    .header__right-panel {
-      @apply flex flex-row items-center justify-end;
-      @apply gap-2;
-    }
+  &__tabs {
+    @apply inline-block;
   }
-  &__body {
+
+  &__content {
+    @apply w-full relative;
     @apply flex flex-col;
-    @apply min-h-[600px] h-full;
-    @apply pb-12;
-  }
-  &__footer {
-    @apply flex flex-row justify-center items-end;
-    @apply p-4;
+
+
+
+    .content__header {
+      @apply w-full;
+      @apply px-2 py-5;
+      @apply flex flex-row items-center justify-between;
+      @apply border-b border-baking-soda;
+
+      .header__left-panel {
+        @apply flex flex-row items-center;
+        @apply float-right;
+        @apply ml-2;
+        @apply gap-2;
+
+        .left-panel__search {
+          @apply w-[350px];
+        }
+      }
+
+      .header__right-panel {
+        @apply flex flex-row items-center justify-end;
+        @apply gap-2;
+      }
+    }
+
+    .content__body {
+      @apply flex flex-col;
+      @apply min-h-[600px] h-full;
+      @apply pb-12;
+    }
+
+    .content__footer {
+      @apply flex flex-row justify-center items-end;
+      @apply p-4;
+    }
   }
 }
 </style>

@@ -1,26 +1,4 @@
 <template>
-  <!-- &.primary {
-    @apply bg-primary text-white;
-  }
-  &.secondary {
-    @apply bg-slate-400 text-white;
-  }
-  &.success {
-    @apply bg-green-500 text-white;
-    #22c55e
-  }
-  &.danger {
-    @apply bg-red-700 text-white;
-    #b91c1c
-  }
-  &.warning {
-    @apply bg-yellow-400 text-white;
-    #facc15
-  } 
-  
-  info
-  #075985
-  -->
   <div class="alert" :class="type">
     <div class="alert__header">
       <div class="header__title">

@@ -1,72 +1,136 @@
 <template>
-  <Form>
+  <Form @submit="submitHandler">
     <div class="login">
-      <Container>
-        <div class="login-content">
-          <div class="login-content__header">
-            <span>LOGO HERE</span>
-          </div>
-          <div class="login-content__body">
-            <InputField
-              name="default-input"
-              placeholder="Enter email"
-              rules="alpha"
-            >
-              <template #label> Email </template>
-            </InputField>
-            <InputField
-              name="default-input"
-              placeholder="Enter password"
-              :type="`password`"
-              rules="alpha"
-            >
-              <template #label> Password </template>
-            </InputField>
-          </div>
-          <div class="login-content__footer">
-            <Button> Login </Button>
-          </div>
-        </div>
-      </Container>
+      <div class="login__header">
+        <Icon name="mdi:account-circle" color="white" width="80" height="80" />
+        <span class="header__title">
+          USER LOGIN
+        </span>
+      </div>
+      <div class="login__body">
+        <Alert type="danger" v-if="hasError" title="Incorrect username or password" />
+        <InputField name="username" placeholder="Enter email" v-model="email" rules="email" v-if="!newPasswordRequired">
+          <template #label> Email </template>
+        </InputField>
+        <InputField name="password" placeholder="Enter password" v-model="password" type="password" rules="alpha_num"
+          v-if="!newPasswordRequired">
+          <template #label> Password </template>
+        </InputField>
+        <InputField name="new-password" placeholder="Enter new password" v-model="newPassword" type="password"
+          rules="alpha_num" v-if="newPasswordRequired">
+          <template #label> New Password </template>
+        </InputField>
+      </div>
+      <div class="login__footer">
+        <Button radius="rounded-xl" type="submit" :loading="isLoading" showLoading>
+          <span v-if="!isLoading">{{ newPasswordRequired ? 'Continue' : 'Login' }}</span>
+        </Button>
+      </div>
     </div>
   </Form>
 </template>
 
 <script>
 import { Form } from "vee-validate";
+import { useAuthStore } from '@/store/auth';
 definePageMeta({
   layout: "login",
 });
 export default {
-  setup() {},
+  setup() {
+    const router = useRouter();
+    const isLoading = ref(false);
+    const hasError = ref(false);
+    const authStore = useAuthStore();
+
+    // Submit handler for conditional login type
+    const newPasswordRequired = ref(false);
+    function submitHandler() {
+      if (newPasswordRequired.value) {
+        doConfirmLogin()
+      } else {
+        doLogin()
+      }
+    }
+
+    // Login
+    const email = ref(null);
+    const password = ref(null);
+    const { login } = authStore;
+    let user = null;
+    async function doLogin() {
+      isLoading.value = true;
+      await login(email.value, password.value).then((res) => {
+        if (res.challengeName) {
+          user = res;
+          isLoading.value = false;
+          return newPasswordRequired.value = true
+
+        }
+        if (authStore.isUserAuthenticated) {
+          router.push('/')
+        }
+        isLoading.value = false;
+      }).catch((error) => {
+        console.log(error)
+        hasError.value = true;
+        isLoading.value = false;
+      });
+    }
+
+    // Login with change password
+    const { completeNewPassword } = authStore;
+    const newPassword = ref(null);
+    async function doConfirmLogin() {
+      console.log('doconfirmlogin', user, email.value, newPassword.value)
+      isLoading.value = true;
+      await completeNewPassword(user, email.value, newPassword.value).then(() => {
+        router.push('/')
+      })
+
+    }
+    return { email, password, doLogin, isLoading, hasError, newPasswordRequired, newPassword, doConfirmLogin, submitHandler };
+
+  },
   components: {
     Form,
+
   },
 };
 </script>
 
 <style lang="postcss" scoped>
 .login {
-  @apply w-[65%];
-  .login-content {
-    @apply px-4 py-8;
-    &__header {
-    }
-    &__body {
-      @apply flex flex-col;
-      @apply mt-5;
-      @apply gap-3;
-    }
-    &__footer {
-      @apply flex justify-end;
-      @apply mt-5;
-    }
-  }
-}
+  @apply w-[25%] min-w-[400px];
+  @apply bg-white;
+  @apply rounded-2xl;
+  box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
 
-@media screen and (max-width: 1440px) {
-  .login {
-    @apply w-[100%]
+  &__header {
+    @apply flex flex-col gap-[4px] items-center;
+    @apply rounded-t-2xl;
+    @apply py-5 px-3 tracking-widest;
+    @apply bg-primary;
+    @apply text-white text-xl font-semibold;
+    box-shadow: 10px 4px 12px rgba(41, 68, 37, 0.12);
+  }
+
+  &__body {
+    @apply px-10 pt-10;
+    @apply flex flex-col;
+    @apply gap-10;
+  }
+
+  &__footer {
+    @apply flex justify-center;
+    @apply mt-5 pt-3 pb-10;
+
+    button {
+      @apply w-[40%] text-center flex flex-col items-center;
+      span {
+        @apply w-full;
+      }
+    }
   }
 }
 </style>

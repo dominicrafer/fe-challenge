@@ -1,36 +1,28 @@
 <template>
   <div class="page">
     <PageHeader title="Users">
-      <template #left-panel>
+      <!-- <template #left-panel>
         <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
-      </template>
+      </template> -->
       <template #right-panel>
-        <router-link
-          :to="{
-            path: '/users/create',
-          }"
-        >
+        <router-link :to="{
+          path: '/users/create',
+        }">
           <Button>Create</Button>
         </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table
-        :loading="isLoading"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
-          () => {
-            showSortDrawer = !showSortDrawer;
-          }
-        "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
-      >
+      <Table :tabs="tabs
+      " :loading="isLoading" @paginate="paginateAction" @search="searchAction" @export="exportAction" @sort="
+  () => {
+    showSortDrawer = !showSortDrawer;
+  }
+" @filter="
+  () => {
+    showFilterDrawer = !showFilterDrawer;
+  }
+">
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -52,25 +44,14 @@
                 <td align="left">Status</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link
-                      :to="{
-                        name: 'users-id',
-                        params: { id: user.id },
-                      }"
-                    >
-                      <Icon
-                        width="20"
-                        height="20"
-                        style="color: #29335c"
-                        name="material-symbols:preview"
-                      />
+                    <router-link :to="{
+                      name: 'users-id',
+                      params: { id: user.id },
+                    }">
+                      <Icon width="20" height="20" style="color: #29335c" name="material-symbols:preview" />
                     </router-link>
                     <div>
-                      <Icon
-                        width="20"
-                        height="20"
-                        name="material-symbols:delete-outline"
-                      />
+                      <Icon width="20" height="20" name="material-symbols:delete-outline" />
                     </div>
                   </div>
                 </td>
@@ -80,22 +61,16 @@
         </template>
       </Table>
     </div>
-    <UsersFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <UsersSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
+    <UsersFilterDrawer :show="showFilterDrawer" @close="
+      () => {
+        showFilterDrawer = false;
+      }
+    " />
+    <UsersSortDrawer :show="showSortDrawer" @close="
+      () => {
+        showSortDrawer = false;
+      }
+    " />
   </div>
 </template>
 
@@ -106,16 +81,16 @@ definePageMeta({
 export default {
   setup(props, { emit }) {
     const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
+      {
+        id: 1,
+      },
+      {
+        id: 2,
+      },
+      {
+        id: 3,
+      },
+    ],
       tabs = [
         {
           label: "active",

@@ -3,6 +3,10 @@
     height: 38px;
     padding: 6px 40px 0 8px;
     border-color: rgb(148 163 184) !important;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    border-radius: 0px;
     font-size: 14px;
 }
 

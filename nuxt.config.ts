@@ -1,27 +1,43 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  modules: ["@nuxtjs/tailwindcss", "nuxt-icon"],
+  modules: ["@nuxtjs/tailwindcss", "nuxt-icon", ['@nuxtjs/google-fonts',
+    {
+      families: {
+        OpenSans: [400, 500, 600, 700],
+        Lato: [100, 300],
+      },
+    }
+  ],
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+  ],
   css: [
     "@/assets/css/main.css",
     "@/assets/css/date-picker.css",
     "@/assets/css/table.css",
-    "@/assets/css/select.css"
+    "@/assets/css/select.css",
+    "@/assets/css/pagination.css"
   ],
-  build: {
-    postcss: {
-      plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
-      },
-    },
-    transpile: ["vee-validate/dist/rules"],
+  alias: {
+    './runtimeConfig': './runtimeConfig.browser',
+    // '@aws-amplify/core': '@aws-amplify/core/lib',
+    // '@aws-amplify/auth': '@aws-amplify/auth/lib',
+    // '@aws-amplify/storage': '@aws-amplify/storage/lib',
   },
-  tailwindcss: {
-    cssPath: "~/assets/css/tailwind.css",
-    configPath: "tailwind.config.js",
-    exposeConfig: false,
-    config: {},
+  vite: {
+    define: {
+      'window.global': {}
+    }
+  },
+  postcss: {
+    plugins: {
+      'postcss-import': {},
+      'tailwindcss/nesting': {},
+      "postcss-nested": {},
+      tailwindcss: {},
+      autoprefixer: {},
+    },
   },
   components: [
     {

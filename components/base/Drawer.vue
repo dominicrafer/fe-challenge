@@ -17,9 +17,9 @@
           <span class="header__title">{{ title }}</span>
           <Icon
             name="mdi:close-circle-outline"
-            width="40"
-            height="40"
-            style="color: #29335c"
+            width="24"
+            color="white"
+            height="24"
             @click="$emit('close')"
           />
         </div>
@@ -72,9 +72,12 @@ export default {
     .content__header {
       @apply p-[12px] border-b border-baking-soda;
       @apply flex flex-row justify-between items-center;
-      @apply flex-grow-0;
+      @apply flex-grow-0 bg-primary;
       .header__title {
-        @apply text-lg font-bold text-primary;
+        @apply text-lg font-bold text-white;
+      }
+      svg {
+        @apply cursor-pointer;
       }
     }
     .content__body {

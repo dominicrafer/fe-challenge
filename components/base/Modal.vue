@@ -6,9 +6,9 @@
           {{ title }}
           <Icon
             name="mdi:close-circle-outline"
-            width="40"
-            height="40"
-            style="color: #29335c"
+            width="24"
+            height="24"
+            color="white"
           />
         </div>
         <div :class="`modal__body`" ref="modal" v-click-outside="clickOutside">
@@ -58,13 +58,13 @@ export default {
   &__content {
     @apply absolute;
     @apply bg-white;
-    @apply rounded-xl;
+    @apply rounded-md;
     @apply min-w-[320px];
     @apply min-h-[320px];
     .modal__header {
       @apply flex flex-row items-center justify-between;
-      @apply border-b border-baking-soda;
-      @apply font-bold text-primary text-lg;
+      @apply border-b border-baking-soda bg-primary rounded-t-md;
+      @apply font-bold text-white text-lg;
       @apply px-[16px] py-[12px];
       .modal__close-button {
         @apply cursor-pointer;

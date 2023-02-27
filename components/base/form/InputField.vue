@@ -1,48 +1,31 @@
 <template>
   <div class="input">
-    <label :name="name" class="input__label">
-      <slot name="label"></slot>
-    </label>
+
     <div class="input__input-container">
-      <Field
-        v-slot="{ meta, field }"
-        :rules="rules"
-        @input="updateValue"
-        :value="modelValue"
-        :name="name"
-      >
-        <input
-          v-bind="field"
-          class="input-container__input"
-          :placeholder="placeholder"
-          :id="name"
-          :name="name"
-          :type="showPassword ? 'text' : type"
-          :class="`${type === 'password' || $slots.icon ? 'has-icon' : null} ${
-            !meta.valid ? 'has-error' : null
-          }`"
-          :disabled="disabled"
-        />
+      <Field v-slot="{ meta, field }" :rules="rules" @input="updateValue" :name="name" :value="modelValue">
+
+        <input v-bind="field" class="input-container__input" :id="name" :name="name" :type="showPassword ? 'text' : type"
+          :class="`${type === 'password' || $slots.icon ? 'has-icon' : null} ${!meta.valid ? 'has-error' : null
+            } ${!$slots.label ? 'show-placeholder': null}`" :disabled="disabled" :placeholder="placeholder" required />
+        <label :name="name" class="input-container__floating-label" v-if="$slots.label">
+          <slot name="label"></slot>
+        </label>
       </Field>
+
       <div class="input-container__icon">
         <slot name="icon"></slot>
-        <Icon
-          name="mdi:eye-outline"
-          v-if="type === 'password' && !showPassword"
-          @click="showPassword = !showPassword"
-        />
-        <Icon
-          name="mdi:eye-off-outline"
-          v-if="type === 'password' && showPassword"
-          @click="showPassword = !showPassword"
-        />
+        <Icon name="mdi:eye-outline" v-if="type === 'password' && !showPassword" @click="showPassword = !showPassword" />
+        <Icon name="mdi:eye-off-outline" v-if="type === 'password' && showPassword"
+          @click="showPassword = !showPassword" />
       </div>
+
     </div>
     <ErrorMessage :name="name" v-slot="{ message }">
       <div class="input__error">
         {{ message }}
       </div>
     </ErrorMessage>
+
   </div>
 </template>
 
@@ -97,36 +80,62 @@ export default {
 
 <style lang="postcss" scoped>
 .input {
-  @apply flex flex-col gap-[4px];
+  @apply flex flex-col gap-[4px] relative;
+
   &__input-container {
-    @apply relative;
     .input-container__input {
       @apply w-full;
-      @apply border border-slate-400 rounded-md;
+      @apply border-b border-gray-200;
       @apply py-[6px] px-[12px];
       @apply outline-none;
+      @apply text-[0.875rem];
+
       &.has-error {
         @apply border-paprika;
       }
+
       &.has-icon {
         @apply pl-[12px] pr-[28px];
       }
-      &:focus {
-        @apply border-primary;
-        box-shadow: 0px 0px 8px 0px #d1e3cb;
+
+
+      &:focus~.input-container__floating-label,
+      &:not(:focus):valid~.input-container__floating-label,
+      &:disabled~.input-container__floating-label,
+      &:autofill~.input-container__floating-label {
+        @apply text-[0.875rem] left-[10px] top-[-20px] !important;
+        opacity: 1;
+      }
+    &.show-placeholder {
+      &::placeholder {
+        @apply text-gray-400 !important;
       }
     }
+      &:not(:focus),
+      &:focus:not(:invalid) {
+        &::placeholder {
+          color: transparent;
+          transition: 0.2s ease all;
+        }
+      }
+
+    }
+
     .input-container__icon {
       @apply cursor-pointer;
-      @apply absolute right-[10px] top-[6px];
+      @apply absolute right-[10px] top-[4px];
+    }
+
+    .input-container__floating-label {
+      @apply z-50 absolute pointer-events-none text-primary font-medium;
+      @apply left-[10px] top-[5px] text-[0.875rem];
+      transition: 0.2s ease all;
     }
   }
-  &__label {
-    @apply text-[1rem] font-medium;
-    @apply ml-[10px];
-  }
+
   &__error {
     @apply text-paprika;
+    @apply text-[0.875rem];
   }
 }
 </style>

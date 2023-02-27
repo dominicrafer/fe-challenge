@@ -1,4 +1,5 @@
 node_modules
+aws-export.js
 *.log*
 .nuxt
 .nitro

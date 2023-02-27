@@ -46,7 +46,6 @@
         </div>
       </div>
       <Form v-slot="{errors}">
-        {{errors}}
         <div class="list__component">
           <span class="component__name">Input</span>
           <div class="component__samples">
@@ -237,7 +236,6 @@ export default {
 
 <style lang="postcss" scoped>
 .components {
-  @apply p-[12px];
   &__header {
     @apply text-[24px] font-bold;
   }

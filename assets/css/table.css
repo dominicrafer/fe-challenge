@@ -1,35 +1,26 @@
 .table__data {
-    width: 100%;
+    @apply w-full;
 }
 
 thead {
-    padding: 1rem;
-    border-bottom-width: 1px;
-    border-color: #E5E5E5;
+    box-shadow: 0 12px 20px -10px rgb(138 143 150 / 28%), 0 4px 20px 0px rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(138 143 150 / 20%) !important;
 }
 
 thead>tr>th {
-    padding: 6px 12px 6px 12px;
-    font-size: 14px;
-    font-weight: 700;
-    color: rgba(65, 60, 60, 1)
+    @apply bg-primary text-white text-sm font-bold;
+    @apply p-4;
 }
 
 tbody {
-    height: 100%;
+    @apply h-full;
 }
 
 tbody>tr>td {
-    padding: 6px 12px 6px 12px;
-    font-size: 14px;
+    @apply border-b;
+    @apply px-4 py-3 text-sm;
     color: rgba(65, 60, 60, 1)
 }
 
 .table__data-actions {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    cursor: pointer;
+    @apply flex gap-5 items-center justify-center cursor-pointer;
 }

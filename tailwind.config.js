@@ -14,7 +14,8 @@ module.exports = {
         body: ['"Open Sans"']
       },
       colors: {
-        primary: '#29335C',
+        primary: '#748FB0',
+        secondary: '#88A0C6',
         paprika: '#E45959',
         salmon: '#FFEAEA',
         kale: '#5A8662',
@@ -24,6 +25,7 @@ module.exports = {
         currant: '#413C3C',
         flour: '#F8F8F8',
         'baking-soda': '#E5E5E5',
+        gainsboro: '#DBDEDA'
       },
     },
   },
