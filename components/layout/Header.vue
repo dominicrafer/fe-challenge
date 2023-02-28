@@ -1,6 +1,7 @@
 <template>
   <div class="header">
     <div class="header__left-panel">
+      <Icon class="left-panel__burder-menu" name="cil:hamburger-menu" width="24" height="24" color="white" @click="sidebarStore.toggleSidebar()"></Icon>
     </div>
     <div class="header__right-panel">
       <div class="right-panel__profile">
@@ -16,6 +17,7 @@
 
 <script>
 import { useAuthStore } from '@/store/auth';
+import { useSidebarStore } from '@/store/sidebar';
 export default {
   props: {
     title: {
@@ -25,7 +27,9 @@ export default {
   },
   setup() {
     const authStore = useAuthStore();
-    return { authStore }
+    const sidebarStore = useSidebarStore();
+
+    return { authStore, sidebarStore }
   }
 };
 </script>
@@ -35,10 +39,12 @@ export default {
   @apply flex flex-row justify-between items-center flex-grow-0;
   @apply px-5 py-[20px] bg-primary  text-sm text-primary border-b border-baking-soda;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
-
-  &__sidebar-button {
-    @apply flex flex-row items-center gap-[4px];
+  &__left-panel {
+    .left-panel__burder-menu {
+      @apply lg:hidden;
+    }
   }
+
 
   &__right-panel {
     @apply flex flex-row items-center gap-3;
