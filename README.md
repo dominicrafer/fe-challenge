@@ -17,6 +17,10 @@ npm install
 pnpm install --shamefully-hoist
 ```
 
+## AWS Amplify Setup
+Create <i>aws-exports.js</i> file and follow the format written on <i>aws-exports-sample.js</i>
+
+
 ## Development Server
 
 Start the development server on http://localhost:3000
@@ -55,4 +59,19 @@ setup() {
 }
 </script>
 ```
-- Lodash
+- Lodash - Javascript library for object, array, data manipulation. https://lodash.com/
+```bash
+<script>
+setup() {
+    const {$_} = useNuxtApp();
+
+    const test = $_.map([1,2,3], (data) => {
+        return data;
+    })
+}
+</script>
+```
+
+## Components
+Visit the <i>/components</i> path for the list of components available.
+
