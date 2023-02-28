@@ -1,7 +1,8 @@
-# Nuxt 3 Minimal Starter
+# Vue 3 + Nuxt 3 + TailwindCSS Admin Dashboard Boilerplate
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+NuxtJS - https://nuxt.com/docs/getting-started/introduction
 
+TailwindCSS - https://tailwindcss.com/
 ## Setup
 
 Make sure to install the dependencies:
@@ -71,6 +72,7 @@ setup() {
 }
 </script>
 ```
+- vee-validate - https://vee-validate.logaretm.com/v3/guide/basics.html#validation-provider
 
 ## Components
 Visit the <i>/components</i> path for the list of components available.
