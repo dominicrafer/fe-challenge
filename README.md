@@ -30,13 +30,29 @@ npm run dev
 Build the application for production:
 
 ```bash
-npm run build
+npm run generate
 ```
 
 Locally preview production build:
 
 ```bash
-npm run preview
+npm run start
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Helpers
+
+- DayJS - JS library for parsing, validation, manipulation of dates / time. visit the link for more info regarding the library https://day.js.org/docs/en/installation/installation
+```bash
+<template>
+    <div>
+        {{$dayjs().format('YYYY-MM-DD')}}
+    </div>
+</template>
+<script>
+setup() {
+    const {$dayjs} = useNuxtApp();
+}
+</script>
+```
+- Lodash

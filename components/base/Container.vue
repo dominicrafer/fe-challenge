@@ -46,8 +46,6 @@ export default {
   @apply relative;
   @apply rounded-sm;
   @apply bg-white;
-  @apply h-min;
-  /* box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12); */
 
   &__loader-body {
     @apply bg-opacity-50 bg-white z-30;

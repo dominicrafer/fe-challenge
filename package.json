@@ -1,5 +1,6 @@
 {
   "private": true,
+  "version": "1.0.0",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -17,12 +18,13 @@
   },
   "dependencies": {
     "@hennge/vue3-pagination": "^1.0.17",
+    "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@pinia/nuxt": "^0.4.7",
     "@vee-validate/rules": "^4.7.3",
     "@vuepic/vue-datepicker": "^3.6.4",
     "@vueuse/core": "^9.9.0",
-    "aws-amplify": "^4.3.46",
+    "aws-amplify": "^5.0.16",
     "lodash": "^4.17.21",
     "pinia": "^2.0.32",
     "v-click-outside": "^3.2.0",

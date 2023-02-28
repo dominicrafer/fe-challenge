@@ -2,9 +2,6 @@
   <div class="page">
     <PageHeader title="Test Page" />
     <div class="page__body">
-      <div>CONTENT</div>
-      <div>CONTENT</div>
-      <div></div>
     </div>
   </div>
 </template>
@@ -15,7 +12,9 @@ definePageMeta({
 });
 export default {
   setup() {
-    const { $api } = useNuxtApp();
+    const { $api, $dayjs } = useNuxtApp();
+    console.log($dayjs().format())
+
   },
 };
 </script>

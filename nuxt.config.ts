@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import packageJSON from './package.json';
+
 export default defineNuxtConfig({
   ssr: false,
   modules: ["@nuxtjs/tailwindcss", "nuxt-icon", ['@nuxtjs/google-fonts',
@@ -38,6 +40,11 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+  runtimeConfig: {
+    public: {
+      app_version: packageJSON.version,
+    }
   },
   components: [
     {

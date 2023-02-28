@@ -212,6 +212,9 @@
 
 <script>
 import { Form, useForm } from "vee-validate";
+definePageMeta({
+  layout: "login",
+});
 export default {
   setup() {
     const leftDrawerVisible = ref(false);

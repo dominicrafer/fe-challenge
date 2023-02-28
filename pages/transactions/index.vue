@@ -81,27 +81,6 @@ export default {
         {
           label: "completed",
         },
-        {
-          label: "voided",
-        },
-        {
-          label: "cancelled",
-        },
-        {
-          label: "source_credited",
-        },
-        {
-          label: "source_debited",
-        },
-        {
-          label: "destination_cancelled",
-        },
-        {
-          label: "destination_debited",
-        },
-        {
-          label: "reversal_failed",
-        },
       ],
       activeTab = ref('pending_otp'),
       isLoading = ref(false),

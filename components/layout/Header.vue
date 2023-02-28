@@ -32,8 +32,8 @@ export default {
 
 <style lang="postcss" scoped>
 .header {
-  @apply flex flex-row justify-between items-center;
-  @apply px-5 py-[20px] bg-primary w-full text-sm text-primary border-b border-baking-soda;
+  @apply flex flex-row justify-between items-center flex-grow-0;
+  @apply px-5 py-[20px] bg-primary  text-sm text-primary border-b border-baking-soda;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
 
   &__sidebar-button {

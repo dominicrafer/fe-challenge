@@ -5,7 +5,7 @@
       <div class="content__menu" v-for="(menuDetails, index) in menus" :key="index" :class="
         isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus') ? 'active-menu' : 'inactive-menu'
       ">
-        <router-link :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''" @click="activeMenu = menuDetails.name">
+        <router-link :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''" @click="selectMenu(menuDetails)">
           <div class="menu__details">
             <div class="details__content">
               <Icon :name="menuDetails.icon" width="20" height="20"
@@ -38,7 +38,7 @@
       </Button>
     </div>
     <div class="sidebar__app-version">
-      v1.0.0
+      v{{config.app_version}}
     </div>
   </div>
 </template>
@@ -54,6 +54,7 @@ export default {
   },
   async setup() {
     const { $_ } = useNuxtApp();
+    const config = useRuntimeConfig()
     const route = useRoute();
     const activeMenu = ref(null);
     const menus = [
@@ -147,11 +148,23 @@ export default {
       }
       return menuDetails.name === activeMenu.value
     }
+
+    // Select menu
+    function selectMenu(menuDetails) {
+      if ($_.has(menuDetails, 'submenus')) {
+        console.log(menuDetails)
+        router.push(menuDetails.submenus[0].path)
+        return activeMenu.value = menuDetails.submenus[0].name
+      }
+      return activeMenu.value = menuDetails.name
+    }
     return {
       menus,
       activeMenu,
+      config,
       doLogout,
       isMenuActive,
+      selectMenu,
     };
   },
 };
@@ -160,7 +173,7 @@ export default {
 
 <style lang="postcss" scoped>
 .sidebar {
-  @apply w-[350px] h-screen bg-white;
+  @apply  min-w-[250px] w-[350px] h-screen bg-white;
   @apply flex flex-col z-10;
   @apply px-5 py-8 relative;
   box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%), 0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
@@ -204,7 +217,7 @@ export default {
 
         &.collapsed {
           @apply max-h-[0px] overflow-hidden;
-          /* transition: all 1s cubic-bezier(0, 1, 0, 1); */
+          transition: all 0.3s cubic-bezier(0, 1, 0, 1);
         }
 
         &.uncollapsed {
@@ -242,7 +255,7 @@ export default {
   &__app-version {
     @apply text-gray-400;
     @apply text-xs;
-    @apply absolute bottom-0 right-5;
+    @apply absolute bottom-1 right-5;
   }
 
   &.collapsed {

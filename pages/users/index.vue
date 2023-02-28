@@ -13,12 +13,12 @@
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table :tabs="tabs
-      " :loading="isLoading" @paginate="paginateAction" @search="searchAction" @export="exportAction" @sort="
-  () => {
-    showSortDrawer = !showSortDrawer;
-  }
-" @filter="
+      <Table :tabs="tabs" @changeTab="changeTab" :activeTab="activeTab" :loading="isLoading" @paginate="paginateAction"
+        @search="searchAction" export="exportAction" @sort="
+          () => {
+            showSortDrawer = !showSortDrawer;
+          }
+        " @filter="
   () => {
     showFilterDrawer = !showFilterDrawer;
   }
@@ -102,7 +102,7 @@ export default {
           label: "deleted",
         },
       ],
-      activeTab = ref(0),
+      activeTab = ref('active'),
       isLoading = ref(false),
       showFilterDrawer = ref(false),
       showSortDrawer = ref(false),
@@ -121,7 +121,7 @@ export default {
       };
       console.log("paginate", queryStringParameters.value);
     }
-    function changeTabAction(event) {
+    function changeTab(event) {
       activeTab.value = event;
     }
     function searchAction(event) {
@@ -143,7 +143,7 @@ export default {
       showFilterDrawer,
       showSortDrawer,
       paginateAction,
-      changeTabAction,
+      changeTab,
       searchAction,
       exportAction,
     };

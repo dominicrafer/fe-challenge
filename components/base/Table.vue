@@ -1,10 +1,12 @@
 <template>
-  <div class="table">
-    <div class="table__tabs" v-if="tabs">
-      <Tabs :tabs="tabs" :active="activeTab" @changeTab="(tab) => $emit('changeTab', tab)" />
-    </div>
-    <Container :loading="loading">
+  <Container :loading="loading">
+
+    <div class="table">
+
       <div class="table__content">
+        <div class="content__tabs" v-if="tabs">
+          <Tabs :tabs="tabs" :active="activeTab" @changeTab="(tab) => $emit('changeTab', tab)" />
+        </div>
         <div class="content__header">
           <div class="header__left-panel">
             <form v-if="searchable" @submit.prevent="$emit('search', searchValue)">
@@ -41,8 +43,8 @@
           <v-pagination v-model="page" :pages="pages" :range-size="1" @update:modelValue="$emit('paginate', page)" />
         </div>
       </div>
-    </Container>
-  </div>
+    </div>
+  </Container>
 </template>
 
 <script>
@@ -91,7 +93,7 @@ export default {
   setup(props, { emit }) {
     let page = ref(props.activatePage);
     let searchValue = ref("");
-   
+
     return {
       page,
       searchValue,
@@ -105,23 +107,24 @@ export default {
 
 <style lang="postcss" scoped>
 .table {
-  @apply w-full;
+  @apply w-full h-full;
 
   &__tabs {
     @apply inline-block;
+    @apply w-full;
+    @apply flex flex-row;
   }
 
   &__content {
-    @apply w-full relative;
+    @apply w-full h-full relative;
     @apply flex flex-col;
-
-
 
     .content__header {
       @apply w-full;
       @apply px-2 py-5;
       @apply flex flex-row items-center justify-between;
       @apply border-b border-baking-soda;
+      @apply flex-grow-0;
 
       .header__left-panel {
         @apply flex flex-row items-center;
@@ -141,12 +144,13 @@ export default {
     }
 
     .content__body {
-      @apply flex flex-col;
-      @apply min-h-[600px] h-full;
-      @apply pb-12;
+      @apply flex flex-col flex-grow h-full;
+      /* @apply min-h-[560px]; */
+      /* @apply pb; */
     }
 
     .content__footer {
+      @apply flex-grow-0;
       @apply flex flex-row justify-center items-end;
       @apply p-4;
     }

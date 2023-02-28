@@ -39,7 +39,7 @@ export default {
 
 <style lang="postcss" scoped>
 .tabs {
-  @apply flex flex-row items-center bg-[#f3f4f6] border-l border-r border-t border-gray-200;
+  @apply flex flex-row items-center bg-[#f3f4f6];
   &__option {
     @apply text-center whitespace-nowrap uppercase;
     @apply cursor-pointer;
