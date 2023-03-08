@@ -1,33 +1,84 @@
 <template>
   <div>
     <Transition appear name="fade">
-      <div class="overlay" v-show="!sidebarStore.isCollapsed">
-      </div>
+      <div class="overlay" v-show="!sidebarStore.isCollapsed"></div>
     </Transition>
-    <div class="sidebar" :class="sidebarStore.isCollapsed ? 'drawer-collapsed' : 'drawer-uncollapsed'" ref="sidebar">
-      <div class="sidebar__header">Title / Logo </div>
+    <div
+      class="sidebar"
+      :class="
+        sidebarStore.isCollapsed ? 'drawer-collapsed' : 'drawer-uncollapsed'
+      "
+      ref="sidebar"
+    >
+      <div class="sidebar__header">Title / Logo</div>
       <div class="sidebar__content">
-        <div class="content__menu" v-for="(menuDetails, index) in menus" :key="index" :class="
-          isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus') ? 'active-menu' : 'inactive-menu'
-        ">
-          <router-link :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''" @click="selectMenu(menuDetails)">
+        <div
+          class="content__menu"
+          v-for="(menuDetails, index) in menus"
+          :key="index"
+          :class="
+            isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus')
+              ? 'active-menu'
+              : 'inactive-menu'
+          "
+        >
+          <router-link
+            :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''"
+            @click="selectMenu(menuDetails)"
+            v-has:module-permission="menuDetails.permission"
+          >
             <div class="menu__details">
               <div class="details__content">
-                <Icon :name="menuDetails.icon" width="20" height="20"
-                  :color="isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus') ? '#FFFFFF' : '#748FB0'" />
+                <Icon
+                  :name="menuDetails.icon"
+                  width="20"
+                  height="20"
+                  :color="
+                    isMenuActive(menuDetails) &&
+                    !$_.has(menuDetails, 'submenus')
+                      ? '#FFFFFF'
+                      : '#FFFFFF'
+                  "
+                />
                 {{ menuDetails.name }}
               </div>
-              <Icon name="mdi:chevron-down" width="20" height="20" v-if="menuDetails?.submenus" />
+              <Icon
+                name="mdi:chevron-down"
+                width="20"
+                height="20"
+                v-if="menuDetails?.submenus"
+              />
             </div>
           </router-link>
-          <div v-for="(submenuDetails, submenuIndex) in menuDetails.submenus" :key="submenuIndex" class="menu__submenus"
-            :class="isMenuActive(menuDetails) ? 'uncollapsed' : 'collapsed'">
+          <div
+            v-for="(submenuDetails, submenuIndex) in menuDetails.submenus"
+            :key="submenuIndex"
+            class="menu__submenus"
+            :class="isMenuActive(menuDetails) ? 'uncollapsed' : 'collapsed'"
+            v-has:module-permission="submenuDetails.permission"
+          >
             <router-link :to="submenuDetails.path">
-              <div class="submenus__details" :class="activeMenu === submenuDetails.name ? 'active-menu' : 'inactive-menu'"
-                @click="activeMenu
-                  = submenuDetails.name">
-                <Icon name="mdi:chevron-down" width="20" height="20" v-if="submenuDetails?.submenus" />
-                <Icon :name="submenuDetails.icon" width="20" height="20" v-else />
+              <div
+                class="submenus__details"
+                :class="
+                  activeMenu === submenuDetails.name
+                    ? 'active-menu'
+                    : 'inactive-menu'
+                "
+                @click="activeMenu = submenuDetails.name"
+              >
+                <Icon
+                  name="mdi:chevron-down"
+                  width="20"
+                  height="20"
+                  v-if="submenuDetails?.submenus"
+                />
+                <Icon
+                  :name="submenuDetails.icon"
+                  width="20"
+                  height="20"
+                  v-else
+                />
                 {{ submenuDetails.name }}
               </div>
             </router-link>
@@ -42,16 +93,14 @@
           Logout
         </Button>
       </div>
-      <div class="sidebar__app-version">
-        v{{ config.app_version }}
-      </div>
+      <div class="sidebar__app-version">v{{ config.app_version }}</div>
     </div>
   </div>
 </template>
 
 <script>
-import { useAuthStore } from '@/store/auth';
-import { useSidebarStore } from '@/store/sidebar';
+import { useAuthStore } from "@/store/auth";
+import { useSidebarStore } from "@/store/sidebar";
 import { onClickOutside, useWindowSize } from "@vueuse/core";
 export default {
   props: {
@@ -62,32 +111,37 @@ export default {
   },
   async setup(props) {
     const { $_ } = useNuxtApp();
-    const config = useRuntimeConfig()
+    const config = useRuntimeConfig();
     const route = useRoute();
     const activeMenu = ref(null);
+
     const menus = [
       {
         name: "Users",
         icon: "mdi:account-multiple-outline",
         roles: ["admin"],
+        permission: "users",
         submenus: [
           {
             name: "Users",
             path: "/users",
             icon: "mdi:account-multiple-outline",
             roles: ["admin"],
+            permission: "users",
           },
           {
             name: "Roles",
             path: "/users/roles",
             icon: "mdi:badge-account-horizontal-outline",
             roles: ["admin"],
+            permission: "usersRoles",
           },
           {
             name: "Policies",
             path: "/users/policies",
             icon: "mdi:shield-account-variant-outline",
             roles: ["admin"],
+            permission: "usersPolicies",
           },
         ],
       },
@@ -96,6 +150,7 @@ export default {
         icon: "mdi:handshake-outline",
         roles: ["admin"],
         path: "/partners",
+        permission: "partners",
         // submenus: [
         //   {
         //     name: "Partners",
@@ -110,12 +165,13 @@ export default {
         icon: "mdi:calendar",
         path: "/campaigns",
         roles: ["admin"],
+        permission: "campaigns",
       },
       {
         name: "Transactions",
         icon: "mdi:swap-horizontal",
-        path: "/transactions",
         roles: ["admin"],
+        path: "transactions",
       },
     ];
 
@@ -142,51 +198,51 @@ export default {
     });
 
     // Logout
-    const { logout } = useAuthStore()
+    const { logout } = useAuthStore();
     const router = useRouter();
     async function doLogout() {
       await logout();
-      router.push('/login');
+      router.push("/login");
     }
 
     // Active menu checker
     function isMenuActive(menuDetails) {
-      if ($_.has(menuDetails, 'submenus')) {
+      if ($_.has(menuDetails, "submenus")) {
         return $_.some(menuDetails.submenus, { name: activeMenu.value });
       }
-      return menuDetails.name === activeMenu.value
+      return menuDetails.name === activeMenu.value;
     }
 
     // Select menu
     function selectMenu(menuDetails) {
-      if ($_.has(menuDetails, 'submenus')) {
-        router.push(menuDetails.submenus[0].path)
-        return activeMenu.value = menuDetails.submenus[0].name
+      if ($_.has(menuDetails, "submenus")) {
+        router.push(menuDetails.submenus[0].path);
+        return (activeMenu.value = menuDetails.submenus[0].name);
       }
-      return activeMenu.value = menuDetails.name
+      return (activeMenu.value = menuDetails.name);
     }
 
-
-
     // Sidebar click outside handler
-    const { width } = useWindowSize()
-    const sidebarStore = useSidebarStore()
-    const drawer = ref('sidebar');
+    const { width } = useWindowSize();
+    const sidebarStore = useSidebarStore();
+    const drawer = ref("sidebar");
     onClickOutside(drawer, () => {
       if (!sidebarStore.isCollapsed && width.value <= 1024) {
-        sidebarStore.toggleSidebar()
+        sidebarStore.toggleSidebar();
       }
     });
 
     // Track window size for sidebar behaviour
-    watch(() => width.value, (val) => {
-      if (width.value >= 1024) {
-        if (sidebarStore.isCollapsed) {
-          sidebarStore.toggleSidebar()
-
+    watch(
+      () => width.value,
+      (val) => {
+        if (width.value >= 1024) {
+          if (sidebarStore.isCollapsed) {
+            sidebarStore.toggleSidebar();
+          }
         }
       }
-    })
+    );
 
     return {
       menus,
@@ -201,18 +257,18 @@ export default {
 };
 </script>
 
-
 <style lang="postcss" scoped>
 .sidebar {
-  @apply min-w-[250px] w-[350px] bg-white;
+  @apply min-w-[300px] bg-primary;
   @apply flex flex-col relative;
-  @apply px-5 py-8;
-  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%), 0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
+  @apply px-3 py-8;
+  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
+    0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
   transition: all 0.3s ease;
 
   &__header {
-    @apply text-primary font-bold text-lg text-center pb-3;
-    @apply border-b border-b-gray-200 flex-grow-0;
+    @apply text-white  font-bold text-lg text-center pb-3;
+    @apply border-b border-b-slate-500 flex-grow-0;
   }
 
   &__content {
@@ -220,7 +276,7 @@ export default {
     @apply gap-3 mt-4;
 
     .content__menu {
-      @apply rounded-sm text-primary;
+      @apply rounded-sm text-white;
 
       .menu__details {
         @apply flex flex-row items-center justify-between w-full;
@@ -241,8 +297,8 @@ export default {
           transition: all 0.3s ease;
 
           &.active-menu {
-            @apply bg-primary text-white;
-            box-shadow: 0 12px 20px -10px rgb(138 143 150 / 28%), 0 4px 20px 0px rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(138 143 150 / 20%) !important;
+            @apply bg-secondary text-white;
+            /* box-shadow: 0 12px 20px -10px rgb(138 143 150 / 28%), 0 4px 20px 0px rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(138 143 150 / 20%) !important; */
           }
         }
 
@@ -254,8 +310,6 @@ export default {
         &.uncollapsed {
           @apply max-h-[1000px] overflow-visible;
         }
-
-
       }
 
       &:hover {
@@ -264,14 +318,13 @@ export default {
       }
 
       &.active-menu {
-        @apply block bg-primary text-white;
-        box-shadow: 0 12px 20px -10px rgb(138 143 150 / 28%), 0 4px 20px 0px rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(138 143 150 / 20%);
+        @apply block bg-secondary text-white;
+        /* box-shadow: 0 12px 20px -10px rgb(138 143 150 / 28%), 0 4px 20px 0px rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(138 143 150 / 20%); */
       }
     }
   }
 
   &__footer {
-
     .footer__logout {
       @apply text-center w-full;
     }
@@ -283,25 +336,24 @@ export default {
     @apply absolute bottom-1 right-5;
   }
 
-
-
   &.drawer-uncollapsed {
-    @apply max-lg:absolute h-screen flex w-[350px] z-50;
+    @apply max-lg:absolute h-screen flex w-[300px] z-50;
     transition: all 0.3s ease;
   }
 
   &.drawer-collapsed {
-    >div {
+    > div {
       @apply hidden;
     }
 
-    @apply w-0 max-w-0 min-w-0 absolute z-[-1] h-screen p-0;
+    @apply w-0  min-w-0 absolute z-[-1] h-screen p-0;
     transition: all 0.3s ease;
   }
 }
 
 .overlay {
   @apply lg:hidden !important;
+  @apply z-40;
   @apply w-screen h-screen fixed top-0 px-0 py-0;
   background: rgba(30, 28, 28, 0.88);
   transition: all 0.3s ease !important;

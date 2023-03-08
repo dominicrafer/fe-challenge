@@ -14,8 +14,8 @@ module.exports = {
         body: ['"Open Sans"']
       },
       colors: {
-        primary: '#748FB0',
-        secondary: '#88A0C6',
+        primary: '#3f4252',
+        secondary: '#838295',
         paprika: '#E45959',
         salmon: '#FFEAEA',
         kale: '#5A8662',

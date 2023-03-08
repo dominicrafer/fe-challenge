@@ -19,21 +19,22 @@
             </form>
           </div>
           <div class="header__right-panel">
-            <Button v-if="exportable" @click="$emit('export')" variant="primary-outline">
+            <Button v-if="exportable" @click="$emit('export')" variant="warning" v-has:action-permission="exportPermission">
               <template #icon-start>
                 <Icon name="mdi:export" width="20" height="20" />
               </template>Export
             </Button>
-            <Button v-if="sortable" @click="$emit('sort')" variant="primary-outline">
+            <Button v-if="sortable" @click="$emit('sort')" variant="warning">
               <template #icon-start>
                 <Icon name="mdi:sort" width="20" height="20" />
               </template>Sort By
             </Button>
-            <Button v-if="filterable" @click="$emit('filter')" variant="primary-outline">
+            <Button v-if="filterable" @click="$emit('filter')" variant="warning">
               <template #icon-start>
                 <Icon name="mdi:filter-cog-outline" width="20" height="20" />
               </template>Filter By
             </Button>
+            <slot name="header-right-panel"></slot>
           </div>
         </div>
         <div class="content__body">
@@ -53,6 +54,10 @@ import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
 export default {
   props: {
+    module: {
+      type: String,
+      default: null
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -91,12 +96,14 @@ export default {
     },
   },
   setup(props, { emit }) {
+    console.log(props.module)
     let page = ref(props.activatePage);
     let searchValue = ref("");
-
+    const exportPermission = `${props.module}Export`;
     return {
       page,
       searchValue,
+      exportPermission
     };
   },
   components: {
@@ -145,8 +152,6 @@ export default {
 
     .content__body {
       @apply flex flex-col flex-grow h-full;
-      /* @apply min-h-[560px]; */
-      /* @apply pb; */
     }
 
     .content__footer {

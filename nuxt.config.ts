@@ -19,7 +19,8 @@ export default defineNuxtConfig({
     "@/assets/css/date-picker.css",
     "@/assets/css/table.css",
     "@/assets/css/select.css",
-    "@/assets/css/pagination.css"
+    "@/assets/css/pagination.css",
+    "@/assets/css/vue3-toastify.css",
   ],
   alias: {
     './runtimeConfig': './runtimeConfig.browser',

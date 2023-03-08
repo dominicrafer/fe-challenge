@@ -4,7 +4,7 @@
     <div class="default__content">
       <Header />
       <div class="flex-grow">
-        <slot />
+        <NuxtPage />
       </div>
     </div>
   </div>

@@ -1,5 +1,10 @@
 <template>
-  <button class="button" :type="type" :class="`${variant} ${radius}`" :disabled="loading">
+  <button
+    class="button"
+    :type="type"
+    :class="`${variant} ${radius}`"
+    :disabled="loading"
+  >
     <div v-if="$slots['icon-start']">
       <slot name="icon-start"></slot>
     </div>
@@ -26,7 +31,7 @@ export default {
     },
     radius: {
       type: String,
-      default: 'rounded-md'
+      default: "rounded-md",
     },
     loading: {
       type: Boolean,
@@ -35,9 +40,9 @@ export default {
     showLoading: {
       type: Boolean,
       default: false,
-    }
+    },
   },
-  setup(props) { },
+  setup(props) {},
 };
 </script>
 
@@ -64,19 +69,38 @@ export default {
   }
 
   &.secondary {
-    @apply bg-slate-400 text-white;
+    @apply bg-secondary text-white;
+  }
+
+  &.secondary-outline {
+    @apply bg-white text-secondary border border-secondary;
+    &:hover {
+      @apply bg-white text-secondary;
+    }
   }
 
   &.success {
-    @apply bg-green-500 text-white;
+    @apply bg-green-600 text-white;
+  }
+
+  &.success-outline {
+    @apply bg-white text-green-600 border border-green-600;
   }
 
   &.danger {
-    @apply bg-red-400 text-white;
+    @apply bg-red-600 text-white;
   }
 
+  &.danger-outline {
+    @apply bg-white text-red-600 border border-red-600;
+  }
+
+
   &.warning {
-    @apply bg-yellow-400 text-white;
+    @apply bg-yellow-500 text-white;
+  }
+   &.warning-outline {
+    @apply bg-white text-yellow-500 border border-yellow-500;
   }
 
   &.link {

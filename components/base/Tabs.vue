@@ -7,7 +7,7 @@
       :class="tab.label == active || tab.value == active ? 'active' : null"
       @click="$emit('changeTab', tab?.value || tab?.label)"
     >
-      <span class="option__label" :class="index == active ? 'active' : null">
+      <span class="option__label" :class="tab.label == active || tab.value == active ? 'active' : null">
         {{ tab.label }}
       </span>
       <span
@@ -15,7 +15,7 @@
         v-if="tab.counter !== 'undefined'"
         :class="tab.label == active || tab.value == active ? 'active' : null"
       >
-        {{ tab.counter }}
+        {{ tab.counter }} 
       </span>
     </div>
   </div>
@@ -43,16 +43,15 @@ export default {
   &__option {
     @apply text-center whitespace-nowrap uppercase;
     @apply cursor-pointer;
-    @apply px-5 py-3 ;
+    @apply px-5 py-3;
     &.active {
       @apply bg-white;
-      @apply  text-black  border-primary;
     }
-  }
-  .option__label {
-    @apply text-sm font-semibold text-gray-400;
-    &.active {
-      @apply text-primary;
+    .option__label {
+      @apply text-sm font-semibold text-gray-400;
+      &.active {
+        @apply text-primary font-bold !important;
+      }
     }
   }
 }

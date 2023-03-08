@@ -1,8 +1,7 @@
 <template>
   <div class="page">
     <PageHeader title="Test Page" />
-    <div class="page__body">
-    </div>
+    <div class="page__body" v-testing></div>
   </div>
 </template>
 
@@ -12,9 +11,8 @@ definePageMeta({
 });
 export default {
   setup() {
-    const { $api, $dayjs } = useNuxtApp();
-    console.log($dayjs().format())
-
+    const { $api, $dayjs, $toast } = useNuxtApp();
+    console.log($dayjs().format("HH:mm"));
   },
 };
 </script>

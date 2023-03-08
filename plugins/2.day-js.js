@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
-import { defineNuxtPlugin } from '#app'
+import duration from 'dayjs/plugin/duration'
 
 export default defineNuxtPlugin((nuxtApp) => {
+  dayjs.extend(duration)
   nuxtApp.provide('dayjs', dayjs)
 })

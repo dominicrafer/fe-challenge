@@ -29,13 +29,13 @@ export default {
 <style lang="postcss" scoped>
 .spinner-container {
   &__spinner {
-    @apply border-2 border-t-[#748FB0] border-l-[#748FB0] border-r-[#748FB0] border-b-white;
+    @apply border-2 border-t-primary border-l-primary border-r-primary border-b-white;
     @apply ease-linear rounded-full;
     -webkit-animation: spinner-container__spinner 1.5s linear infinite;
     animation: spinner-container__spinner 1.5s linear infinite;
 
     &.reverse-color {
-      @apply border-2 border-t-white border-l-white border-r-white border-b-[#748FB0] !important;
+      @apply border-2 border-t-white border-l-white border-r-white border-b-primary !important;
     }
   }
 }
