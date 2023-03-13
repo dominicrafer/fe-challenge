@@ -1,6 +1,6 @@
 <template>
   <div class="input">
-
+    <div class="input__label-height-placeholder" v-if="$slots.label"></div>
     <div class="input__input-container">
       <Field v-slot="{ meta, field }" :rules="rules" @input="updateValue" :name="name" :value="modelValue">
 
@@ -80,9 +80,13 @@ export default {
 
 <style lang="postcss" scoped>
 .input {
-  @apply flex flex-col gap-[4px] relative;
-
+  @apply flex flex-col gap-[4px] relative justify-end;
+    &__label-height-placeholder {
+      @apply h-[20px] w-full;
+    }
   &__input-container {
+    @apply relative;
+   
     .input-container__input {
       @apply w-full;
       @apply border-b border-gray-200;
@@ -103,7 +107,7 @@ export default {
       &:not(:focus):valid~.input-container__floating-label,
       &:disabled~.input-container__floating-label,
       &:autofill~.input-container__floating-label {
-        @apply text-[0.875rem] left-[10px] top-[-20px] !important;
+        @apply left-[10px] top-[-25px] text-primary !important;
         opacity: 1;
       }
     &.show-placeholder {
@@ -114,7 +118,7 @@ export default {
       &:not(:focus),
       &:focus:not(:invalid) {
         &::placeholder {
-          color: transparent;
+          @apply text-transparent;
           transition: 0.2s ease all;
         }
       }
@@ -127,7 +131,7 @@ export default {
     }
 
     .input-container__floating-label {
-      @apply z-50 absolute pointer-events-none text-primary font-medium;
+      @apply z-50 absolute pointer-events-none text-gray-400 font-medium;
       @apply left-[10px] top-[5px] text-[0.875rem];
       transition: 0.2s ease all;
     }

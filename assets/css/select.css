@@ -1,8 +1,9 @@
 .multiselect>.multiselect__tags {
+    @apply border-b-gray-200;
     min-height: 0px;
     height: 38px;
     padding: 6px 40px 0 8px;
-    border-color: rgb(148 163 184) !important;
+   
     border-right: none;
     border-left: none;
     border-top: none;

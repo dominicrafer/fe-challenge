@@ -64,20 +64,17 @@ export default {
 .textarea {
   @apply flex flex-col gap-[4px];
   &__label {
-    @apply text-primary text-[1rem] font-medium;
+    @apply text-primary text-[0.875rem] pl-[10px] font-medium;
   }
   &__input {
     @apply py-[6px] px-[12px];
-    @apply border border-slate-400 rounded-md;
+    @apply border border-gray-200 rounded-md;
     @apply outline-none resize;
 
     &.has-error {
       @apply border-paprika;
     }
-    &:hover {
-      @apply border-primary;
-      box-shadow: 0px 0px 8px 0px #d1e3cb;
-    }
+ 
   }
   &__error {
     @apply text-paprika;

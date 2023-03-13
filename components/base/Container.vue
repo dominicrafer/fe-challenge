@@ -46,7 +46,6 @@ export default {
   @apply relative;
   @apply rounded-sm;
   @apply bg-white;
-  @apply w-full h-full;
   &__loader-body {
     @apply bg-opacity-50 bg-white z-30;
     @apply w-full h-full;

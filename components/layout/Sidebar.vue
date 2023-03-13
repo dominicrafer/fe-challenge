@@ -134,14 +134,14 @@ export default {
             path: "/users/roles",
             icon: "mdi:badge-account-horizontal-outline",
             roles: ["admin"],
-            permission: "usersRoles",
+            permission: "users-roles",
           },
           {
             name: "Policies",
             path: "/users/policies",
             icon: "mdi:shield-account-variant-outline",
             roles: ["admin"],
-            permission: "usersPolicies",
+            permission: "users-policies",
           },
         ],
       },
@@ -172,6 +172,7 @@ export default {
         icon: "mdi:swap-horizontal",
         roles: ["admin"],
         path: "transactions",
+        permission: "transactions",
       },
     ];
 

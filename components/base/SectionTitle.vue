@@ -23,7 +23,7 @@ export default {
     },
     fontColor: {
       type: String,
-      default: "text-primary",
+      default: "text-white",
     },
   },
   setup(props) {},
@@ -31,4 +31,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.section-title {
+  @apply bg-primary text-white p-4;
+}
 </style>

@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader backRoute="/users" title="Roles">
       <template #right-panel>
-        <Button>Save</Button>
+        <Button variant="success">Save</Button>
       </template>
     </PageHeader>
     <div class="page__body">

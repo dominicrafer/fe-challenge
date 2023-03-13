@@ -10,7 +10,6 @@ export const useSidebarStore = defineStore({
     },
     actions: {
          toggleSidebar() {
-            console.log('WAT')
             this.collapsed = !this.collapsed
         },
     },

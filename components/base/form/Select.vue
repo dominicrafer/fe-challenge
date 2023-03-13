@@ -1,26 +1,14 @@
 <template>
   <div class="select">
-    <label :name="name" class="select__label">
+    <div class="select__label-height-placeholder" v-if="$slots.label"></div>
+
+    <label :name="name" class="select__label" :class="selected ? 'float' : null">
       <slot name="label"></slot>
     </label>
-    <Field
-      v-slot="{ meta, field }"
-      :value="modelValue"
-      :rules="rules"
-      :name="name"
-    >
-      <VueMultiselect
-        v-bind="field"
-        v-model="selected"
-        :options="options"
-        :placeholder="placeholder"
-        :searchable="searchable"
-        :multiple="multiple"
-        :taggable="taggable"
-        :tag-placeholder="tagPlaceholder"
-        @search-change="$emit('asyncSearch')"
-        :class="!meta.valid ? `has-error` : null"
-      >
+    <Field v-slot="{ meta, field }" :value="modelValue" :rules="rules" :name="name">
+      <VueMultiselect v-bind="field" v-model="selected" :options="options" :searchable="searchable" :multiple="multiple"
+        :taggable="taggable" :placeholder="null" :tag-placeholder="tagPlaceholder" @search-change="$emit('asyncSearch')"
+        :class="!meta.valid ? `has-error` : null">
         <slots name="drop-down"></slots>
       </VueMultiselect>
     </Field>
@@ -91,11 +79,19 @@ export default {
 
 <style lang="postcss" scoped>
 .select {
-  @apply flex flex-col gap-[4px];
+  @apply inline-flex flex-col gap-[4px] relative;
+  &__label-height-placeholder {
+      @apply h-[20px] w-full;
+    }
   &__label {
-    @apply text-[1rem] font-medium;
-    @apply ml-[10px];
+    @apply text-[0.875rem] font-medium absolute top-[30px] left-[10px] z-[51]  text-gray-400;
+    transition:  0.2s ease top;
+    &.float {
+      @apply left-[10px] top-[0px] text-primary !important;
+    }
+
   }
+
   &__error {
     @apply text-paprika;
   }

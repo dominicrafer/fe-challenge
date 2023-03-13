@@ -23,7 +23,7 @@
         :loading="isLoading"
         @paginate="paginateAction"
         @search="searchAction"
-        export="exportAction"
+        @export="exportAction"
         @sort="
           () => {
             showSortDrawer = !showSortDrawer;

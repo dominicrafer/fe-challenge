@@ -1,17 +1,26 @@
 <template>
   <Container :loading="loading">
-
     <div class="table">
-
       <div class="table__content">
         <div class="content__tabs" v-if="tabs">
-          <Tabs :tabs="tabs" :active="activeTab" @changeTab="(tab) => $emit('changeTab', tab)" />
+          <Tabs
+            :tabs="tabs"
+            :active="activeTab"
+            @changeTab="(tab) => $emit('changeTab', tab)"
+          />
         </div>
         <div class="content__header">
           <div class="header__left-panel">
-            <form v-if="searchable" @submit.prevent="$emit('search', searchValue)">
-              <InputField class="left-panel__search" v-model="searchValue" name="search"
-                placeholder="Search by name here...">
+            <form
+              v-if="searchable"
+              @submit.prevent="$emit('search', searchValue)"
+            >
+              <InputField
+                class="left-panel__search"
+                v-model="searchValue"
+                name="search"
+                placeholder="Search by name here..."
+              >
                 <template #icon>
                   <Icon name="mdi:magnify" />
                 </template>
@@ -19,20 +28,33 @@
             </form>
           </div>
           <div class="header__right-panel">
-            <Button v-if="exportable" @click="$emit('export')" variant="warning" v-has:action-permission="exportPermission">
+            <Button
+              v-if="exportable"
+              v-has:action-permission="exportPermission"
+              @click="$emit('export')"
+              variant="warning"
+            >
               <template #icon-start>
-                <Icon name="mdi:export" width="20" height="20" />
-              </template>Export
+                <Icon name="mdi:export" width="20" height="20" /> </template
+              >Export
             </Button>
             <Button v-if="sortable" @click="$emit('sort')" variant="warning">
               <template #icon-start>
-                <Icon name="mdi:sort" width="20" height="20" />
-              </template>Sort By
+                <Icon name="mdi:sort" width="20" height="20" /> </template
+              >Sort By
             </Button>
-            <Button v-if="filterable" @click="$emit('filter')" variant="warning">
+            <Button
+              v-if="filterable"
+              @click="$emit('filter')"
+              variant="warning"
+            >
               <template #icon-start>
-                <Icon name="mdi:filter-cog-outline" width="20" height="20" />
-              </template>Filter By
+                <Icon
+                  name="mdi:filter-cog-outline"
+                  width="20"
+                  height="20"
+                /> </template
+              >Filter By
             </Button>
             <slot name="header-right-panel"></slot>
           </div>
@@ -41,7 +63,12 @@
           <slot name="table-data"></slot>
         </div>
         <div class="content__footer">
-          <v-pagination v-model="page" :pages="pages" :range-size="1" @update:modelValue="$emit('paginate', page)" />
+          <v-pagination
+            v-model="page"
+            :pages="pages"
+            :range-size="1"
+            @update:modelValue="$emit('paginate', page)"
+          />
         </div>
       </div>
     </div>
@@ -56,7 +83,7 @@ export default {
   props: {
     module: {
       type: String,
-      default: null
+      default: null,
     },
     loading: {
       type: Boolean,
@@ -68,7 +95,7 @@ export default {
     },
     tabs: {
       type: Array,
-      default: []
+      default: [],
     },
     activeTab: {
       type: [Number, String],
@@ -96,14 +123,14 @@ export default {
     },
   },
   setup(props, { emit }) {
-    console.log(props.module)
+    console.log(props.module);
     let page = ref(props.activatePage);
     let searchValue = ref("");
     const exportPermission = `${props.module}Export`;
     return {
       page,
       searchValue,
-      exportPermission
+      exportPermission,
     };
   },
   components: {

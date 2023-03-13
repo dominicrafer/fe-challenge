@@ -1,8 +1,7 @@
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive("has", (el, binding, vnode) => {
     const { $_, $toast } = useNuxtApp();
-    console.log(binding);
-
+    const mapper = permissionsMapper();
     if (binding.arg === "module-permission") {
       if (!hasModulePermission()) {
         vnode.el.hidden = true;
@@ -11,24 +10,32 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     if (binding.arg === "action-permission") {
-      el.addEventListener("click", (event) => {
-        if (!hasActionPermission()) {
-          $toast.error("User is not auhorized to perform this action.", {
-            autoClose: 3000,
-            position: $toast.POSITION.BOTTOM_CENTER,
-            closeButton: false,
-          });
-          event.stopPropagation();
-          event.preventDefault();
+      el.addEventListener(
+        "click",
+        (event) => {
           event.stopImmediatePropagation();
-        }
-      });
+          if (!hasActionPermission()) {
+            $toast.error("User is not auhorized to perform this action.", {
+              autoClose: 3000,
+              position: $toast.POSITION.BOTTOM_CENTER,
+              closeButton: false,
+            });
+            event.stopImmediatePropagation();
+          }
+        },
+        { capture: true }
+      );
     }
 
     function hasActionPermission() {
       const myPermissions = ["users:create", "users:view", "users:delete"];
-
-      return $_.includes(myPermissions, actionPermissionsMapper()[binding.value]);
+      let allPermissions = {};
+      $_.forEach(mapper, (permissions) => {
+        $_.forEach(permissions, (value, key) => {
+          allPermissions[key] = value;
+        });
+      });
+      return $_.includes(myPermissions, allPermissions[binding.value]);
     }
     function hasModulePermission() {
       const myModulePermissions = [
@@ -36,14 +43,12 @@ export default defineNuxtPlugin((nuxtApp) => {
         "users-list",
         "users-roles",
         "users-policies",
-        "campaigns",
-        "partners"
+        // "campaigns",
+        // "partners",
+        // "transactions",
       ];
 
-      return $_.includes(
-        myModulePermissions,
-        modulePermissionsMapper()[binding.value]
-      );
+      return $_.includes(myModulePermissions, binding.value);
     }
   });
 });
