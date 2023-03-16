@@ -1,18 +1,22 @@
 import { useAuthStore } from "@/store/auth";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 
-
-export default defineNuxtPlugin(({$dayjs}) => {
+export default defineNuxtPlugin(({ $dayjs }) => {
   const authStore = useAuthStore();
   // authStore.load();
-  const tokenExpirationDayjs = dayjs(authStore.tokenExpiration)
+  const tokenExpirationDayjs = dayjs(authStore.tokenExpiration);
   const currentTimeDayjs = dayjs();
 
-  const tokenExpirationDuration = dayjs.duration(tokenExpirationDayjs.diff(currentTimeDayjs)).asMinutes();
+  const tokenExpirationDuration = dayjs
+    .duration(tokenExpirationDayjs.diff(currentTimeDayjs))
+    .asMinutes();
 
-  // console.log(tokenExpirationDuration, 'tokenExpirationDuration')
-  // console.log(dayjs.duration(dayjs(authStore.tokenExpiration).diff(dayjs(), 'hours'))).asMinutes();
-
-  authStore.refresh();
-  // console.log('tes');
+  const expirationInMinutes = dayjs
+    .duration(dayjs.unix(authStore.tokenExpiration).diff(dayjs()))
+    .asMinutes();
+  // if token expiration < 20 mins, refresh
+  if (expirationInMinutes < 20) {
+    console.log('REFRESH TOKEN')
+    authStore.refresh();
+  }
 });

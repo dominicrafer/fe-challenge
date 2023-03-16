@@ -21,6 +21,9 @@ pnpm install --shamefully-hoist
 ## AWS Amplify Setup
 Create <i>aws-exports.js</i> file and follow the format written on <i>aws-exports-sample.js</i>
 
+## ENV Setup
+Create <i>.env</i> file and follow the format on <i>.env-example</i>
+
 
 ## Development Server
 
@@ -76,4 +79,12 @@ setup() {
 
 ## Components
 Visit the <i>/components</i> path for the list of components available.
+
+## API Management
+This boilerplate uses factory pattern in managing APIs
+
+### Factory - <i>/plugins/api.js</i>
+### Endpoints - <i>/api/*</i>
+
+### API Interceptor - <i>/composables/api-interceptor.js</i>
 
