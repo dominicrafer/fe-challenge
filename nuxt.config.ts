@@ -45,6 +45,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       app_version: packageJSON.version,
+      api_base_url: process.env.API_URL
     }
   },
   components: [

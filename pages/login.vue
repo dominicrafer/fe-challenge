@@ -1,5 +1,5 @@
 <template>
-  <Form @submit="submitHandler">
+  <VeeForm @submit="submitHandler">
     <div class="login">
       <div class="login__header">
         <Icon name="mdi:account-circle" color="white" width="80" height="80" />
@@ -27,11 +27,11 @@
         </Button>
       </div>
     </div>
-  </Form>
+  </VeeForm>
 </template>
 
 <script>
-import { Form } from "vee-validate";
+import { Form as VeeForm } from "vee-validate";
 import { useAuthStore } from '@/store/auth';
 definePageMeta({
   layout: "login",
@@ -93,7 +93,7 @@ export default {
 
   },
   components: {
-    Form,
+    VeeForm,
 
   },
 };

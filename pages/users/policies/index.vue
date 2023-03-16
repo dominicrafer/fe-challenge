@@ -1,19 +1,19 @@
 <template>
   <div class="page">
-    <PageHeader title="Roles">
+    <PageHeader title="Policies">
       <template #right-panel>
         <router-link
           :to="{
             path: '/users/policies/create',
           }"
         >
-          <Button>Create</Button>
+          <Button variant="success">Create</Button>
         </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
       <Table
-        :loading="isLoading"
+        :loading="pending"
         @paginate="paginateAction"
         @search="searchAction"
         @export="exportAction"
@@ -32,28 +32,24 @@
           <table class="table__data">
             <thead>
               <tr>
+                <th align="left">Module</th>
                 <th align="left">Policy</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(policy, index) in data" :key="index">
-                <td align="left">Policy</td>
+              <tr v-for="(policy, index) in data?.resource?.policies" :key="index">
+                <td align="left">{{policy.module}}</td>
+                <td align="left">{{policy.policy}}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link
-                      :to="{
-                        name: 'users-policies-id',
-                        params: { id: policy.id },
-                      }"
-                    >
+                    
                       <Icon
                         width="20"
                         height="20"
                         style="color: #29335c"
                         name="material-symbols:preview"
                       />
-                    </router-link>
                     <div>
                       <Icon
                         width="20"
@@ -94,27 +90,17 @@ definePageMeta({
 });
 export default {
   setup(props, { emit }) {
-    const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-      isLoading = ref(false),
-      showFilterDrawer = ref(false),
-      showSortDrawer = ref(false),
-      queryStringParameters = reactive({
-        search: "",
-        filters: "",
-        sorts: "",
-        page: 1,
-        page_size: 10,
-      });
+    const { $api } = useNuxtApp();
+    const showFilterDrawer = ref(false);
+    const showSortDrawer = ref(false);
+    const queryStringParameters = reactive({
+      search: "",
+      filters: "",
+      sorts: "",
+      page: 1,
+      page_size: 10,
+    });
+    const { data, pending } = $api.policies.getPolicies();
 
     function paginateAction(event) {
       queryStringParameters.value = {
@@ -136,7 +122,7 @@ export default {
 
     return {
       data,
-      isLoading,
+      pending,
       showFilterDrawer,
       showSortDrawer,
       paginateAction,

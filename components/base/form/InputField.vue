@@ -80,7 +80,7 @@ export default {
 
 <style lang="postcss" scoped>
 .input {
-  @apply flex flex-col gap-[4px] relative justify-end;
+  @apply flex flex-col gap-[4px] relative justify-start;
     &__label-height-placeholder {
       @apply h-[20px] w-full;
     }

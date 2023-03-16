@@ -14,31 +14,31 @@
 export default {
   props: {
     padding: {
-      type: String,
+      type: String
     },
     width: {
       type: String,
-      default: "w-full",
+      default: 'w-full'
     },
     height: {
       type: String,
-      default: "h-full",
+      default: 'h-auto'
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loaderMessage: {
       type: String,
-      default: "Fetching data...",
+      default: 'Fetching data...'
     },
     spinnerSize: {
       type: String,
-      default: "w-12 h-12 border-2",
-    },
+      default: 'w-12 h-12 border-2'
+    }
   },
-  setup(props) {},
-};
+  setup (props) {}
+}
 </script>
 
 <style lang="postcss" scoped>
@@ -55,7 +55,7 @@ export default {
   .loader-body__loader {
     @apply w-full h-full;
     @apply flex flex-col items-center justify-center;
-    @apply text-sm font-bold text-primary;
+    @apply text-sm font-bold text-green-500;
     @apply sticky;
     @apply gap-[10px];
     top: 50%;

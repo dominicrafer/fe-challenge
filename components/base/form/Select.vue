@@ -1,15 +1,37 @@
 <template>
   <div class="select">
     <div class="select__label-height-placeholder" v-if="$slots.label"></div>
-
-    <label :name="name" class="select__label" :class="selected ? 'float' : null">
+    <label
+      :name="name"
+      class="select__label"
+      ref="label"
+      :class="
+        selected?.length || multiselect?.search || showOptions ? 'float' : null
+      "
+    >
       <slot name="label"></slot>
     </label>
-    <Field v-slot="{ meta, field }" :value="modelValue" :rules="rules" :name="name">
-      <VueMultiselect v-bind="field" v-model="selected" :options="options" :searchable="searchable" :multiple="multiple"
-        :taggable="taggable" :placeholder="null" :tag-placeholder="tagPlaceholder" @search-change="$emit('asyncSearch')"
-        :class="!meta.valid ? `has-error` : null">
-        <slots name="drop-down"></slots>
+    <Field :value="modelValue" :rules="rules" :name="name">
+      <VueMultiselect
+        ref="multiselect"
+        :key="options.length"
+        :options="options"
+        v-model="selected"
+        @open="showOptions = true"
+        @close="showOptions = false"
+        :label="label"
+        :track-by="trackBy"
+        :close-on-select="closeOnSelect"
+        :hide-selected="hideSelected"
+        :searchable="searchable"
+        :multiple="multiple"
+        @tag="addTag"
+        :taggable="taggable"
+        :placeholder="null"
+        :tag-placeholder="tagPlaceholder"
+        @search-change="$emit('asyncSearch')"
+      >
+        <!-- <slots name="drop-down"></slots> -->
       </VueMultiselect>
     </Field>
     <ErrorMessage :name="name" v-slot="{ message }">
@@ -34,8 +56,8 @@ export default {
       type: String,
     },
     modelValue: {
-      type: [Object, String, Number],
-      default: null,
+      type: [Object, String, Number, Array],
+      default: [],
     },
     placeholder: {
       type: String,
@@ -61,12 +83,37 @@ export default {
       type: String,
       default: "Create tag",
     },
+    trackBy: {
+      type: String,
+    },
+    label: {
+      type: String,
+    },
+    closeOnSelect: {
+      type: Boolean,
+      default: true,
+    },
+    hideSelected: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { $_ } = useNuxtApp();
+    const multiselect = ref(null);
+    const showOptions = ref(false);
     const selected = ref(props.modelValue);
+
+    function addTag(value) {
+      console.log("ADD OPTION", { label: value, value: $_.toLower(value) });
+      emit("addTag", { label: value, value: $_.toLower(value) });
+    }
 
     return {
       selected,
+      multiselect,
+      addTag,
+      showOptions,
     };
   },
   components: {
@@ -80,16 +127,18 @@ export default {
 <style lang="postcss" scoped>
 .select {
   @apply inline-flex flex-col gap-[4px] relative;
+
   &__label-height-placeholder {
-      @apply h-[20px] w-full;
-    }
+    @apply h-[20px] w-full;
+  }
+
   &__label {
-    @apply text-[0.875rem] font-medium absolute top-[30px] left-[10px] z-[51]  text-gray-400;
-    transition:  0.2s ease top;
+    @apply text-[0.875rem] font-medium absolute top-[30px] left-[10px] z-[51] text-gray-400;
+    transition: 0.2s ease top;
+
     &.float {
       @apply left-[10px] top-[0px] text-primary !important;
     }
-
   }
 
   &__error {

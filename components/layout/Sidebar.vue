@@ -119,28 +119,24 @@ export default {
       {
         name: "Users",
         icon: "mdi:account-multiple-outline",
-        roles: ["admin"],
         permission: "users",
         submenus: [
           {
             name: "Users",
             path: "/users",
             icon: "mdi:account-multiple-outline",
-            roles: ["admin"],
             permission: "users",
           },
           {
             name: "Roles",
             path: "/users/roles",
             icon: "mdi:badge-account-horizontal-outline",
-            roles: ["admin"],
             permission: "users-roles",
           },
           {
             name: "Policies",
             path: "/users/policies",
             icon: "mdi:shield-account-variant-outline",
-            roles: ["admin"],
             permission: "users-policies",
           },
         ],
@@ -148,7 +144,6 @@ export default {
       {
         name: "Partners",
         icon: "mdi:handshake-outline",
-        roles: ["admin"],
         path: "/partners",
         permission: "partners",
         // submenus: [
@@ -156,7 +151,6 @@ export default {
         //     name: "Partners",
         //     path: "/partners",
         //     icon: "mdi:account-multiple-outline",
-        //     roles: ["admin"],
         //   },
         // ],
       },
@@ -164,13 +158,11 @@ export default {
         name: "Campaigns",
         icon: "mdi:calendar",
         path: "/campaigns",
-        roles: ["admin"],
         permission: "campaigns",
       },
       {
         name: "Transactions",
         icon: "mdi:swap-horizontal",
-        roles: ["admin"],
         path: "transactions",
         permission: "transactions",
       },
@@ -262,7 +254,7 @@ export default {
 .sidebar {
   @apply min-w-[300px] bg-primary;
   @apply flex flex-col relative;
-  @apply px-3 py-8;
+  @apply px-3 py-8  z-[100];
   box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
     0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
   transition: all 0.3s ease;
@@ -338,7 +330,7 @@ export default {
   }
 
   &.drawer-uncollapsed {
-    @apply max-lg:absolute h-screen flex w-[300px] z-50;
+    @apply max-lg:absolute h-screen flex w-[300px];
     transition: all 0.3s ease;
   }
 
@@ -347,14 +339,14 @@ export default {
       @apply hidden;
     }
 
-    @apply w-0  min-w-0 absolute z-[-1] h-screen p-0;
+    @apply w-0  min-w-0 absolute  h-screen p-0;
     transition: all 0.3s ease;
   }
 }
 
 .overlay {
   @apply lg:hidden !important;
-  @apply z-40;
+  @apply z-[99];
   @apply w-screen h-screen fixed top-0 px-0 py-0;
   background: rgba(30, 28, 28, 0.88);
   transition: all 0.3s ease !important;

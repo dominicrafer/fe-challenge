@@ -14,7 +14,6 @@ export const useAuthStore = defineStore({
         },
         token: null,
         tokenExpiration: null,
-        roles: [],
       },
     };
   },
@@ -28,11 +27,10 @@ export const useAuthStore = defineStore({
           userDetails: {
             email: response.attributes.email,
             contact: response.attributes.phone_number,
-            name: response.attributes.name,
+            name: 'Test User',
           },
-          token: response.signInUserSession.accessToken.jwtToken,
-          tokenExpiration: response.signInUserSession.accessToken.payload.exp,
-          roles: response.signInUserSession.idToken.payload["cognito:groups"],
+          token: response.signInUserSession.idToken.jwtToken,
+          tokenExpiration: response.signInUserSession.idToken.payload.exp,
         };
       }
       return response;
@@ -54,9 +52,8 @@ export const useAuthStore = defineStore({
             phone_number: response.attributes.phone_number,
             name: response.attributes.name,
           },
-          token: response.signInUserSession.accessToken.jwtToken,
-          tokenExpiration: response.signInUserSession.accessToken.payload.exp,
-          roles: response.signInUserSession.idToken.payload["cognito:groups"],
+          token: response.signInUserSession.idToken.jwtToken,
+          tokenExpiration: response.signInUserSession.idToken.payload.exp,
         };
       } catch (error) {
         this.auth = {
@@ -66,7 +63,6 @@ export const useAuthStore = defineStore({
             name: null,
           },
           token: null,
-          roles: [],
         };
       }
     },
@@ -81,7 +77,6 @@ export const useAuthStore = defineStore({
           name: null,
         },
         token: null,
-        roles: [],
       };
     },
     async refresh() {
@@ -95,12 +90,13 @@ export const useAuthStore = defineStore({
             console.log(session , 'refresh')
             this.auth = {
               ...this.auth,
-              token: session.accessToken.jwtToken,
-              tokenExpiration: session.accessToken.payload.exp,
+              token: session.idToken.jwtToken,
+              tokenExpiration: session.idToken.payload.exp,
             };
           }
         );
       } catch (error) {
+        this.isAuthenticated = false;
         console.log(error)
       }
     },
@@ -110,6 +106,5 @@ export const useAuthStore = defineStore({
     userDetails: (state) => state.auth.userDetails,
     token: (state) => state.auth.token,
     tokenExpiration: (state) => state.auth.tokenExpiration,
-    roles: (state) => state.auth.roles,
   },
 });

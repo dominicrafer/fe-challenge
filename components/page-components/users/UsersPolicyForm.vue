@@ -1,37 +1,42 @@
 <template>
-  <Form>
+  <VeeForm @submit="submitHandler" v-slot="{isSubmitting}">
     <div class="policy">
-      <Container :loading="isLoading" padding="p-[16px]">
+      <Container :loading="isLoading" padding="p-0" width="w-1/2">
+        <SectionTitle title="Policy Details" class="rounded-t-sm" />
         <div class="policy__form">
-          <SectionTitle title="User Details" />
           <InputField
-            name="default-input"
+            name="policy"
             placeholder="Enter Text"
-            rules="alpha"
+            v-model="formData.policy"
           >
             <template #label> Name </template>
           </InputField>
-          <InputField
-            name="default-input"
-            placeholder="Enter Text"
-            rules="alpha"
+          <Select
+            v-model="formData.actions"
+            name="actions"
+            class="w-1/2"
+            :multiple="true"
+            :options="actionOptions"
+            @addTag="addTag"
+            trackBy="value"
+            label="label"
+            taggable
+            searchable
+            :closeOnSelect="false"
           >
-            <template #label> Slug </template>
-          </InputField>
-          <Textarea
-            name="default-textarea"
-            label="Description"
-            placeholder="Enter Text"
-            rules="digits:3"
-          />
+            <template #label> Actions </template>
+          </Select>
+          <div class="form__footer">
+            <Button variant="success" type="submit" :loading="isSubmitting">Save</Button>
+          </div>
         </div>
       </Container>
     </div>
-  </Form>
+  </VeeForm>
 </template>
 
 <script>
-import { Form } from "vee-validate";
+import { Form as VeeForm } from "vee-validate";
 definePageMeta({
   layout: "default",
 });
@@ -41,10 +46,59 @@ export default {
       type: Boolean,
       default: false,
     },
+    submitHandler: {
+      type: Function
+    }
   },
-  setup(props) {},
+  setup(props, { emit }) {
+    const { $_ } = useNuxtApp();
+    const actionOptions = [
+      {
+        label: "Read",
+        value: "read",
+      },
+      {
+        label: "List",
+        value: "list",
+      },
+      {
+        label: "Write",
+        value: "write",
+      },
+      {
+        label: "Delete",
+        value: "delete",
+      },
+      {
+        label: "Export",
+        value: "export",
+      },
+    ];
+    let formData = reactive({
+      policy: null,
+      actions: [{ label: "Delete", value: "delete" }],
+    });
+    async function submitHandler(values) {
+      await props.submitHandler({
+        ...values,
+        actions: $_.map(values.actions, "value"),
+      })
+    }
+
+    const addTag = (newOption) => {
+      actionOptions.push(newOption);
+      formData.actions.push(newOption)
+    };
+
+    return {
+      actionOptions,
+      formData,
+      submitHandler,
+      addTag,
+    };
+  },
   components: {
-    Form,
+    VeeForm,
   },
 };
 </script>
@@ -52,12 +106,17 @@ export default {
 <style lang="postcss" scoped>
 .policy {
   @apply flex justify-center;
+
   &__form {
-    @apply flex flex-col gap-[24px];
+    @apply flex flex-col gap-[24px] px-4 pt-4 pb-4;
   }
 
   .form__col {
     @apply grid grid-cols-2 gap-[10px];
+  }
+
+  .form__footer {
+    @apply self-end justify-self-end;
   }
 
   .col__button {

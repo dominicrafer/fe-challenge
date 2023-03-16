@@ -1,5 +1,5 @@
 <template>
-  <Container :loading="loading">
+  <Container :loading="loading" >
     <div class="table">
       <div class="table__content">
         <div class="content__tabs" v-if="tabs">
@@ -141,8 +141,7 @@ export default {
 
 <style lang="postcss" scoped>
 .table {
-  @apply w-full h-full;
-
+  @apply w-full h-full min-h-[650px];
   &__tabs {
     @apply inline-block;
     @apply w-full;

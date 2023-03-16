@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { Icon } from "@iconify/vue";
 export default {
   props: {
     title: {
@@ -30,9 +29,6 @@ export default {
       type: [String, Object],
       default: null,
     },
-  },
-  components: {
-    Icon,
   },
 };
 </script>

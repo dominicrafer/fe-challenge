@@ -25,7 +25,8 @@ module.exports = {
         currant: '#413C3C',
         flour: '#F8F8F8',
         'baking-soda': '#E5E5E5',
-        gainsboro: '#DBDEDA'
+        gainsboro: '#DBDEDA',
+        mackerel: '#9B9B9B',
       },
     },
   },

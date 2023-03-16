@@ -46,3 +46,14 @@ html {
 	flex-basis: 0px;
 }
 
+::-webkit-scrollbar {
+	@apply w-[5px];
+	@apply z-0;
+}
+
+::-webkit-scrollbar-thumb {
+	@apply z-0;
+	@apply rounded-lg;
+	background-color: gainsboro;
+}
+

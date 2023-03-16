@@ -8,7 +8,7 @@
         <Icon name="mdi:account-circle" color="white" width="30" height="30" />
         <div class="profile__details">
           <span class="details__name">{{ authStore.userDetails.name }}</span>
-          <span class="details__role">{{ authStore.roles[0] }}</span>
+          <!-- <span class="details__role">{{ authStore.roles[0] }}</span> -->
         </div>
       </div>
     </div>

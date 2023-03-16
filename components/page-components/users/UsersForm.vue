@@ -33,7 +33,6 @@
           <Select
             name="role"
             placeholder="Select role"
-            rules="alpha"
             v-model="formData.role"
             class="w-1/2"
           >
@@ -58,12 +57,12 @@ export default {
     },
   },
   setup(props) {
-    const formData = {
+    const formData = reactive({
       name: null,
       email: null,
       mobile: null,
       role: null,
-    };
+    });
     return {
       formData,
     };

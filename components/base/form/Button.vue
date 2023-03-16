@@ -2,7 +2,7 @@
   <button
     class="button"
     :type="type"
-    :class="`${variant} ${radius}`"
+    :class="`${loading ? 'disabled' : variant} ${radius}`"
     :disabled="loading"
   >
     <div v-if="$slots['icon-start']">
@@ -56,6 +56,9 @@ export default {
   &:hover {
     /* @apply opacity-75; */
     filter: brightness(110%);
+    &.disabled {
+      @apply filter-none cursor-not-allowed;
+    }
   }
 
   &.primary {
@@ -95,12 +98,15 @@ export default {
     @apply bg-white text-red-600 border border-red-600;
   }
 
-
   &.warning {
     @apply bg-yellow-500 text-white;
   }
-   &.warning-outline {
+  &.warning-outline {
     @apply bg-white text-yellow-500 border border-yellow-500;
+  }
+
+  &.disabled {
+    @apply bg-baking-soda text-mackerel;
   }
 
   &.link {

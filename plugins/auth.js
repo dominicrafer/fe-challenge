@@ -10,7 +10,7 @@ export default defineNuxtPlugin(({$dayjs}) => {
 
   const tokenExpirationDuration = dayjs.duration(tokenExpirationDayjs.diff(currentTimeDayjs)).asMinutes();
 
-  console.log(tokenExpirationDuration, 'tokenExpirationDuration')
+  // console.log(tokenExpirationDuration, 'tokenExpirationDuration')
   // console.log(dayjs.duration(dayjs(authStore.tokenExpiration).diff(dayjs(), 'hours'))).asMinutes();
 
   authStore.refresh();
