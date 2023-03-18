@@ -3,7 +3,7 @@
     <label :name="name" class="date-picker__label">
       <slot name="label"></slot>
     </label>
-    <Field
+    <VField
       v-slot="{ meta, field }"
       :value="modelValue"
       :rules="rules"
@@ -29,19 +29,18 @@
         :time-picker="timePicker"
         :class="!meta.valid ? `has-error` : null"
       />
-    </Field>
-    <ErrorMessage :name="name" v-slot="{ message }">
+    </VField>
+    <VErrorMessage :name="name" v-slot="{ message }">
       <div class="date-picker__error">
         {{ message }}
       </div>
-    </ErrorMessage>
+    </VErrorMessage>
   </div>
 </template>
 
 <script>
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { Field, ErrorMessage } from "vee-validate";
 export default {
   props: {
     name: {
@@ -89,8 +88,6 @@ export default {
   },
   components: {
     Datepicker,
-    Field,
-    ErrorMessage,
   },
 };
 </script>

@@ -6,46 +6,47 @@
       class="select__label"
       ref="label"
       :class="
-        selected?.length || multiselect?.search || showOptions ? 'float' : null
+        selected?.length || $refs.name?.search || showOptions ? 'float' : null
       "
     >
       <slot name="label"></slot>
     </label>
-    <Field :value="modelValue" :rules="rules" :name="name">
-      <VueMultiselect
-        ref="multiselect"
-        :key="options.length"
-        :options="options"
-        v-model="selected"
-        @open="showOptions = true"
-        @close="showOptions = false"
-        :label="label"
-        :track-by="trackBy"
-        :close-on-select="closeOnSelect"
-        :hide-selected="hideSelected"
-        :searchable="searchable"
-        :multiple="multiple"
-        @tag="addTag"
-        :taggable="taggable"
-        :placeholder="null"
-        :tag-placeholder="tagPlaceholder"
-        @search-change="$emit('asyncSearch')"
-      >
-        <!-- <slots name="drop-down"></slots> -->
-      </VueMultiselect>
-    </Field>
-    <ErrorMessage :name="name" v-slot="{ message }">
-      <div class="select__error">
-        {{ message }}
-      </div>
-    </ErrorMessage>
+    <VueMultiselect
+      :ref="name"
+      :key="options.length"
+      :options="options"
+      v-model="selected"
+      @open="showOptions = true"
+      @close="
+        () => {
+          showOptions = false;
+          meta.touched = true;
+        }
+      "
+      :label="label"
+      :track-by="trackBy"
+      :close-on-select="closeOnSelect"
+      :hide-selected="hideSelected"
+      :searchable="searchable"
+      :multiple="multiple"
+      @tag="addTag"
+      :taggable="taggable"
+      :placeholder="null"
+      :tag-placeholder="tagPlaceholder"
+      @search-change="$emit('asyncSearch')"
+    >
+      <!-- <slots name="drop-down"></slots> -->
+    </VueMultiselect>
+    <div class="select__error" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
 <script>
 import VueMultiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import { Field, ErrorMessage } from "vee-validate";
+import { useField } from "vee-validate";
 export default {
   props: {
     name: {
@@ -100,26 +101,35 @@ export default {
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
-    const multiselect = ref(null);
+    const {
+      errorMessage,
+      meta,
+      value: selected,
+    } = useField(props.name, props.rules, {
+      initialValue: props.modelValue,
+    });
     const showOptions = ref(false);
-    const selected = ref(props.modelValue);
 
     function addTag(value) {
-      console.log("ADD OPTION", { label: value, value: $_.toLower(value) });
       emit("addTag", { label: value, value: $_.toLower(value) });
     }
-
+    watch(
+      meta,
+      (meta) => {
+        emit("update:isDirty", meta.dirty);
+      },
+      { deep: true }
+    );
     return {
+      errorMessage,
+      meta,
       selected,
-      multiselect,
       addTag,
       showOptions,
     };
   },
   components: {
     VueMultiselect,
-    Field,
-    ErrorMessage,
   },
 };
 </script>
@@ -142,7 +152,7 @@ export default {
   }
 
   &__error {
-    @apply text-paprika;
+    @apply text-paprika text-[0.75rem];
   }
 }
 </style>

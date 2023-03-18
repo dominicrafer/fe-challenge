@@ -14,49 +14,45 @@
     <div class="page__body">
       <Table
         :loading="pending"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
-          () => {
-            showSortDrawer = !showSortDrawer;
-          }
-        "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
+        paginationType="dynamodb"
+        @nextPage="nextPage"
+        @prevPage="prevPage"
+        :searchable="false"
+        :filterable="false"
+        :sortable="false"
+        :exportable="false"
       >
         <template #table-data>
           <table class="table__data">
             <thead>
               <tr>
-                <th align="left">Module</th>
                 <th align="left">Policy</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(policy, index) in data?.resource?.policies" :key="index">
-                <td align="left">{{policy.module}}</td>
-                <td align="left">{{policy.policy}}</td>
+              <tr
+                v-for="(policyDetails, index) in data?.resource?.policies"
+                :key="index"
+              >
+                <td align="left">{{ policyDetails.policy }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    
-                      <Icon
-                        width="20"
-                        height="20"
-                        style="color: #29335c"
-                        name="material-symbols:preview"
-                      />
-                    <div>
-                      <Icon
-                        width="20"
-                        height="20"
-                        name="material-symbols:delete-outline"
-                      />
-                    </div>
+                    <NuxtLink
+                      :to="{
+                        name: 'users-policies-id',
+                        params: { id: policyDetails.policy },
+                      }"
+                    >
+                      <Icon width="20" height="20" name="mdi:eye-outline" />
+                    </NuxtLink>
+                    <Icon
+                      @click="deletePolicy(policyDetails.policy)"
+                      width="20"
+                      height="20"
+                      color="#E45959"
+                      name="material-symbols:delete-outline"
+                    />
                   </div>
                 </td>
               </tr>
@@ -64,70 +60,74 @@
           </table>
         </template>
       </Table>
+      <ConfirmationModal
+        :show="deleteConfirmationModalVisible"
+        title="Delete Policy"
+        type="danger"
+        confirmText="Delete"
+        @close="deleteConfirmationModalVisible = false"
+        @confirm="confirmDelete"
+      >
+        <template #message
+          >Are you sure you want to continue? This cannot be undone.</template
+        >
+      </ConfirmationModal>
     </div>
-    <UsersFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <UsersSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
   </div>
 </template>
 
-<script>
+<script >
 definePageMeta({
   layout: "default",
 });
 export default {
-  setup(props, { emit }) {
-    const { $api } = useNuxtApp();
-    const showFilterDrawer = ref(false);
-    const showSortDrawer = ref(false);
-    const queryStringParameters = reactive({
-      search: "",
-      filters: "",
-      sorts: "",
-      page: 1,
-      page_size: 10,
-    });
-    const { data, pending } = $api.policies.getPolicies();
+  setup() {
+    const { $api, $_ } = useNuxtApp();
+    // PAGINATION
+    let previousEvaluatedKey = ref([]);
+    let nextEvaluatedKey = ref(null);
+    const { data, pending, refresh} = $api.policies.getPolicies(
+      {
+        limit: 10,
+        last_evaluated_sort_key: nextEvaluatedKey,
+      },
+      [nextEvaluatedKey]
+    );
+    function prevPage() {
+      nextEvaluatedKey.value = $_.last(previousEvaluatedKey.value);
+      if (previousEvaluatedKey.value.length) {
+        previousEvaluatedKey.value.pop();
+      }
+    }
+    function nextPage() {
+      previousEvaluatedKey.value.push(nextEvaluatedKey.value);
+      nextEvaluatedKey.value = $_.last(data?.value?.resource?.policies).policy;
+    }
+    // PAGINATION 
 
-    function paginateAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        page: event,
-      };
-      console.log("paginate", queryStringParameters.value);
-    }
-    function searchAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        search: event,
-      };
-      console.log("search", queryStringParameters.value);
-    }
-    function exportAction(event) {
-      console.log("export", event);
+    // DELETE POLICY 
+    const deleteConfirmationModalVisible = ref(false)
+    const selectedPolicy = ref(null);
+    function deletePolicy(id) {
+      selectedPolicy.value = id;
+      deleteConfirmationModalVisible.value = true;
     }
 
+    async function confirmDelete() {
+      pending.value = true;
+      await $api.policies.deletePolicy(selectedPolicy.value);
+      refresh();
+    }
+    // DELETE POLICY 
     return {
       data,
       pending,
-      showFilterDrawer,
-      showSortDrawer,
-      paginateAction,
-      searchAction,
-      exportAction,
+      nextPage,
+      prevPage,
+      selectedPolicy,
+      deletePolicy,
+      deleteConfirmationModalVisible,
+      confirmDelete,
     };
   },
 };

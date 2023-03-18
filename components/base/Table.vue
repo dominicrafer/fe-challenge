@@ -9,7 +9,8 @@
             @changeTab="(tab) => $emit('changeTab', tab)"
           />
         </div>
-        <div class="content__header">
+        <template v-if="exportable || sortable || searchable || filterable || $slots['header-right-panel']">
+        <div class="content__header" >
           <div class="header__left-panel">
             <form
               v-if="searchable"
@@ -59,16 +60,22 @@
             <slot name="header-right-panel"></slot>
           </div>
         </div>
+        </template>
         <div class="content__body">
           <slot name="table-data"></slot>
         </div>
         <div class="content__footer">
-          <v-pagination
+          <v-pagination v-if="paginationType === 'default'"
             v-model="page"
             :pages="pages"
             :range-size="1"
             @update:modelValue="$emit('paginate', page)"
           />
+
+          <div class="footer__pagination-ddb" v-if="paginationType === 'dynamodb'" >
+            <Icon name='material-symbols:chevron-left-rounded' class="pagination-ddb__prev" width="24" height="24" @click="$emit('prevPage')"/>
+            <Icon name='material-symbols:chevron-right-rounded' class="pagination-ddb__next" width="24" height="24" @click="$emit('nextPage')"/>
+          </div>
         </div>
       </div>
     </div>
@@ -121,6 +128,11 @@ export default {
       type: Boolean,
       default: true,
     },
+    paginationType: {
+      type: String,
+      // default or dynamodb
+      default: "default",
+    },
   },
   setup(props, { emit }) {
     console.log(props.module);
@@ -141,7 +153,7 @@ export default {
 
 <style lang="postcss" scoped>
 .table {
-  @apply w-full h-full min-h-[650px];
+  @apply w-full h-full min-h-[580px];
   &__tabs {
     @apply inline-block;
     @apply w-full;
@@ -184,6 +196,16 @@ export default {
       @apply flex-grow-0;
       @apply flex flex-row justify-center items-end;
       @apply p-4;
+      .footer__pagination-ddb {
+        @apply flex gap-[20px];
+        @apply cursor-pointer;
+        .pagination-ddb__prev,
+        .pagination-ddb__next {
+          &:hover {
+            @apply bg-slate-200;
+          }
+        }
+      }
     }
   }
 }

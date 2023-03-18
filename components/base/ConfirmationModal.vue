@@ -2,7 +2,7 @@
   <Transition appear name="fade">
     <div class="modal" v-if="show">
       <div class="modal__content" :style="{ width: `${width}px` }">
-        <div class="modal__header">
+        <div class="modal__header" :class="type">
           {{ title }}
           <Icon
             name="mdi:close-circle-outline"
@@ -13,11 +13,17 @@
             @click="$emit('close')"
           />
         </div>
-        <div :class="`modal__body`" ref="modal" v-click-outside="clickOutside">
-          <slot></slot>
+        <div :class="`modal__body ${type}`"  ref="modal" v-click-outside="clickOutside">
+          <slot name="message"></slot>
         </div>
-        <div class="modal__footer" v-if="$slots.footer">
-          <slot name="footer"></slot>
+        <div class="modal__footer">
+          <Button class="inline-block" variant="secondary" @click="$emit('close')">Cancel</Button>
+          <Button
+            class="inline-block"
+            @click="$emit('confirm')"
+            :variant="type === 'danger' ? 'danger' : 'success'"
+            >{{ confirmText }}</Button
+          >
         </div>
       </div>
     </div>
@@ -40,12 +46,20 @@ export default {
       type: String,
       default: "450",
     },
+    type: {
+      type: String,
+      default: "default",
+    },
+    confirmText: {
+      type: String,
+      default: "Confirm",
+    },
   },
   setup(props, { attrs, slots, emit, expose }) {
     const modal = ref(null);
     onClickOutside(modal, () => emit("close"));
 
-    return { modal };
+    return { modal};
   },
 };
 </script>
@@ -58,33 +72,49 @@ export default {
   background: rgba(30, 28, 28, 0.88);
 
   &__content {
-    @apply absolute;
+    @apply absolute flex flex-col;
     @apply bg-white;
     @apply rounded-md;
-    @apply min-w-[320px];
-    @apply min-h-[320px];
+    /* @apply min-w-[220px];
+    @apply min-h-[220px]; */
     .modal__header {
       @apply flex flex-row items-center justify-between;
-      @apply border-b border-baking-soda bg-primary rounded-t-md;
+      @apply border-b border-baking-soda  rounded-t-md;
       @apply font-bold text-white text-lg;
-      @apply px-[16px] py-[12px];
+      @apply px-[16px] py-[12px] flex-grow-0;
       .modal__close-button {
         @apply cursor-pointer;
+      }
+      &.default {
+        @apply bg-primary;
+      }
+      &.danger {
+        @apply bg-paprika;
       }
     }
     .modal__body {
       z-index: 1;
-      @apply max-h-[80vh] p-4;
+      @apply max-h-[80vh] p-4 flex-grow;
       @apply w-full h-full;
       @apply overflow-y-auto;
-      @apply text-sm text-currant;
+      @apply text-sm ;
+       &.default {
+        @apply text-currant;
+      }
+      &.danger {
+        @apply font-semibold;
+        @apply text-paprika;
+      }
     }
     .modal__footer {
       @apply border-t border-baking-soda;
       @apply flex flex-row justify-end items-center;
-      @apply p-[16px] rounded-b-xl;
+      @apply p-3 rounded-b-xl;
       gap: 12px;
       background: #f8f8f8;
+      button {
+        @apply w-auto;
+      }
     }
   }
 }

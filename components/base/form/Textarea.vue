@@ -1,31 +1,25 @@
 <template>
   <div class="textarea">
     <label class="textarea__label" :for="name" resize>{{ label }}</label>
-    <Field
-      v-slot="{ field, meta }"
-      @input="updateValue"
-      :value="modelValue"
+    <textarea
       :name="name"
-      :rules="rules"
-    >
-      <textarea
-        v-bind="field"
-        class="textarea__input"
-        :placeholder="placeholder"
-        :class="!meta.valid ? 'has-error' : null"
-        :id="name"
-      ></textarea>
-    </Field>
-    <ErrorMessage :name="name" v-slot="{ message }">
-      <div class="textarea__error">
-        {{ message }}
-      </div>
-    </ErrorMessage>
+      :value="modelValue"
+      @input="updateValue"
+      @blur="meta.touched = true"
+      class="textarea__input"
+      :placeholder="placeholder"
+      :class="!meta.valid && meta.dirty ? 'has-error' : null"
+      :id="name"
+    ></textarea>
+    <div class="textarea__error" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
 <script>
-import { Field, ErrorMessage } from "vee-validate";
+import { useField } from "vee-validate";
+
 export default {
   props: {
     label: {
@@ -46,16 +40,27 @@ export default {
     modelValue: {
       type: [String, Number],
     },
-  },
-  components: {
-    Field,
-    ErrorMessage,
+    isDirty: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
+    const { errorMessage, meta } = useField(props.name, props.rules, {
+      initialValue: props.modelValue,
+    });
     const updateValue = (event) => {
       emit("update:modelValue", event.target.value);
     };
-    return { updateValue };
+
+    watch(
+      meta,
+      (meta) => {
+        emit("update:isDirty", meta.dirty);
+      },
+      { deep: true }
+    );
+    return { updateValue, errorMessage, meta };
   },
 };
 </script>
@@ -67,17 +72,16 @@ export default {
     @apply text-primary text-[0.875rem] pl-[10px] font-medium;
   }
   &__input {
-    @apply py-[6px] px-[12px];
+    @apply py-[6px] px-[12px] text-[0.875rem];
     @apply border border-gray-200 rounded-md;
     @apply outline-none resize;
 
     &.has-error {
       @apply border-paprika;
     }
- 
   }
   &__error {
-    @apply text-paprika;
+    @apply text-paprika text-[0.75rem];
   }
 }
 </style>

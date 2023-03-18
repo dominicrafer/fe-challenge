@@ -1,20 +1,32 @@
 <template>
-  <VeeForm @submit="submitHandler" v-slot="{isSubmitting}">
-    <div class="policy">
-      <Container :loading="isLoading" padding="p-0" width="w-1/2">
+  <div class="policy">
+    <Container :loading="isLoading" padding="p-0" width="w-1/2">
+      <VForm @submit="onSubmit" v-slot="{ isSubmitting }">
         <SectionTitle title="Policy Details" class="rounded-t-sm" />
         <div class="policy__form">
           <InputField
+            class="w-1/2"
             name="policy"
             placeholder="Enter Text"
-            v-model="formData.policy"
+            v-model:modelValue="formData.policy"
+            v-model:isDirty="dirtyFieldValidator.policy"
+            :disabled="edit"
+            rules="required|alpha_number"
           >
             <template #label> Name </template>
           </InputField>
+          <Textarea
+            v-model:modelValue="formData.description"
+            v-model:isDirty="dirtyFieldValidator.description"
+            name="description"
+            label="Description"
+            placeholder="Enter description"
+            :rules="edit ? null : 'required'"
+          />
           <Select
-            v-model="formData.actions"
+            v-model:modelValue="formData.actions"
+            v-model:isDirty="dirtyFieldValidator.actions"
             name="actions"
-            class="w-1/2"
             :multiple="true"
             :options="actionOptions"
             @addTag="addTag"
@@ -23,20 +35,23 @@
             taggable
             searchable
             :closeOnSelect="false"
+            rules="required"
           >
             <template #label> Actions </template>
           </Select>
           <div class="form__footer">
-            <Button variant="success" type="submit" :loading="isSubmitting">Save</Button>
+            <Button variant="success" type="submit" :loading="isSubmitting"
+              >Save</Button
+            >
           </div>
         </div>
-      </Container>
-    </div>
-  </VeeForm>
+      </VForm>
+    </Container>
+  </div>
 </template>
 
 <script>
-import { Form as VeeForm } from "vee-validate";
+import { useForm } from "vee-validate";
 definePageMeta({
   layout: "default",
 });
@@ -47,10 +62,25 @@ export default {
       default: false,
     },
     submitHandler: {
-      type: Function
-    }
+      type: Function,
+    },
+    policyDetails: {
+      type: Object,
+      default() {
+        return {
+          policy: null,
+          description: null,
+          actions: [],
+        };
+      },
+    },
+    edit: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props, { emit }) {
+
+  setup(props) {
     const { $_ } = useNuxtApp();
     const actionOptions = [
       {
@@ -74,31 +104,44 @@ export default {
         value: "export",
       },
     ];
-    let formData = reactive({
-      policy: null,
-      actions: [{ label: "Delete", value: "delete" }],
+    const dirtyFieldValidator = reactive({
+      policy: false,
+      description: false,
+      actions: false,
     });
-    async function submitHandler(values) {
-      await props.submitHandler({
-        ...values,
-        actions: $_.map(values.actions, "value"),
-      })
+    const formData = reactive(props.policyDetails);
+    async function onSubmit(values) {
+      if (props.edit) {
+        let payload = {};
+
+        $_.forEach(dirtyFieldValidator, (isDirty, key) => {
+          if (isDirty) {
+            payload[key] =
+              key === "actions"
+                ? $_.map(values.actions, (action) => action.value)
+                : values[key];
+          }
+        });
+        await props.submitHandler(payload);
+      } else {
+        await props.submitHandler({
+          ...values,
+          actions: $_.map(values.actions, (action) => action.value),
+        });
+      }
     }
 
     const addTag = (newOption) => {
       actionOptions.push(newOption);
-      formData.actions.push(newOption)
+      formData.actions.push(newOption);
     };
-
     return {
+      dirtyFieldValidator,
       actionOptions,
       formData,
-      submitHandler,
+      onSubmit,
       addTag,
     };
-  },
-  components: {
-    VeeForm,
   },
 };
 </script>

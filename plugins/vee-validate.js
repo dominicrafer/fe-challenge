@@ -1,7 +1,10 @@
-import { defineRule, configure } from "vee-validate";
+import { defineRule, configure, Form, Field, ErrorMessage } from "vee-validate";
 import AllRules from "@vee-validate/rules";
 
 export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.component('VForm', Form)
+  nuxtApp.vueApp.component('VField', Field)
+  nuxtApp.vueApp.component('VErrorMessage', ErrorMessage)
   Object.keys(AllRules)
     .filter((k) => k !== "default")
     .forEach((rule) => {
@@ -11,12 +14,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Customize global validation rules error message
   configure({
     generateMessage: (context) => {
+      console.log(context)
+      const {$_} = useNuxtApp()
       switch (context.rule.name) {
         // case "digits":
           // return "Custom Message";
           // break;
         default:
-          return `The field ${context.field} is invalid`;
+          return `${$_.startCase(context.field)} is ${context.rule.name}`;
       }
     },
   });
