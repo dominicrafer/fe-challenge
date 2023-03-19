@@ -6,7 +6,7 @@
       </template>
     </PageHeader>
     <div class="page__body">
-      <UsersRoleForm />
+      <UsersRoleForm :submitHandler="submitHandler" />
     </div>
   </div>
 </template>
@@ -22,7 +22,19 @@ export default {
       default: false,
     },
   },
-  setup(props) {},
+  setup(props) {
+    async function submitHandler(data) {
+      const { $api, $toast } = useNuxtApp();
+      await $api.roles.createRole(data).then(() => {
+        const router = useRouter();
+        router.push("/users/roles");
+        $toast.success("Policy successfully created.");
+      }).catch(() => {
+        console.log('err')
+      });
+    }
+    return { submitHandler };
+  },
 };
 </script>
 

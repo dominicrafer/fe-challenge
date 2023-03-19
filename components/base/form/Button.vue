@@ -49,7 +49,7 @@ export default {
 <style lang="postcss" scoped>
 .button {
   @apply flex flex-row gap-2 items-center font-normal text-center;
-  @apply py-[8px] px-[10px] w-full;
+  @apply py-[8px] px-[10px];
   @apply text-[0.875rem] border border-transparent whitespace-nowrap;
   transition: all ease-in 0.1s;
 

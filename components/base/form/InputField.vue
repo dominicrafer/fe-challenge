@@ -46,13 +46,7 @@
 </template>
 
 <script>
-import { useField, configure } from "vee-validate";
-configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
-});
+import { useField } from "vee-validate";
 export default {
   props: {
     label: {

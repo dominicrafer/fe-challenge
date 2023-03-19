@@ -14,48 +14,41 @@
     <div class="page__body">
       <Table
         :loading="isLoading"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
-          () => {
-            showSortDrawer = !showSortDrawer;
-          }
-        "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
+        :filterable="false"
+        :searchable="false"
+        :exportable="false"
+        :sortable="false"
+        paginationType="dynamodb"
+
       >
         <template #table-data>
           <table class="table__data">
             <thead>
               <tr>
                 <th align="left">Role</th>
-                <th align="left">Policies</th>
+                <th align="left">Description</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(roles, index) in data" :key="index">
-                <td align="left">Role</td>
-                <td align="left">Policies</td>
+              <tr v-for="(roleDetails, index) in data?.resource?.roles" :key="index">
+                <td align="left">{{roleDetails.role}}</td>
+                <td align="left">{{roleDetails.description}}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link
+                    <!-- <router-link
                       :to="{
                         name: 'users-roles-id',
-                        params: { id: roles.id },
+                        params: { id: roleDetails.role },
                       }"
-                    >
+                    > -->
                       <Icon
                         width="20"
                         height="20"
                         style="color: #29335c"
                         name="material-symbols:preview"
                       />
-                    </router-link>
+                    <!-- </router-link> -->
                     <div>
                       <Icon
                         width="20"
@@ -71,22 +64,6 @@
         </template>
       </Table>
     </div>
-    <UsersFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <UsersSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
   </div>
 </template>
 
@@ -95,55 +72,53 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  setup(props, { emit }) {
-    const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-      isLoading = ref(false),
-      showFilterDrawer = ref(false),
-      showSortDrawer = ref(false),
-      queryStringParameters = reactive({
-        search: "",
-        filters: "",
-        sorts: "",
-        page: 1,
-        page_size: 10,
-      });
+  setup() {
+    const { $api, $_ } = useNuxtApp();
+    // PAGINATION
+    let previousEvaluatedKey = ref([]);
+    let nextEvaluatedKey = ref(null);
+    const { data, pending, refresh} = $api.roles.getRoles(
+      {
+        limit: 10,
+        last_evaluated_sort_key: nextEvaluatedKey,
+      },
+      [nextEvaluatedKey]
+    );
+    function prevPage() {
+      nextEvaluatedKey.value = $_.last(previousEvaluatedKey.value);
+      if (previousEvaluatedKey.value.length) {
+        previousEvaluatedKey.value.pop();
+      }
+    }
+    function nextPage() {
+      previousEvaluatedKey.value.push(nextEvaluatedKey.value);
+      nextEvaluatedKey.value = $_.last(data?.value?.resource?.policies).policy;
+    }
+    // PAGINATION 
 
-    function paginateAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        page: event,
-      };
-      console.log("paginate", queryStringParameters.value);
-    }
-    function searchAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        search: event,
-      };
-      console.log("search", queryStringParameters.value);
-    }
-    function exportAction(event) {
-      console.log("export", event);
+    // DELETE POLICY 
+    const deleteConfirmationModalVisible = ref(false)
+    const selectedPolicy = ref(null);
+    function deletePolicy(id) {
+      selectedPolicy.value = id;
+      deleteConfirmationModalVisible.value = true;
     }
 
+    async function confirmDelete() {
+      pending.value = true;
+      await $api.policies.deletePolicy(selectedPolicy.value);
+      refresh();
+    }
+    // DELETE POLICY 
     return {
       data,
-      isLoading,
-      showFilterDrawer,
-      showSortDrawer,
-      paginateAction,
-      searchAction,
-      exportAction,
+      pending,
+      nextPage,
+      prevPage,
+      selectedPolicy,
+      deletePolicy,
+      deleteConfirmationModalVisible,
+      confirmDelete,
     };
   },
 };

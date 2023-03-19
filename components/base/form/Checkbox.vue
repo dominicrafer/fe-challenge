@@ -1,11 +1,19 @@
 <template>
   <div class="checkbox">
-    <input type="checkbox" class="checkbox__input" :id="name" />
-    <label :for="name" class="checkbox__label">{{ label }}</label>
+    <input
+      type="checkbox"
+      class="checkbox__input"
+      :name="name"
+      :id="id"
+      :value="inputValue"
+      v-model="value"
+    />
+    <label :for="id" class="checkbox__label">{{ label }}</label>
   </div>
 </template>
 
 <script>
+import { useField, Field } from "vee-validate";
 export default {
   props: {
     label: {
@@ -16,8 +24,28 @@ export default {
       type: String,
       required: true,
     },
+    id: {
+      type: [String, Number],
+      required: true,
+    },
+    inputValue: {
+      type: [String, Object, Boolean, Number],
+      required: false,
+    },
+    modelValue: {
+      type: [String, Object, Boolean, Number],
+      required: false,
+    },
   },
-  setup(props) {},
+  setup(props) {
+    const { value } = useField(props.name, undefined, {
+      initialValue: props.modelValue,
+    });
+    return { value };
+  },
+  components: {
+    Field,
+  },
 };
 </script>
 
@@ -26,9 +54,15 @@ export default {
   @apply flex flex-row items-center gap-[5px];
   &__input {
     @apply accent-primary text-lg w-[18px] h-[18px] rounded-lg;
+    &:hover {
+      @apply cursor-pointer;
+    }
   }
   &__label {
-    @apply text-[1rem] text-primary font-medium;
+    @apply text-[0.875rem] text-primary font-medium;
+    &:hover {
+      @apply cursor-pointer;
+    }
   }
 }
 </style>

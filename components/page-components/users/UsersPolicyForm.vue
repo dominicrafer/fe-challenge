@@ -39,11 +39,11 @@
           >
             <template #label> Actions </template>
           </Select>
-          <div class="form__footer">
-            <Button variant="success" type="submit" :loading="isSubmitting"
-              >Save</Button
-            >
-          </div>
+        </div>
+        <div class="policy__footer">
+          <Button variant="success" type="submit" :loading="isSubmitting"
+            >Save</Button
+          >
         </div>
       </VForm>
     </Container>
@@ -51,10 +51,6 @@
 </template>
 
 <script>
-import { useForm } from "vee-validate";
-definePageMeta({
-  layout: "default",
-});
 export default {
   props: {
     isLoading: {
@@ -63,6 +59,7 @@ export default {
     },
     submitHandler: {
       type: Function,
+      required: true,
     },
     policyDetails: {
       type: Object,
@@ -158,12 +155,12 @@ export default {
     @apply grid grid-cols-2 gap-[10px];
   }
 
-  .form__footer {
-    @apply self-end justify-self-end;
-  }
-
   .col__button {
     @apply mt-[28px];
+  }
+
+  &__footer {
+    @apply flex flex-col items-end px-4 pb-4;
   }
 }
 </style>

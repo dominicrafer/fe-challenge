@@ -12,6 +12,8 @@ export const interceptors = () => {
         },
         onRequestError({ request, options, error }) {
             // Handle the request errors
+
+            // return Promise.reject(error)
         },
         onResponse({ request, response, options }) {
             // Process the response data
