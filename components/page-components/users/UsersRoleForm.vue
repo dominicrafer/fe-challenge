@@ -1,15 +1,24 @@
 <template>
   <div class="role">
-    <Container :loading="pending" padding="p-0" width="w-1/2">
-      <VForm @submit="onSubmit" v-slot="{isSubmitting}">
+    <Container
+      :loading="pending"
+      padding="p-0"
+      width="w-1/2"
+      :key="pending || isLoading"
+    >
+      <VForm
+        @submit="onSubmit"
+        v-slot="{ isSubmitting }"
+        :initialValues="roleDetails"
+      >
         <SectionTitle title="Role Details" class="rounded-t-sm" />
         <div class="role__form">
           <InputField
             class="w-1/2"
             name="role"
             placeholder="Enter Text"
-            rules="alpha"
             v-model="formData.role"
+            v-model:isDirty="dirtyFieldValidator.role"
           >
             <template #label> Role </template>
           </InputField>
@@ -18,6 +27,7 @@
             label="Description"
             placeholder="Enter Text"
             v-model="formData.description"
+            v-model:isDirty="dirtyFieldValidator.description"
           />
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
@@ -37,6 +47,7 @@
                 :label="$_.startCase(policyActionDetails.action)"
                 name="actions"
                 v-model="formData.policies"
+                v-model:isDirty="dirtyFieldValidator.policies"
                 v-for="(
                   policyActionDetails, actionIndex
                 ) in policyDetails.policies"
@@ -81,28 +92,37 @@ export default {
       required: true,
     },
   },
-  setup(props) {
-    const { $api } = useNuxtApp();
-
+  async setup(props) {
+    const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.roleDetails);
 
-    const { data: policies, pending } = $api.policies.getAllPolicies();
+    const dirtyFieldValidator = reactive({
+      role: false,
+      description: false,
+      policies: false,
+    });
+    const { data: policies, pending } = await $api.policies.getAllPolicies();
 
     async function onSubmit(values) {
       if (props.edit) {
         let payload = {};
 
         $_.forEach(dirtyFieldValidator, (isDirty, key) => {
+          console.log(isDirty, key);
           if (isDirty) {
             payload[key] = values[key];
           }
         });
-        await props.submitHandler(payload);
+        // await props.submitHandler(payload);
       } else {
-        await props.submitHandler(values);
+        try {
+          await props.submitHandler(values);
+        } catch (error) {
+          console.log("WAAATT");
+        }
       }
     }
-    return { formData, policies, pending, onSubmit };
+    return { formData, dirtyFieldValidator, policies, pending, onSubmit };
   },
 };
 </script>

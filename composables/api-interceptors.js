@@ -5,6 +5,7 @@ export const interceptors = () => {
     const authStore = useAuthStore();
     return {
         baseURL: config.public.api_base_url,
+        server: false,
         onRequest({ request, options }) {
             // Set the request headers
             options.headers = options.headers || {}
@@ -20,6 +21,7 @@ export const interceptors = () => {
             return response._data
         },
         onResponseError({ request, response, options }) {
+            console.log(request, response, options)
             // Handle the response errors
         }
     }

@@ -3,13 +3,13 @@ export default () => ({
         return useFetch('/role', { method: 'POST', body: data, ...interceptors() });
     },
     getAllRoles() {
-        return useFetch(() => '/role', { method: 'GET', ...interceptors() });
+        return useLazyFetch(() => '/role', { method: 'GET', ...interceptors() });
     },
     getRoles(params, watch) {
         return useFetch(() => '/role', { method: 'GET', params, ...interceptors(), watch });
     },
     getRoleDetails(id) {
-        return useLazyFetch(`/role/${id}`, { method: 'GET', server: false, ...interceptors() });
+        return useLazyFetch(`/role/${id}`, { method: 'GET', ...interceptors() });
     },
     updateRole(id, data) {
         return useFetch(`/role/${id}`, { method: 'PATCH', body: data, ...interceptors() });

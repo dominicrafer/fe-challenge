@@ -6,7 +6,6 @@
         :isLoading="pending"
         :policyDetails="policyDetails"
         :submitHandler="submitHandler"
-        :key="pending"
         edit
       />
     </div>
@@ -37,11 +36,11 @@ export default {
     );
     watch(
       policies,
-      (newPolicies) => {
-        policyDetails.policy = newPolicies.resource.policy;
-        policyDetails.description = newPolicies.resource.description;
+      (policy) => {
+        policyDetails.policy = policy.resource.policy;
+        policyDetails.description = policy.resource.description;
         policyDetails.actions = $_.map(
-          newPolicies.resource.actions,
+          policy.resource.actions,
           (actionDetails) => {
             return {
               label: actionDetails.action,

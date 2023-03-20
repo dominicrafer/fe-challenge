@@ -8,7 +8,7 @@ export default () => ({
     return useFetch(() => '/policy', { method: 'GET', params, ...interceptors(), watch });
   },
   getAllPolicies() {
-    return useFetch(() => '/policy/policy-action:all', { method: 'GET', ...interceptors() });
+    return useLazyFetch(() => '/policy/policy-action:all', { method: 'GET', ...interceptors() });
   },
   getPolicyDetails(id) {
     return useLazyFetch(`/policy/${id}`, { method: 'GET', ...interceptors() });

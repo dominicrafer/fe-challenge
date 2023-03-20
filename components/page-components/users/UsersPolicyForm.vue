@@ -1,7 +1,11 @@
 <template>
   <div class="policy">
     <Container :loading="isLoading" padding="p-0" width="w-1/2">
-      <VForm @submit="onSubmit" v-slot="{ isSubmitting }">
+      <VForm
+        @submit="onSubmit"
+        v-slot="{ isSubmitting }"
+        :initialValues="roleDetails"
+      >
         <SectionTitle title="Policy Details" class="rounded-t-sm" />
         <div class="policy__form">
           <InputField
@@ -11,7 +15,7 @@
             v-model:modelValue="formData.policy"
             v-model:isDirty="dirtyFieldValidator.policy"
             :disabled="edit"
-            rules="required|alpha_number"
+            rules="required"
           >
             <template #label> Name </template>
           </InputField>
@@ -106,7 +110,7 @@ export default {
       description: false,
       actions: false,
     });
-    const formData = reactive(props.policyDetails);
+    const formData = reactive($_.cloneDeep(props.policyDetails));
     async function onSubmit(values) {
       if (props.edit) {
         let payload = {};

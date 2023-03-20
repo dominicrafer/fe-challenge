@@ -37,10 +37,17 @@ export default {
       required: false,
     },
   },
-  setup(props) {
-    const { value } = useField(props.name, undefined, {
+  setup(props, { emit }) {
+    const { value, meta } = useField(props.name, undefined, {
       initialValue: props.modelValue,
     });
+    watch(
+      meta,
+      (meta) => {
+        emit("update:isDirty", meta.dirty);
+      },
+      { deep: true }
+    );
     return { value };
   },
   components: {
