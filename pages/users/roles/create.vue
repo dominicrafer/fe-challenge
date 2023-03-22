@@ -25,13 +25,16 @@ export default {
   setup(props) {
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      await $api.roles.createRole(data).then(() => {
-        const router = useRouter();
-        router.push("/users/roles");
-        $toast.success("Policy successfully created.");
-      }).catch(() => {
-        console.log('err')
-      });
+      try {
+        await $api.roles.createRole(data).then((response) => {
+          console.log(response);
+          const router = useRouter();
+          router.push("/users/roles");
+          $toast.success("Policy successfully created.");
+        });
+      } catch (error) {
+        console.log(error)
+      }
     }
     return { submitHandler };
   },

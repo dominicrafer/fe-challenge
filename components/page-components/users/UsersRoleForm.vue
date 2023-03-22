@@ -1,11 +1,6 @@
 <template>
   <div class="role">
-    <Container
-      :loading="pending"
-      padding="p-0"
-      width="w-1/2"
-      :key="pending || isLoading"
-    >
+    <Container :loading="pending" padding="p-0" width="w-1/2">
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
@@ -92,7 +87,7 @@ export default {
       required: true,
     },
   },
-  async setup(props) {
+  setup(props) {
     const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.roleDetails);
 
@@ -101,7 +96,7 @@ export default {
       description: false,
       policies: false,
     });
-    const { data: policies, pending } = await $api.policies.getAllPolicies();
+    const { data: policies, pending } = $api.policies.getAllPolicies();
 
     async function onSubmit(values) {
       if (props.edit) {
@@ -113,13 +108,9 @@ export default {
             payload[key] = values[key];
           }
         });
-        // await props.submitHandler(payload);
+        await props.submitHandler(payload);
       } else {
-        try {
-          await props.submitHandler(values);
-        } catch (error) {
-          console.log("WAAATT");
-        }
+        props.submitHandler(values);
       }
     }
     return { formData, dirtyFieldValidator, policies, pending, onSubmit };
