@@ -11,6 +11,8 @@ export const useAuthStore = defineStore({
           email: null,
           contact: null,
           name: null,
+          modules: [],
+          policies: [],
         },
         token: null,
         tokenExpiration: null,
@@ -19,19 +21,26 @@ export const useAuthStore = defineStore({
   },
   actions: {
     async login(email, password) {
-      const { $auth } = useNuxtApp();
+      const { $auth, $api } = useNuxtApp();
       const response = await $auth.signIn(email, password);
       if (response && !response.challengeName) {
-        this.isAuthenticated = true;
-        this.auth = {
-          userDetails: {
-            email: response.attributes.email,
-            contact: response.attributes.phone_number,
-            name: 'Test User',
-          },
-          token: response.signInUserSession.idToken.jwtToken,
-          tokenExpiration: response.signInUserSession.idToken.payload.exp,
-        };
+        this.auth.token = response.signInUserSession.idToken.jwtToken;
+        this.auth.tokenExpiration = response.signInUserSession.idToken.payload.exp;
+        await $api.roles.getCurrentUserRole().then((auth) => {
+          this.isAuthenticated = true;
+          this.auth = {
+            ...this.auth,
+            userDetails: {
+              email: response.attributes.email,
+              contact: response.attributes.phone_number,
+              name: response.attributes.name,
+              modules: auth.data.value.resource.modules,
+              policies: auth.data.value.resource.policies,
+            },
+
+          };
+        })
+
       }
       return response;
     },
@@ -44,17 +53,24 @@ export const useAuthStore = defineStore({
     },
     async load() {
       try {
-        const { $auth } = useNuxtApp();
-        const response = await $auth.currentAuthenticatedUser();
-        this.auth = {
-          userDetails: {
-            email: response.attributes.email,
-            phone_number: response.attributes.phone_number,
-            name: response.attributes.name,
-          },
-          token: response.signInUserSession.idToken.jwtToken,
-          tokenExpiration: response.signInUserSession.idToken.payload.exp,
-        };
+        const { $auth, $api } = useNuxtApp();
+        await $auth.currentAuthenticatedUser().then(async (auth) => {
+          this.auth.token = auth.signInUserSession.idToken.jwtToken;
+          this.auth.tokenExpiration = auth.signInUserSession.idToken.payload.exp;
+          await $api.roles.getCurrentUserRole().then((role) => {
+            this.isAuthenticated = true;
+            this.auth = {
+              ...this.auth,
+              userDetails: {
+                email: auth.attributes.email,
+                contact: auth.attributes.phone_number,
+                name: auth.attributes.name,
+                modules: role.data.value.resource.modules,
+                policies: role.data.value.resource.policies,
+              },
+            };
+          })
+        });
       } catch (error) {
         this.auth = {
           userDetails: {
@@ -84,10 +100,20 @@ export const useAuthStore = defineStore({
       try {
         const cognitoUser = await $auth.currentAuthenticatedUser();
         const currentSession = await $auth.currentSession();
+        await $api.roles.getCurrentUserRole().then((role) => {
+          this.auth = {
+            ...this.auth,
+            userDetails: {
+              ...this.auth.userDetails,
+              modules: role.data.value.resource.modules,
+              policies: role.data.value.resource.policies,
+            },
+          };
+        })
         cognitoUser.refreshSession(
           currentSession.refreshToken,
           (err, session) => {
-            console.log(session , 'refresh')
+            console.log(session, 'refresh')
             this.auth = {
               ...this.auth,
               token: session.idToken.jwtToken,

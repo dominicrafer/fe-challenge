@@ -119,13 +119,13 @@ export default {
       {
         name: "Users",
         icon: "mdi:account-multiple-outline",
-        permission: "users",
+        permission: "Userlist",
         submenus: [
           {
             name: "Users",
             path: "/users",
             icon: "mdi:account-multiple-outline",
-            permission: "users",
+            permission: "UserList",
           },
           {
             name: "Roles",

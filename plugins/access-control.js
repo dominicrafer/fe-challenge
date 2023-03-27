@@ -1,6 +1,9 @@
+import { useAuthStore } from '@/store/auth';
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive("has", (el, binding, vnode) => {
-    const { $_, $toast } = useNuxtApp();
+    const myModules = useAuthStore().auth.userDetails.modules
+    const myPolicies = useAuthStore().auth.userDetails.policies
+    const { $_, $toast, } = useNuxtApp();
     const mapper = permissionsMapper();
     if (binding.arg === "module-permission") {
       if (!hasModulePermission()) {
@@ -28,27 +31,24 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     function hasActionPermission() {
-      const myPermissions = ["users:create", "users:view", "users:delete"];
+      if ($_.includes(myPolicies, '*:*')) {
+        return true;
+      }
       let allPermissions = {};
       $_.forEach(mapper, (permissions) => {
         $_.forEach(permissions, (value, key) => {
           allPermissions[key] = value;
         });
       });
-      return $_.includes(myPermissions, allPermissions[binding.value]);
+
+      return $_.includes(myPolicies, allPermissions[binding.value]);
     }
     function hasModulePermission() {
-      const myModulePermissions = [
-        "users",
-        "users-list",
-        "users-roles",
-        "users-policies",
-        // "campaigns",
-        // "partners",
-        // "transactions",
-      ];
-
-      return $_.includes(myModulePermissions, binding.value);
+      console.log(myModules, 'myModules', binding.value)
+      if ($_.includes(myModules, 'All')) {
+        return true;
+      }
+      return $_.includes(myModules, binding.value);
     }
   });
 });

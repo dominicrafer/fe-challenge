@@ -1,6 +1,7 @@
 import Branches from '@/api/branches';
 import Policies from '@/api/policies';
 import Roles from '@/api/roles';
+import Users from '@/api/users';
 
 
 export default defineNuxtPlugin(() => {
@@ -8,6 +9,7 @@ export default defineNuxtPlugin(() => {
         branches: Branches(),
         policies: Policies(),
         roles: Roles(),
+        users: Users(),
     };
     return {
         provide: {

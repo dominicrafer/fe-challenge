@@ -16,24 +16,17 @@
     </PageHeader>
     <div class="page__body">
       <Table
-        module="users"
-        :tabs="tabs"
-        @changeTab="changeTab"
-        :activeTab="activeTab"
-        :loading="isLoading"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
-          () => {
-            showSortDrawer = !showSortDrawer;
-          }
+        :loading="pending"
+        :pages="
+          Math.round(
+            data?.resource?.pagination.total_count / pagination.page_size
+          )
         "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
+        @paginate="paginate"
+        @search="searchUsers"
+        :filterable="false"
+        :exportable="false"
+        :sortable="false"
       >
         <template #table-data>
           <table class="table__data">
@@ -48,18 +41,21 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(user, index) in data" :key="index">
-                <td align="left">Name</td>
-                <td align="left">Email</td>
-                <td align="left">Mobile Number</td>
-                <td align="left">Role</td>
-                <td align="left">Status</td>
+              <tr
+                v-for="(userDetails, index) in data?.resource?.data"
+                :key="index"
+              >
+                <td align="left">{{ userDetails.name }}</td>
+                <td align="left">{{ userDetails.email }}</td>
+                <td align="left">{{ userDetails.phone_number }}</td>
+                <td align="left">{{ userDetails.role }}</td>
+                <td align="left">{{ userDetails.status }}</td>
                 <td align="center">
                   <div class="table__data-actions">
                     <router-link
                       :to="{
                         name: 'users-id',
-                        params: { id: user.id },
+                        params: { id: userDetails.cognito_id },
                       }"
                     >
                       <Icon
@@ -84,22 +80,6 @@
         </template>
       </Table>
     </div>
-    <UsersFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <UsersSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
   </div>
 </template>
 
@@ -108,73 +88,56 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  setup(props, { emit }) {
-    const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-      tabs = [
-        {
-          label: "active",
-        },
-        {
-          label: "inactive",
-        },
-        {
-          label: "deleted",
-        },
-      ],
-      activeTab = ref("active"),
-      isLoading = ref(false),
-      showFilterDrawer = ref(false),
-      showSortDrawer = ref(false),
-      queryStringParameters = reactive({
-        search: "",
-        filters: "",
-        sorts: "",
-        page: 1,
-        page_size: 10,
-      });
+  setup() {
+    const { $api, $_ } = useNuxtApp();
+    // PAGINATION
+    let pagination = reactive({
+      page: 1,
+      page_size: 10,
+      return_count: true,
+    });
+    const { data, pending, refresh } = $api.users.getUsers(pagination, [
+      pagination.page,
+    ]);
+    function paginate(page) {
+      pagination.page = page;
+    }
 
-    function paginateAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        page: event,
-      };
-      console.log("paginate", queryStringParameters.value);
+    // PAGINATION
+
+    // DELETE POLICY
+    const deleteConfirmationModalVisible = ref(false);
+    const selectedRole = ref(null);
+    function deleteRole(id) {
+      selectedRole.value = id;
+      deleteConfirmationModalVisible.value = true;
     }
-    function changeTab(event) {
-      activeTab.value = event;
+
+    async function confirmDelete() {
+      pending.value = true;
+      await $api.roles.deleteRole(selectedRole.value);
+      refresh();
     }
-    function searchAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        search: event,
-      };
-      console.log("search", queryStringParameters.value);
+    // DELETE POLICY
+
+    // SEARCH USER
+    async function searchUsers(search) {
+      pending.value = true;
+      await $api.users.searchUsers({ like_value: search });
+      pending.value = false;
     }
-    function exportAction(event) {
-      console.log("export", event);
-    }
+    // SEARCH USER
 
     return {
       data,
-      tabs,
-      activeTab,
-      isLoading,
-      showFilterDrawer,
-      showSortDrawer,
-      paginateAction,
-      changeTab,
-      searchAction,
-      exportAction,
+      pending,
+      selectedRole,
+      deleteRole,
+      deleteConfirmationModalVisible,
+      confirmDelete,
+      pagination,
+      paginate,
+      searchUsers,
     };
   },
 };

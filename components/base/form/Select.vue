@@ -6,7 +6,9 @@
       class="select__label"
       ref="label"
       :class="
-        selected?.length || $refs.name?.search || showOptions ? 'float' : null
+        selected?.length || $refs.name?.search || selected || showOptions
+          ? 'float'
+          : null
       "
     >
       <slot name="label"></slot>
@@ -29,6 +31,7 @@
       :hide-selected="hideSelected"
       :searchable="searchable"
       :multiple="multiple"
+      :show-labels="false"
       @tag="addTag"
       :taggable="taggable"
       :placeholder="null"

@@ -1,10 +1,10 @@
 <template>
   <div class="policy">
-    <Container :loading="isLoading" padding="p-0" width="w-1/2">
+    <Container :loading="isLoading" padding="p-0" width="w-1/2" :key="isLoading && pending">
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
-        :initialValues="roleDetails"
+        :initialValues="policyDetails"
       >
         <SectionTitle title="Policy Details" class="rounded-t-sm" />
         <div class="policy__form">
@@ -110,7 +110,7 @@ export default {
       description: false,
       actions: false,
     });
-    const formData = reactive($_.cloneDeep(props.policyDetails));
+    const formData = reactive(props.policyDetails);
     async function onSubmit(values) {
       if (props.edit) {
         let payload = {};

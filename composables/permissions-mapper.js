@@ -1,5 +1,15 @@
 export default function () {
+  // POLICY MAPPER
+  // note: case sensitive
+  // (Module): {
+    //policy-mapped-value: policy-value-on-backend
+  // }
   return {
+    Userlist: {
+      userList: "users:view",
+      usersDelete: "users:delete",
+      usersExport: "users:export",
+    },
     users: {
       usersView: "users:view",
       usersDelete: "users:delete",
@@ -11,21 +21,6 @@ export default function () {
       usersRolesDelete: "users-roles:delete",
     },
     "users-policies": {
-      usersPoliciesView: "users-policies:view",
-      usersPoliciesExport: "users-policies:export",
-      usersPoliciesDelete: "users-policies:delete",
-    },
-    "campaigns": {
-      usersPoliciesView: "users-policies:view",
-      usersPoliciesExport: "users-policies:export",
-      usersPoliciesDelete: "users-policies:delete",
-    },
-    "partners": {
-      usersPoliciesView: "users-policies:view",
-      usersPoliciesExport: "users-policies:export",
-      usersPoliciesDelete: "users-policies:delete",
-    },
-    "transactions": {
       usersPoliciesView: "users-policies:view",
       usersPoliciesExport: "users-policies:export",
       usersPoliciesDelete: "users-policies:delete",

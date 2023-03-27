@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users/roles" title="Roles" />
+    <PageHeader backRoute="/users/roles" title="Edit Role" />
     <div class="page__body">
       <UsersRoleForm
         :roleDetails="roleDetails"
@@ -17,31 +17,26 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
   async setup(props) {
-    const { $api } = useNuxtApp();
+    const { $api, $_ } = useNuxtApp();
     const route = useRoute();
-    const roleDetails = reactive({
+    let roleDetails = {
       role: null,
       description: null,
       policies: [],
-    });
-    const { data: roles, pending } = await $api.roles.getRoleDetails(
-      route.params.id
+    };
+    const { data, pending } = $api.roles.getRoleDetails(
+      route.params.id,
+      roleDetails
     );
     watch(
-      roles,
-      (role) => {
-        roleDetails.role = role.resource.role;
-        roleDetails.description = role.resource.description;
-        roleDetails.policies = role.resource.policies;
-      },
-      { deep: true }
+      () => data.value,
+      (policies) => {
+        console.log(policies, 'policies')
+        roleDetails.role = policies.resource?.role;
+        roleDetails.description = policies.resource?.description;
+        roleDetails.policies = policies.resource?.policies;
+      }
     );
 
     async function submitHandler(data) {

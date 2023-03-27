@@ -91,11 +91,11 @@ export default {
   }
 
   &.danger {
-    @apply bg-red-600 text-white;
+    @apply bg-paprika text-white;
   }
 
   &.danger-outline {
-    @apply bg-white text-red-600 border border-red-600;
+    @apply bg-white text-paprika border border-paprika;
   }
 
   &.warning {

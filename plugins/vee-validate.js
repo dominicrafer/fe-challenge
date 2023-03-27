@@ -11,17 +11,25 @@ export default defineNuxtPlugin((nuxtApp) => {
       defineRule(rule, AllRules[rule]);
     });
 
+
+  defineRule('phone_number', value => {
+    if (!/^(09|\+639)\d{9}$/.test(value)) {
+      return 'This field must be a valid phone_number';
+    }
+    return true;
+  });
+
   // Customize global validation rules error message
   configure({
     generateMessage: (context) => {
-      console.log(context)
-      const {$_} = useNuxtApp()
+      const { $_ } = useNuxtApp()
       switch (context.rule.name) {
-        // case "digits":
-          // return "Custom Message";
-          // break;
+        case "email":
+          return "This field must be a valid email";
+        case "min":
+        return `${$_.startCase(context.field)} must be atleast ${context.rule.params[0]} characters`;
         default:
-          return `${$_.startCase(context.field)} is ${context.rule.name}`;
+          return `${$_.startCase(context.field)} is invalid`;
       }
     },
   });
