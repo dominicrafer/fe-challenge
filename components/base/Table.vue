@@ -31,7 +31,7 @@
           <div class="header__right-panel">
             <Button
               v-if="exportable"
-              v-has:action-permission="exportPermission"
+              v-has:[module]:action-permission="exportPermission"
               @click="$emit('export')"
               variant="warning"
             >

@@ -6,6 +6,7 @@
           :to="{
             path: '/users/roles/create',
           }"
+          v-has:users.action-permission="`roles:write`"
         >
           <Button variant="success">Create</Button>
         </router-link>
@@ -45,6 +46,7 @@
                       }"
                     >
                       <Icon
+                        v-has:users.action-permission="`roles:read`"
                         width="20"
                         height="20"
                         style="color: #29335c"
@@ -53,6 +55,7 @@
                     </router-link>
                     <div>
                       <Icon
+                        v-has:users.action-permission="`roles:delete`"
                         width="20"
                         height="20"
                         color="#E45959"

@@ -5,13 +5,14 @@
         <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
       </template> -->
       <template #right-panel>
-        <router-link
+        <NuxtLink
           :to="{
             path: '/users/create',
           }"
+          v-has:users.action-permission="`users:write`"
         >
-          <Button variant="success">Create</Button>
-        </router-link>
+          <Button variant="success" type="button"> Create </Button>
+        </NuxtLink>
       </template>
     </PageHeader>
     <div class="page__body">
@@ -57,6 +58,7 @@
                         name: 'users-id',
                         params: { id: userDetails.cognito_id },
                       }"
+                      v-has:users.action-permission="`users:read`"
                     >
                       <Icon
                         width="20"
@@ -67,9 +69,12 @@
                     </router-link>
                     <div>
                       <Icon
+                        v-has:users.action-permission="`users:delete`"
                         width="20"
                         height="20"
+                        color="#E45959"
                         name="material-symbols:delete-outline"
+                        @click="deleteUser(userDetails.cognito_id)"
                       />
                     </div>
                   </div>
@@ -80,6 +85,18 @@
         </template>
       </Table>
     </div>
+    <ConfirmationModal
+      :show="deleteConfirmationModalVisible"
+      title="Delete User"
+      type="danger"
+      confirmText="Delete"
+      @close="deleteConfirmationModalVisible = false"
+      @confirm="confirmDelete"
+    >
+      <template #message
+        >Are you sure you want to continue? This cannot be undone.</template
+      >
+    </ConfirmationModal>
   </div>
 </template>
 
@@ -88,6 +105,12 @@ definePageMeta({
   layout: "default",
 });
 export default {
+  props: {
+    module: {
+      type: String,
+      default: "users",
+    },
+  },
   setup() {
     const { $api, $_ } = useNuxtApp();
     // PAGINATION
@@ -107,15 +130,15 @@ export default {
 
     // DELETE POLICY
     const deleteConfirmationModalVisible = ref(false);
-    const selectedRole = ref(null);
-    function deleteRole(id) {
-      selectedRole.value = id;
+    const selectedUser = ref(null);
+    function deleteUser(id) {
+      selectedUser.value = id;
       deleteConfirmationModalVisible.value = true;
     }
 
     async function confirmDelete() {
       pending.value = true;
-      await $api.roles.deleteRole(selectedRole.value);
+      await $api.users.deleteUser(selectedUser.value);
       refresh();
     }
     // DELETE POLICY
@@ -131,8 +154,8 @@ export default {
     return {
       data,
       pending,
-      selectedRole,
-      deleteRole,
+      selectedUser,
+      deleteUser,
       deleteConfirmationModalVisible,
       confirmDelete,
       pagination,

@@ -21,3 +21,6 @@
 .multiselect__content-wrapper {
     z-index: 51 !important;
 }
+.multiselect__content {
+    z-index: 51 !important;
+}

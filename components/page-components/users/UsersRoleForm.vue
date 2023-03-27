@@ -1,11 +1,15 @@
 <template>
   <div class="role">
-    <Container :loading="isLoading" padding="p-0" width="w-1/2" :key="String(pending && isLoading)">
+    <Container
+      :loading="isLoading"
+      padding="p-0"
+      width="w-1/2"
+      :key="String(pending && isLoading)"
+    >
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
         :initialValues="roleDetails"
-        
       >
         <SectionTitle title="Role Details" class="rounded-t-sm" />
         <div class="role__form">
@@ -13,6 +17,7 @@
             class="w-1/2"
             name="role"
             placeholder="Enter Text"
+            rules="alpha_dash"
             v-model="formData.role"
             v-model:isDirty="dirtyFieldValidator.role"
           >
@@ -53,13 +58,20 @@
                 :id="policyActionDetails.slug"
                 :inputValue="policyActionDetails.slug"
                 :label="$_.startCase(policyActionDetails.action)"
-                @change="selectPolicy"
+                @change="
+                  ($event) =>
+                    selectPolicy($event, policyDetails, policyActionDetails)
+                "
                 name="policies"
                 v-model="formData.policies"
                 v-model:isDirty="dirtyFieldValidator.policies"
-                v-for="(
-                  policyActionDetails, actionIndex
-                ) in policyDetails.policies"
+                v-for="(policyActionDetails, actionIndex) in [
+                  ...policyDetails.policies,
+                  {
+                    slug: `${$_.toLower(policyDetails.policy_group_name)}:*`,
+                    action: 'All',
+                  },
+                ]"
                 :key="actionIndex"
               />
             </div>
@@ -129,9 +141,8 @@ export default {
       },
       { deep: true }
     );
-    function mapToFormData() {
-      console.log(props.roleDetails.policies, "props.roleDetails.policies");
-      if ($_.includes(props.roleDetails.policies, "*:*")) {
+    function mapToFormData(roleDetails) {
+      if ($_.includes(roleDetails.policies, "*:*")) {
         let allPolicies = ["*:*"];
         $_.forEach(policies.value.resource, (policyGroup) => {
           $_.forEach(policyGroup.policies, (action) => {
@@ -139,28 +150,70 @@ export default {
           });
         });
         formData.policies = allPolicies;
+      } else {
+        $_.forEach(roleDetails.policies, (slug) => {
+          const action = $_.split(slug, ":");
+          if (action[1] === "*") {
+            const policyGroup = $_.find(policies.value.resource, {
+              policy_group_name: $_.startCase(action[0]),
+            });
+            formData.policies = [
+              ...formData.policies,
+              ...$_.map(policyGroup.policies, "slug"),
+            ];
+          }
+        });
       }
     }
-    // watch(
-    //   formData,
-    //   (form) => {
-    //     if ($_.includes(form.policies, '*:*')) {
-    //       console.log('select all')
-    //       selectAllPolicies();
-    //     }
-    //   },
-    //   { deep: true }
-    // );
-    function selectPolicy(e) {
-      console.log(e);
-      if (!e.target.checked && $_.includes(formData.policies, "*:*")) {
-        formData.policies = $_.pull(formData.policies, "*:*");
+
+    // Select policy behaviour
+    function selectPolicy(e, policyGroup, policyActionDetails) {
+      const action = $_.split(policyActionDetails.slug, ":");
+      if (e.target.checked) {
+        // if All Module's Policy is selected
+        if (action[1] === "*") {
+          formData.policies = $_.uniq([
+            ...formData.policies,
+            ...$_.map(policyGroup.policies, "slug"),
+          ]);
+        }
+        // if all module's policy is selected, automatically tick 'All' checkbox
+        if (
+          !$_.difference(
+            $_.map(policyGroup.policies, "slug"),
+            $_.pull(
+              formData.policies,
+              `${$_.toLower(policyGroup.policy_group_name)}:*`
+            )
+          ).length
+        ) {
+          formData.policies.push(
+            `${$_.toLower(policyGroup.policy_group_name)}:*`
+          );
+        }
+      } else {
+        // if All Module's Policy is unselected
+        if (action[1] === "*") {
+          formData.policies = $_.difference(
+            formData.policies,
+            $_.map(policyGroup.policies, "slug")
+          );
+        }
+        formData.policies = $_.pull(
+          formData.policies,
+          `${$_.toLower(policyGroup.policy_group_name)}:*`
+        );
+        // if All Policy is unselected
+        if ($_.includes(formData.policies, "*:*")) {
+          formData.policies = $_.pull(formData.policies, "*:*");
+        }
       }
     }
     function selectAllPolicies(e) {
       if (e.target.checked) {
         let allPolicies = [];
         $_.forEach(policies.value.resource, (policyGroup) => {
+          allPolicies.push(`${$_.toLower(policyGroup.policy_group_name)}:*`);
           $_.forEach(policyGroup.policies, (action) => {
             allPolicies.push(action.slug);
           });
@@ -177,18 +230,31 @@ export default {
 
         $_.forEach(dirtyFieldValidator, (isDirty, key) => {
           if (isDirty) {
-            payload[key] = values[key];
+            payload[key] =
+              key === "policies" ? filterPolicies(values[key]) : values[key];
           }
         });
-        await props.submitHandler(
-          parsePayload({
-            ...payload,
-            policies: values.policies,
-          })
-        );
+        await props.submitHandler(parsePayload(payload));
       } else {
         props.submitHandler(parsePayload(values));
       }
+    }
+
+    function filterPolicies(policies) {
+      const modulesWithAllPolicySelected = $_.filter(policies, (policy) => {
+        const action = $_.split(policy, ":");
+        return action[0] !== "*" && action[1] === "*";
+      });
+      let filteredPolicies = policies;
+      $_.forEach(modulesWithAllPolicySelected, (policy) => {
+        const action = $_.split(policy, ":");
+
+        filteredPolicies = $_.filter(
+          filteredPolicies,
+          (slug) => !$_.includes(slug, `${action[0]}:`)
+        );
+      });
+      return [...filteredPolicies, ...modulesWithAllPolicySelected];
     }
     function parsePayload(payload) {
       let parsedPayload = {
@@ -225,7 +291,7 @@ export default {
         @apply font-bold;
       }
       .policy__actions {
-        @apply flex gap-10;
+        @apply flex gap-10  flex-wrap;
       }
     }
 

@@ -139,7 +139,7 @@ export default {
 
 <style lang="postcss" scoped>
 .select {
-  @apply inline-flex flex-col gap-[4px] relative;
+  @apply inline-flex flex-col gap-[4px] relative z-[52];
 
   &__label-height-placeholder {
     @apply h-[20px] w-full;

@@ -40,11 +40,7 @@ export default {
   setup(props, { emit }) {
     const { value, meta, handleChange } = useField(props.name, undefined, {
       type: "checkbox",
-      // checkedValue: props.inputValue,
-      // uncheckedValue: [],
       initialValue: props.modelValue,
-      // valueProp: props.inputValue,
-      // syncVModel: false,
     });
     function updateValue(e) {
       handleChange(e.target.value);
