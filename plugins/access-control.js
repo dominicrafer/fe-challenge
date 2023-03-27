@@ -39,6 +39,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
     function hasModulePermission() {
       const myModulePermissions = [
+        "businesses",
+        "banks",
         "users",
         "users-list",
         "users-roles",

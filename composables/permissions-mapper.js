@@ -20,15 +20,5 @@ export default function () {
       usersPoliciesExport: "users-policies:export",
       usersPoliciesDelete: "users-policies:delete",
     },
-    "partners": {
-      usersPoliciesView: "users-policies:view",
-      usersPoliciesExport: "users-policies:export",
-      usersPoliciesDelete: "users-policies:delete",
-    },
-    "transactions": {
-      usersPoliciesView: "users-policies:view",
-      usersPoliciesExport: "users-policies:export",
-      usersPoliciesDelete: "users-policies:delete",
-    },
   };
 }

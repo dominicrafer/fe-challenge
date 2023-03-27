@@ -12,6 +12,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     // }
   })
   nuxtApp.vueApp.config.errorHandler = (..._args) => {
+    console.log(..._args)
     console.log('global error handler')
     // if (process.client) {
     //   console.log(..._args)

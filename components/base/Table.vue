@@ -1,5 +1,5 @@
 <template>
-  <Container :loading="loading" >
+  <Container :loading="loading">
     <div class="table">
       <div class="table__content">
         <div class="content__tabs" v-if="tabs">
@@ -9,72 +9,96 @@
             @changeTab="(tab) => $emit('changeTab', tab)"
           />
         </div>
-        <template v-if="exportable || sortable || searchable || filterable || $slots['header-right-panel']">
-        <div class="content__header" >
-          <div class="header__left-panel">
-            <form
-              v-if="searchable"
-              @submit.prevent="$emit('search', searchValue)"
-            >
-              <InputField
-                class="left-panel__search"
-                v-model="searchValue"
-                name="search"
-                placeholder="Search by name here..."
+        <template
+          v-if="
+            exportable ||
+            sortable ||
+            searchable ||
+            filterable ||
+            $slots['header-right-panel']
+          "
+        >
+          <div class="content__header">
+            <div class="header__left-panel">
+              <form
+                v-if="searchable"
+                @submit.prevent="$emit('search', searchValue)"
               >
-                <template #icon>
-                  <Icon name="mdi:magnify" />
-                </template>
-              </InputField>
-            </form>
+                <InputField
+                  class="left-panel__search"
+                  v-model="searchValue"
+                  name="search"
+                  placeholder="Search by name here..."
+                >
+                  <template #icon>
+                    <Icon name="mdi:magnify" />
+                  </template>
+                </InputField>
+              </form>
+            </div>
+            <div class="header__right-panel">
+              <Button
+                v-if="exportable"
+                v-has:action-permission="exportPermission"
+                @click="$emit('export')"
+                variant="warning"
+              >
+                <template #icon-start>
+                  <Icon name="mdi:export" width="20" height="20" /> </template
+                >Export
+              </Button>
+              <Button v-if="sortable" @click="$emit('sort')" variant="warning">
+                <template #icon-start>
+                  <Icon name="mdi:sort" width="20" height="20" /> </template
+                >Sort By
+              </Button>
+              <Button
+                v-if="filterable"
+                @click="$emit('filter')"
+                variant="warning"
+              >
+                <template #icon-start>
+                  <Icon
+                    name="mdi:filter-cog-outline"
+                    width="20"
+                    height="20"
+                  /> </template
+                >Filter By
+              </Button>
+              <slot name="header-right-panel"></slot>
+            </div>
           </div>
-          <div class="header__right-panel">
-            <Button
-              v-if="exportable"
-              v-has:action-permission="exportPermission"
-              @click="$emit('export')"
-              variant="warning"
-            >
-              <template #icon-start>
-                <Icon name="mdi:export" width="20" height="20" /> </template
-              >Export
-            </Button>
-            <Button v-if="sortable" @click="$emit('sort')" variant="warning">
-              <template #icon-start>
-                <Icon name="mdi:sort" width="20" height="20" /> </template
-              >Sort By
-            </Button>
-            <Button
-              v-if="filterable"
-              @click="$emit('filter')"
-              variant="warning"
-            >
-              <template #icon-start>
-                <Icon
-                  name="mdi:filter-cog-outline"
-                  width="20"
-                  height="20"
-                /> </template
-              >Filter By
-            </Button>
-            <slot name="header-right-panel"></slot>
-          </div>
-        </div>
         </template>
         <div class="content__body">
           <slot name="table-data"></slot>
         </div>
         <div class="content__footer">
-          <v-pagination v-if="paginationType === 'default'"
+          <v-pagination
+            v-if="paginationType === 'default'"
             v-model="page"
             :pages="pages"
             :range-size="1"
             @update:modelValue="$emit('paginate', page)"
           />
 
-          <div class="footer__pagination-ddb" v-if="paginationType === 'dynamodb'" >
-            <Icon name='material-symbols:chevron-left-rounded' class="pagination-ddb__prev" width="24" height="24" @click="$emit('prevPage')"/>
-            <Icon name='material-symbols:chevron-right-rounded' class="pagination-ddb__next" width="24" height="24" @click="$emit('nextPage')"/>
+          <div
+            class="footer__pagination-ddb"
+            v-if="paginationType === 'dynamodb'"
+          >
+            <Icon
+              name="material-symbols:chevron-left-rounded"
+              class="pagination-ddb__prev"
+              width="24"
+              height="24"
+              @click="$emit('prevPage')"
+            />
+            <Icon
+              name="material-symbols:chevron-right-rounded"
+              class="pagination-ddb__next"
+              width="24"
+              height="24"
+              @click="$emit('nextPage')"
+            />
           </div>
         </div>
       </div>

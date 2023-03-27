@@ -6,7 +6,9 @@
       class="select__label"
       ref="label"
       :class="
-        selected?.length || $refs.name?.search || showOptions ? 'float' : null
+        selected || selected?.length || $refs.name?.search || showOptions
+          ? 'float'
+          : 'null'
       "
     >
       <slot name="label"></slot>
@@ -33,7 +35,8 @@
       :taggable="taggable"
       :placeholder="null"
       :tag-placeholder="tagPlaceholder"
-      @search-change="$emit('asyncSearch')"
+      @search-change="asyncSearch"
+      open-direction="bottom"
     >
       <!-- <slots name="drop-down"></slots> -->
     </VueMultiselect>
@@ -57,7 +60,7 @@ export default {
       type: String,
     },
     modelValue: {
-      type: [Object, String, Number, Array],
+      type: [Object, String, Number, Array, null],
       default: [],
     },
     placeholder: {
@@ -113,6 +116,9 @@ export default {
     function addTag(value) {
       emit("addTag", { label: value, value: $_.toLower(value) });
     }
+    function asyncSearch(value) {
+      emit("asyncSearch", value);
+    }
     watch(
       meta,
       (meta) => {
@@ -125,6 +131,7 @@ export default {
       meta,
       selected,
       addTag,
+      asyncSearch,
       showOptions,
     };
   },

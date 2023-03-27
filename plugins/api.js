@@ -1,11 +1,11 @@
-import Branches from '@/api/branches';
+import Businesses from '@/api/businesses';
 import Policies from '@/api/policies';
 import Roles from '@/api/roles';
 
 
 export default defineNuxtPlugin(() => {
     const api = {
-        branches: Branches(),
+        businesses: Businesses(),
         policies: Policies(),
         roles: Roles(),
     };

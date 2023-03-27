@@ -142,29 +142,23 @@ export default {
         ],
       },
       {
-        name: "Partners",
-        icon: "mdi:handshake-outline",
-        path: "/partners",
-        permission: "partners",
-        // submenus: [
-        //   {
-        //     name: "Partners",
-        //     path: "/partners",
-        //     icon: "mdi:account-multiple-outline",
-        //   },
-        // ],
-      },
-      {
-        name: "Campaigns",
-        icon: "mdi:calendar",
-        path: "/campaigns",
-        permission: "campaigns",
-      },
-      {
-        name: "Transactions",
-        icon: "mdi:swap-horizontal",
-        path: "transactions",
-        permission: "transactions",
+        name: "Businesses",
+        icon: "mdi:account-multiple-outline",
+        permission: "businesses",
+        submenus: [
+          {
+            name: "Businesses",
+            path: "/businesses",
+            icon: "mdi:account-multiple-outline",
+            permission: "businesses",
+          },
+          {
+            name: "Banks",
+            path: "/banks",
+            icon: "mdi:badge-account-horizontal-outline",
+            permission: "banks",
+          },
+        ],
       },
     ];
 
