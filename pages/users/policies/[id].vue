@@ -23,24 +23,26 @@ export default {
       default: false,
     },
   },
-  async setup(props) {
+  setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
-    const policyDetails = reactive({
+    let policyDetails = {
       policy: null,
       description: null,
       actions: [],
-    });
-    const { data: policies, pending } = await $api.policies.getPolicyDetails(
-      route.params.id
+    };
+    const { data, pending } = $api.policies.getPolicyDetails(
+      route.params.id,
+      policyDetails
     );
     watch(
-      policies,
+      data,
       (policy) => {
-        policyDetails.policy = policy.resource.policy;
-        policyDetails.description = policy.resource.description;
+        console.log(policy, "policy");
+        policyDetails.policy = policy.resource?.policy;
+        policyDetails.description = policy.resource?.description;
         policyDetails.actions = $_.map(
-          policy.resource.actions,
+          policy.resource?.actions,
           (actionDetails) => {
             return {
               label: actionDetails.action,
@@ -51,7 +53,6 @@ export default {
       },
       { deep: true }
     );
-
 
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();

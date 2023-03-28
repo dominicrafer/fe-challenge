@@ -25,7 +25,9 @@
           <router-link
             :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''"
             @click="selectMenu(menuDetails)"
-            v-has:module-permission="menuDetails.permission"
+            v-has:[menuDetails.permission]:module-permission="
+              menuDetails.permission
+            "
           >
             <div class="menu__details">
               <div class="details__content">
@@ -55,7 +57,9 @@
             :key="submenuIndex"
             class="menu__submenus"
             :class="isMenuActive(menuDetails) ? 'uncollapsed' : 'collapsed'"
-            v-has:module-permission="submenuDetails.permission"
+            v-has:[submenuDetails.permission].module-permission="
+              submenuDetails.permission
+            "
           >
             <router-link :to="submenuDetails.path">
               <div
@@ -119,25 +123,24 @@ export default {
       {
         name: "Users",
         icon: "mdi:account-multiple-outline",
-        permission: "users",
         submenus: [
           {
-            name: "Users",
+            name: "List",
             path: "/users",
             icon: "mdi:account-multiple-outline",
-            permission: "users",
+            permission: "Users",
           },
           {
             name: "Roles",
             path: "/users/roles",
             icon: "mdi:badge-account-horizontal-outline",
-            permission: "users-roles",
+            permission: "Roles",
           },
           {
             name: "Policies",
             path: "/users/policies",
             icon: "mdi:shield-account-variant-outline",
-            permission: "users-policies",
+            permission: "Policies",
           },
         ],
       },
@@ -195,17 +198,13 @@ export default {
     // Active menu checker
     function isMenuActive(menuDetails) {
       if ($_.has(menuDetails, "submenus")) {
-        return $_.some(menuDetails.submenus, { name: activeMenu.value });
+        return $_.some(menuDetails.submenus, { name: activeMenu.value }) || menuDetails.name === activeMenu.value;
       }
       return menuDetails.name === activeMenu.value;
     }
 
     // Select menu
     function selectMenu(menuDetails) {
-      if ($_.has(menuDetails, "submenus")) {
-        router.push(menuDetails.submenus[0].path);
-        return (activeMenu.value = menuDetails.submenus[0].name);
-      }
       return (activeMenu.value = menuDetails.name);
     }
 

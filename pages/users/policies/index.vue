@@ -6,6 +6,7 @@
           :to="{
             path: '/users/policies/create',
           }"
+          v-has:users.action-permission="`policies:write`"
         >
           <Button variant="success">Create</Button>
         </router-link>
@@ -43,10 +44,12 @@
                         name: 'users-policies-id',
                         params: { id: policyDetails.policy },
                       }"
+                      v-has:users.action-permission="`policies:read`"
                     >
                       <Icon width="20" height="20" name="mdi:eye-outline" />
                     </NuxtLink>
                     <Icon
+                      v-has:users.action-permission="`policies:delete`"
                       @click="deletePolicy(policyDetails.policy)"
                       width="20"
                       height="20"
@@ -86,7 +89,7 @@ export default {
     // PAGINATION
     let previousEvaluatedKey = ref([]);
     let nextEvaluatedKey = ref(null);
-    const { data, pending, refresh} = $api.policies.getPolicies(
+    const { data, pending, refresh } = $api.policies.getPolicies(
       {
         limit: 10,
         last_evaluated_sort_key: nextEvaluatedKey,
@@ -103,10 +106,10 @@ export default {
       previousEvaluatedKey.value.push(nextEvaluatedKey.value);
       nextEvaluatedKey.value = $_.last(data?.value?.resource?.policies).policy;
     }
-    // PAGINATION 
+    // PAGINATION
 
-    // DELETE POLICY 
-    const deleteConfirmationModalVisible = ref(false)
+    // DELETE POLICY
+    const deleteConfirmationModalVisible = ref(false);
     const selectedPolicy = ref(null);
     function deletePolicy(id) {
       selectedPolicy.value = id;
@@ -118,7 +121,7 @@ export default {
       await $api.policies.deletePolicy(selectedPolicy.value);
       refresh();
     }
-    // DELETE POLICY 
+    // DELETE POLICY
     return {
       data,
       pending,

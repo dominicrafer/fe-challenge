@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users" title="Roles">
+    <PageHeader backRoute="/users/roles" title="Create Role">
       <template #right-panel>
         <Button variant="success">Save</Button>
       </template>

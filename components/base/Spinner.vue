@@ -1,7 +1,9 @@
 <template>
   <div class="spinner-container">
-    <div class="spinner-container__spinner"
-      :class="[{ 'reverse-color': reverse }, size]"></div>
+    <div
+      class="spinner-container__spinner"
+      :class="[{ 'reverse-color': reverse }, size]"
+    ></div>
   </div>
 </template>
 
@@ -14,20 +16,21 @@ export default {
     },
     reverse: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  setup(props) { 
+  setup(props) {
     const sizeData = props.size;
     return {
-      sizeData
-    }
+      sizeData,
+    };
   },
 };
 </script>
 
 <style lang="postcss" scoped>
 .spinner-container {
+  @apply z-[52];
   &__spinner {
     @apply border-2 border-t-green-600 border-l-green-600 border-r-green-600 border-b-white;
     @apply ease-linear rounded-full;

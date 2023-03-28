@@ -2,9 +2,12 @@
   <div class="page">
     <PageHeader title="Roles">
       <template #right-panel>
-        <router-link :to="{
-          path: '/users/roles/create',
-        }">
+        <router-link
+          :to="{
+            path: '/users/roles/create',
+          }"
+          v-has:users.action-permission="`roles:write`"
+        >
           <Button variant="success">Create</Button>
         </router-link>
       </template>
@@ -27,15 +30,29 @@
                 <td align="left">{{ roleDetails.description }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link :to="{
-                      name: 'users-roles-id',
-                      params: { id: roleDetails.role },
-                    }">
-                      <Icon width="20" height="20" style="color: #29335c" name="material-symbols:preview" />
+                    <router-link
+                      :to="{
+                        name: 'users-roles-id',
+                        params: { id: roleDetails.role },
+                      }"
+                    >
+                      <Icon
+                        v-has:users.action-permission="`roles:read`"
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                      />
                     </router-link>
                     <div>
-                      <Icon width="20" height="20" color="#E45959" @click="deleteRole(roleDetails.role)"
-                        name="material-symbols:delete-outline" />
+                      <Icon
+                        v-has:users.action-permission="`roles:delete`"
+                        width="20"
+                        height="20"
+                        color="#E45959"
+                        @click="deleteRole(roleDetails.role)"
+                        name="material-symbols:delete-outline"
+                      />
                     </div>
                   </div>
                 </td>

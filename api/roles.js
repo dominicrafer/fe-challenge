@@ -2,14 +2,14 @@ export default () => ({
     createRole(data) {
         return useFetch('/role', { method: 'POST', body: data, ...interceptors() });
     },
-    getAllRoles() {
-        return useLazyFetch(() => '/role', { method: 'GET', ...interceptors() });
+    getCurrentUserRole() {
+        return useFetch(() => '/role/access-policy', { method: 'GET', ...interceptors() });
     },
     getRoles(params, watch) {
         return useFetch(() => '/role', { method: 'GET', params, ...interceptors(), watch });
     },
-    getRoleDetails(id) {
-        return useLazyFetch(`/role/${id}`, { method: 'GET', ...interceptors() });
+    getRoleDetails(id, defaultValue) {
+        return useFetch(`/role/${id}`, { method: 'GET', default: () => defaultValue, ...interceptors() });
     },
     updateRole(id, data) {
         return useFetch(`/role/${id}`, { method: 'PATCH', body: data, ...interceptors() });

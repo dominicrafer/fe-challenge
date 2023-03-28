@@ -6,9 +6,9 @@
       class="select__label"
       ref="label"
       :class="
-        selected || selected?.length || $refs.name?.search || showOptions
+        selected?.length || $refs.name?.search || selected || showOptions
           ? 'float'
-          : 'null'
+          : null
       "
     >
       <slot name="label"></slot>
@@ -31,6 +31,7 @@
       :hide-selected="hideSelected"
       :searchable="searchable"
       :multiple="multiple"
+      :show-labels="false"
       @tag="addTag"
       :taggable="taggable"
       :placeholder="null"
@@ -143,7 +144,7 @@ export default {
 
 <style lang="postcss" scoped>
 .select {
-  @apply inline-flex flex-col gap-[4px] relative;
+  @apply inline-flex flex-col gap-[4px] relative z-[52];
 
   &__label-height-placeholder {
     @apply h-[20px] w-full;

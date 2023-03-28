@@ -1,12 +1,8 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users" title="Users">
-      <template #right-panel>
-        <Button variant="success">Save</Button>
-      </template>
-    </PageHeader>
+    <PageHeader backRoute="/users" title="Users" />
     <div class="page__body">
-      <UsersForm />
+      <UsersForm :submitHandler="submitHandler" />
     </div>
   </div>
 </template>
@@ -22,7 +18,23 @@ export default {
       default: false,
     },
   },
-  setup(props) {},
+  setup(props) {
+    async function submitHandler(data) {
+      const { $api, $toast } = useNuxtApp();
+      try {
+        await $api.users.createUser(data).then((response) => {
+          const router = useRouter();
+          router.push("/users");
+          $toast.success("User successfully created.");
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    return {
+      submitHandler,
+    };
+  },
 };
 </script>
 

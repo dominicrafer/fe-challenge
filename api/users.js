@@ -1,0 +1,24 @@
+export default () => ({
+    createUser(data) {
+        return useFetch('/user', { method: 'POST', body: data, ...interceptors() });
+    },
+    searchUsers(params) {
+        console.log(params, 'PARAMS')
+        return useFetch('/user:search', { method: 'GET', query: params, ...interceptors() });
+    },
+    getAllUsers() {
+        return useLazyFetch(() => '/user', { method: 'GET', ...interceptors() });
+    },
+    getUsers(data, watch) {
+        return useLazyFetch(() => '/user/list', { method: 'POST', body: data, ...interceptors(), watch });
+    },
+    getUserDetails(id) {
+        return useFetch(`/user/${id}`, { method: 'GET', ...interceptors() });
+    },
+    updateUser(id, data) {
+        return useFetch(`/user/${id}`, { method: 'PATCH', body: data, ...interceptors() });
+    },
+    deleteUser(id) {
+        return useFetch(`/user/${id}`, { method: 'DELETE', ...interceptors() });
+    },
+})

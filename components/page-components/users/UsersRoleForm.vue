@@ -1,6 +1,11 @@
 <template>
   <div class="role">
-    <Container :loading="pending" padding="p-0" width="w-1/2">
+    <Container
+      :loading="isLoading"
+      padding="p-0"
+      width="w-1/2"
+      :key="String(pending && isLoading)"
+    >
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
@@ -12,6 +17,7 @@
             class="w-1/2"
             name="role"
             placeholder="Enter Text"
+            rules="alpha_dash"
             v-model="formData.role"
             v-model:isDirty="dirtyFieldValidator.role"
           >
@@ -27,7 +33,19 @@
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
         <div class="role__form">
+          <Spinner class="m-auto" v-if="pending" />
+          <div class="form__col"></div>
+          <Checkbox
+            v-if="!pending"
+            inputValue="*:*"
+            label="Select All"
+            id="actions"
+            name="policies"
+            @change="selectAllPolicies"
+            v-model="formData.policies"
+          />
           <div
+            v-show="!pending"
             class="form__policy"
             v-for="(policyDetails, index) in policies?.resource"
             :key="index"
@@ -40,21 +58,29 @@
                 :id="policyActionDetails.slug"
                 :inputValue="policyActionDetails.slug"
                 :label="$_.startCase(policyActionDetails.action)"
-                name="actions"
+                @change="
+                  ($event) =>
+                    selectPolicy($event, policyDetails, policyActionDetails)
+                "
+                name="policies"
                 v-model="formData.policies"
                 v-model:isDirty="dirtyFieldValidator.policies"
-                v-for="(
-                  policyActionDetails, actionIndex
-                ) in policyDetails.policies"
+                v-for="(policyActionDetails, actionIndex) in [
+                  ...policyDetails.policies,
+                  {
+                    slug: `${$_.toLower(policyDetails.policy_group_name)}:*`,
+                    action: 'All',
+                  },
+                ]"
                 :key="actionIndex"
               />
             </div>
           </div>
-        </div>
-        <div class="role__footer">
-          <Button variant="success" type="submit" :loading="isSubmitting"
-            >Save</Button
-          >
+          <div class="role__footer">
+            <Button variant="success" type="submit" :loading="isSubmitting"
+              >Save</Button
+            >
+          </div>
         </div>
       </VForm>
     </Container>
@@ -62,7 +88,9 @@
 </template>
 
 <script>
+import Button from "~~/components/base/form/Button.vue";
 export default {
+  components: { Button },
   props: {
     isLoading: {
       type: Boolean,
@@ -90,30 +118,163 @@ export default {
   setup(props) {
     const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.roleDetails);
-
     const dirtyFieldValidator = reactive({
       role: false,
       description: false,
       policies: false,
     });
-    const { data: policies, pending } = $api.policies.getAllPolicies();
+    const {
+      data: policies,
+      pending,
+      refresh,
+    } = $api.policies.getAllPolicies(!props.edit);
+    watch(
+      () => props.isLoading,
+      () => {
+        refresh();
+      }
+    );
+    watch(
+      policies,
+      () => {
+        mapToFormData(props.roleDetails);
+      },
+      { deep: true }
+    );
+    function mapToFormData(roleDetails) {
+      if ($_.includes(roleDetails.policies, "*:*")) {
+        let allPolicies = ["*:*"];
+        $_.forEach(policies.value.resource, (policyGroup) => {
+          $_.forEach(policyGroup.policies, (action) => {
+            allPolicies.push(action.slug);
+          });
+        });
+        formData.policies = allPolicies;
+      } else {
+        $_.forEach(roleDetails.policies, (slug) => {
+          const action = $_.split(slug, ":");
+          if (action[1] === "*") {
+            const policyGroup = $_.find(policies.value.resource, {
+              policy_group_name: $_.startCase(action[0]),
+            });
+            formData.policies = [
+              ...formData.policies,
+              ...$_.map(policyGroup.policies, "slug"),
+            ];
+          }
+        });
+      }
+    }
 
+    // Select policy behaviour
+    function selectPolicy(e, policyGroup, policyActionDetails) {
+      const action = $_.split(policyActionDetails.slug, ":");
+      if (e.target.checked) {
+        // if All Module's Policy is selected
+        if (action[1] === "*") {
+          formData.policies = $_.uniq([
+            ...formData.policies,
+            ...$_.map(policyGroup.policies, "slug"),
+          ]);
+        }
+        // if all module's policy is selected, automatically tick 'All' checkbox
+        if (
+          !$_.difference(
+            $_.map(policyGroup.policies, "slug"),
+            $_.pull(
+              formData.policies,
+              `${$_.toLower(policyGroup.policy_group_name)}:*`
+            )
+          ).length
+        ) {
+          formData.policies.push(
+            `${$_.toLower(policyGroup.policy_group_name)}:*`
+          );
+        }
+      } else {
+        // if All Module's Policy is unselected
+        if (action[1] === "*") {
+          formData.policies = $_.difference(
+            formData.policies,
+            $_.map(policyGroup.policies, "slug")
+          );
+        }
+        formData.policies = $_.pull(
+          formData.policies,
+          `${$_.toLower(policyGroup.policy_group_name)}:*`
+        );
+        // if All Policy is unselected
+        if ($_.includes(formData.policies, "*:*")) {
+          formData.policies = $_.pull(formData.policies, "*:*");
+        }
+      }
+    }
+    function selectAllPolicies(e) {
+      if (e.target.checked) {
+        let allPolicies = [];
+        $_.forEach(policies.value.resource, (policyGroup) => {
+          allPolicies.push(`${$_.toLower(policyGroup.policy_group_name)}:*`);
+          $_.forEach(policyGroup.policies, (action) => {
+            allPolicies.push(action.slug);
+          });
+        });
+        allPolicies.push("*:*");
+        formData.policies = allPolicies;
+      } else {
+        formData.policies = [];
+      }
+    }
     async function onSubmit(values) {
       if (props.edit) {
         let payload = {};
 
         $_.forEach(dirtyFieldValidator, (isDirty, key) => {
-          console.log(isDirty, key);
           if (isDirty) {
-            payload[key] = values[key];
+            payload[key] =
+              key === "policies" ? filterPolicies(values[key]) : values[key];
           }
         });
-        await props.submitHandler(payload);
+        await props.submitHandler(parsePayload(payload));
       } else {
-        props.submitHandler(values);
+        props.submitHandler(parsePayload(values));
       }
     }
-    return { formData, dirtyFieldValidator, policies, pending, onSubmit };
+
+    function filterPolicies(policies) {
+      const modulesWithAllPolicySelected = $_.filter(policies, (policy) => {
+        const action = $_.split(policy, ":");
+        return action[0] !== "*" && action[1] === "*";
+      });
+      let filteredPolicies = policies;
+      $_.forEach(modulesWithAllPolicySelected, (policy) => {
+        const action = $_.split(policy, ":");
+
+        filteredPolicies = $_.filter(
+          filteredPolicies,
+          (slug) => !$_.includes(slug, `${action[0]}:`)
+        );
+      });
+      return [...filteredPolicies, ...modulesWithAllPolicySelected];
+    }
+    function parsePayload(payload) {
+      let parsedPayload = {
+        role: payload.role,
+        description: payload.description,
+        policies: $_.includes(payload.policies, "*:*")
+          ? ["*:*"]
+          : payload.policies,
+      };
+      return parsedPayload;
+    }
+    return {
+      pending,
+      policies,
+      formData,
+      dirtyFieldValidator,
+      selectPolicy,
+      onSubmit,
+      selectAllPolicies,
+    };
   },
 };
 </script>
@@ -123,15 +284,19 @@ export default {
   @apply flex justify-center;
 
   &__form {
-    @apply flex flex-col gap-[24px] px-4 pt-4 pb-10;
+    @apply flex flex-col gap-[24px] px-4 pt-4 pb-4;
     .form__policy {
       @apply flex flex-col gap-4 text-[1rem];
       .policy__name {
         @apply font-bold;
       }
       .policy__actions {
-        @apply flex gap-10;
+        @apply flex gap-10  flex-wrap;
       }
+    }
+
+    .form__col {
+      @apply flex gap-[10px];
     }
   }
   &__footer {

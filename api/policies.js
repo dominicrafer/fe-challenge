@@ -7,11 +7,11 @@ export default () => ({
   getPolicies(params, watch) {
     return useFetch(() => '/policy', { method: 'GET', params, ...interceptors(), watch });
   },
-  getAllPolicies() {
-    return useLazyFetch(() => '/policy/policy-action:all', { method: 'GET', ...interceptors() });
+  getAllPolicies(immediate = true) {
+    return useLazyFetch(() => '/policy/policy-action:all', { method: 'GET', immediate, ...interceptors() });
   },
-  getPolicyDetails(id) {
-    return useLazyFetch(`/policy/${id}`, { method: 'GET', ...interceptors() });
+  getPolicyDetails(id, defaultValue) {
+    return useFetch(`/policy/${id}`, { method: 'GET',  default: () => defaultValue, ...interceptors() });
   },
   updatePolicy(id, data) {
     return useFetch(`/policy/${id}`, { method: 'PATCH', body: data, ...interceptors() });
