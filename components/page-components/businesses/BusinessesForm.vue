@@ -32,7 +32,7 @@
             <div class="col__auto">
               <InputField
                 class="w-1/2"
-                :name="`service-name-${index}`"
+                :name="`services[${index}].name`"
                 placeholder="Enter Text"
                 v-model="formData.services[index].name"
                 v-model:isDirty="dirtyFieldValidator.services[index].name"
@@ -42,7 +42,7 @@
               </InputField>
               <InputField
                 class="w-full"
-                :name="`service-description-${index}`"
+                :name="`services[${index}].description`"
                 placeholder="Enter Text"
                 v-model="formData.services[index].description"
                 v-model:isDirty="
@@ -125,6 +125,7 @@
           <template v-for="(approver, index) in formData.approval_heirarchy">
             <div
               class="col__auto"
+              :key="index"
               v-if="
                 ['creator', 'account_manager'].includes(
                   formData.approval_heirarchy[index].type
@@ -133,7 +134,7 @@
             >
               <InputField
                 class="w-full"
-                :name="`approver-${index}`"
+                :name="`approver[${index}].type`"
                 placeholder="Enter Text"
                 rules="required"
                 v-model="formData.approval_heirarchy[index].type"
@@ -142,11 +143,11 @@
                 <template #label> Approver </template>
               </InputField>
             </div>
-            <div class="col__auto" v-else>
+            <div class="col__auto" v-else :key="`dynamic-field-${index}`">
               <Select
                 class="w-full"
-                v-model:modelValue="formData.approval_heirarchy[index]"
-                :name="`approver-${index}`"
+                v-model="formData.approval_heirarchy[index].type"
+                :name="`approver[${[index]}].type`"
                 :options="approverOptions"
                 trackBy="value"
                 label="label"
@@ -271,24 +272,20 @@ export default {
       formData.approval_heirarchy.splice(
         formData.approval_heirarchy.length - 1,
         0,
-        {
-          type: "approver",
-          cognito_id: null,
-          email: null,
-          name: null,
-        }
+        { cognito_id: null, email: null, name: null, type: null }
       );
     }
 
     function searchUser(value) {
       console.log(value);
       approverOptions.value = [
+     
         {
-          label: `Jewel 1 | jewel.reventar1@ecloudvalley.com`,
+          label: `Jewel 2 | jewel.reventar2@ecloudvalley.com`,
           value: {
             cognito_id: "UUID",
-            email: "jewel.reventar1@ecloudvalley.com",
-            name: "Jewel 1",
+            email: "jewel.reventar2@ecloudvalley.com",
+            name: "Jewel 2",
             type: "approver",
           },
         },
