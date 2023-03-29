@@ -1,23 +1,58 @@
 <template>
   <div class="radio-button">
-    <input type="radio" class="radio-button__input" :id="name" />
-    <label :for="name" class="radio-button__label">{{ label }}</label>
+    <input
+      type="radio"
+      class="radio-button__input"
+      :name="name"
+      :id="id"
+      :value="inputValue"
+      v-model="value"
+      @change="($event) => $emit('change', $event)"
+    />
+    <label :for="id" class="radio-button__label">{{ label }}</label>
   </div>
 </template>
 
 <script>
+import { useField } from "vee-validate";
 export default {
   props: {
     label: {
       type: String,
       required: true,
     },
+    id: {
+      type: [String, Number],
+      required: true,
+    },
+    inputValue: {
+      type: [String, Object, Boolean, Number],
+    },
     name: {
       type: String,
       required: true,
     },
+    modelValue: {
+      type: [String, Object, Boolean, Number],
+    },
   },
-  setup(props) {},
+  setup(props, { emit }) {
+    const { value, meta, handleChange } = useField(props.name, undefined, {
+      type: "radio",
+      initialValue: props.modelValue,
+    });
+    function updateValue(e) {
+      handleChange(e.target.value);
+    }
+    watch(
+      meta,
+      (meta) => {
+        emit("update:isDirty", meta.dirty);
+      },
+      { deep: true }
+    );
+    return { value, updateValue };
+  },
 };
 </script>
 

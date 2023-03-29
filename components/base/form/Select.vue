@@ -10,6 +10,7 @@
           ? 'float'
           : null
       "
+      v-if="$slots.label"
     >
       <slot name="label"></slot>
     </label>

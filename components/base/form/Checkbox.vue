@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { useField, Field } from "vee-validate";
+import { useField } from "vee-validate";
 export default {
   props: {
     label: {
@@ -53,9 +53,6 @@ export default {
       { deep: true }
     );
     return { value, updateValue };
-  },
-  components: {
-    Field,
   },
 };
 </script>

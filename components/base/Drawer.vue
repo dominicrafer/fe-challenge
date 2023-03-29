@@ -67,7 +67,7 @@ export default {
 <style lang="postcss" scoped>
 .drawer {
   &__content {
-    @apply bg-white z-50 fixed top-0 h-screen;
+    @apply bg-white z-[102] fixed top-0 h-screen;
     @apply flex flex-col items-stretch;
     .content__header {
       @apply p-[12px] border-b border-baking-soda;
@@ -81,17 +81,18 @@ export default {
       }
     }
     .content__body {
-      @apply flex-grow;
+      @apply flex-grow p-4;
     }
     .content__footer {
       @apply flex-grow-0;
-      @apply p-[12px] border-t border-baking-soda;
+      @apply flex gap-3 justify-end;
+      @apply p-4 border-t border-baking-soda;
     }
   }
   &__overlay {
     @apply fixed;
     @apply w-screen h-screen top-0 left-0;
-    @apply z-40;
+    @apply z-[101];
     background: rgba(30, 28, 28, 0.88);
   }
 }
