@@ -27,7 +27,13 @@ export default defineNuxtPlugin((nuxtApp) => {
         case "email":
           return "This field must be a valid email";
         case "min":
-        return `${$_.startCase(context.field)} must be atleast ${context.rule.params[0]} characters`;
+          return `${$_.startCase(context.field)} must be atleast ${context.rule.params[0]} characters`;
+        case "max":
+          return `${$_.startCase(context.field)} must only contain ${context.rule.params[0]} characters`;
+        case "required":
+          return `${$_.startCase(context.field)} is required`
+        case "digits":
+          return `${$_.startCase(context.field)} exceeds expected value`
         default:
           return `${$_.startCase(context.field)} is invalid`;
       }

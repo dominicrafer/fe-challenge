@@ -70,7 +70,7 @@ export default {
       default: false,
     },
     rules: {
-      type: String,
+      type: [String, Object],
     },
     modelValue: {
       type: [String, Number],
@@ -81,9 +81,13 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { errorMessage, meta, value, handleBlur  } = useField(props.name, props.rules, {
-      initialValue: props.modelValue,
-    });
+    const { errorMessage, meta, value, handleBlur } = useField(
+      props.name,
+      props.rules,
+      {
+        initialValue: props.modelValue,
+      }
+    );
 
     const showPassword = ref(false);
     const updateValue = (event) => {

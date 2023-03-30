@@ -1,12 +1,13 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/partners" title="Partners">
-      <template #right-panel>
-        <Button>Edit</Button>
-      </template>
-    </PageHeader>
+    <PageHeader backRoute="/businesses" title="Edit Business" />
     <div class="page__body">
-      <PartnersForm :isLoading="isLoading" />
+      <BusinessesForm
+        :businessDetails="businessDetails"
+        :submitHandler="submitHandler"
+        :isLoading="pending"
+        edit
+      />
     </div>
   </div>
 </template>
@@ -16,13 +17,69 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
+  async setup(props) {
+    const { $api, $_ } = useNuxtApp();
+    const route = useRoute();
+    let businessDetails = {
+      business: null,
+      address: null,
+      services: [],
+      approval_heirarchy: [],
+      due_date_duration: null,
+      follow_up_intervals: null,
+      invoice_number_template: null,
+      tax: null,
+      tin: null,
+    };
+    const { data, pending } = $api.businesses.getBusinessDetails(
+      route.params.id,
+      businessDetails
+    );
+    watch(
+      () => data.value,
+      (result) => {
+        let data = result.resource?.business;
+        businessDetails.business = data?.business;
+        businessDetails.address = data?.address;
+
+        $_.forEach(data?.services, (item) => {
+          businessDetails.services.push({
+            name: item.service,
+            description: item.description,
+          });
+        });
+        $_.forEach(data?.approval_heirarchy, (item) => {
+          businessDetails.approval_heirarchy.push(item);
+        });
+
+        businessDetails.approval_heirarchy = data?.approval_heirarchy;
+        businessDetails.due_date_duration = data?.due_date_duration;
+        businessDetails.follow_up_intervals = data?.follow_up_intervals;
+        businessDetails.invoice_number_template = data?.invoice_number_template;
+        businessDetails.tax = data?.tax;
+        businessDetails.tin = data?.tin;
+      }
+    );
+
+    async function submitHandler(data) {
+      const { $api, $toast } = useNuxtApp();
+      try {
+        const router = useRouter();
+        const route = useRoute();
+        await $api.business.updateBusiness(route.params.id, data);
+        router.push("/businesses");
+        $toast.success("Business successfully updated.");
+        router.push();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    return {
+      pending,
+      businessDetails,
+      submitHandler,
+    };
   },
-  setup(props) {},
 };
 </script>
 

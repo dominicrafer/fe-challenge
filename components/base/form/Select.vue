@@ -15,7 +15,6 @@
     </label>
     <VueMultiselect
       :ref="name"
-      :key="options.length"
       :options="options"
       v-model="selected"
       @open="showOptions = true"
@@ -37,7 +36,8 @@
       :placeholder="null"
       :tag-placeholder="tagPlaceholder"
       @search-change="asyncSearch"
-      open-direction="bottom"
+      :open-direction="openDirection"
+      :loading="isLoading"
     >
       <!-- <slots name="drop-down"></slots> -->
     </VueMultiselect>
@@ -102,6 +102,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    openDirection: {
+      type: String,
+      default: null,
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
@@ -156,6 +164,7 @@ export default {
 
     &.float {
       @apply left-[10px] top-[0px] text-primary !important;
+      @apply z-0;
     }
   }
 

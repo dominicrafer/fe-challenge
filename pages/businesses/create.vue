@@ -22,18 +22,17 @@ export default {
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
       try {
-        // await $api.roles.createRole(data).then((response) => {
-        //     const router = useRouter();
-        //     router.push("/businesses");
-        //     $toast.success("Business successfully created.");
-        // });
-      }
-      catch (error) {
+        await $api.businesses.createBusiness(data).then((response) => {
+          const router = useRouter();
+          router.push("/businesses");
+          $toast.success("Business successfully created.");
+        });
+      } catch (error) {
         console.log(error);
       }
     }
     return { submitHandler };
-  }
+  },
 };
 </script>
 
