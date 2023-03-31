@@ -1,77 +1,45 @@
 <template>
   <div class="page">
-    <PageHeader title="Campaigns">
+    <PageHeader title="Banks">
       <template #right-panel>
-        <router-link
-          :to="{
-            path: '/campaigns/create',
-          }"
-        >
+        <router-link :to="{
+          path: '/banks/create',
+        }">
           <Button>Create</Button>
         </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table
-        :loading="isLoading"
-        @paginate="paginateAction"
-        @search="searchAction"
-        @export="exportAction"
-        @sort="
-          () => {
-            showSortDrawer = !showSortDrawer;
-          }
-        "
-        @filter="
-          () => {
-            showFilterDrawer = !showFilterDrawer;
-          }
-        "
-      >
+      <Table :loading="pending" :filterable="false" :searchable="false" :exportable="false" :sortable="false"
+        paginationType="dynamodb">
         <template #table-data>
           <table class="table__data">
             <thead>
               <tr>
-                <th align="left">Campaign Title</th>
-                <th align="left">Campaign Code</th>
-                <th align="left">Status</th>
-                <th align="left">Channels</th>
-                <th align="left">Discount Access</th>
-                <th align="left">Starts On</th>
-                <th align="left">Ends On</th>
+                <th align="left">Account Number</th>
+                <th align="left">Beneficiary Bank</th>
+                <th align="left">Account Name</th>
+                <th align="left">Swift Code</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(campaign, index) in data" :key="index">
-                <td align="left">Campaign Title</td>
-                <td align="left">Campaign Code</td>
-                <td align="left">Status</td>
-                <td align="left">Channels</td>
-                <td align="left">Discount Access</td>
-                <td align="left">Starts On</td>
-                <td align="left">Ends On</td>
+              <tr v-for="(bankDetails, index) in data?.resource?.banks" :key="index">
+                <td align="left">{{ bankDetails.account_number }}</td>
+                <td align="left">{{ bankDetails.beneficiary_bank }}</td>
+                <td align="left">{{ bankDetails.account_name }}</td>
+                <td align="left">{{ bankDetails.swift_code }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link
-                      :to="{
-                        name: 'campaigns-id',
-                        params: { id: campaign.id },
-                      }"
-                    >
-                      <Icon
-                        width="20"
-                        height="20"
-                        style="color: #29335c"
-                        name="material-symbols:preview"
-                      />
+                    <router-link :to="{
+                      name: 'banks-id',
+                      params: { id: bankDetails.account_number },
+                    }">
+                      <Icon width="20" height="20" style="color: #29335c" name="material-symbols:preview" />
                     </router-link>
                     <div>
-                      <Icon
-                        width="20"
-                        height="20"
-                        name="material-symbols:delete-outline"
-                      />
+                      <Icon width="20" height="20" color="#E45959" @click="deleteBank(bankDetails.account_number)"
+                        name="material-symbols:delete-outline" />
                     </div>
                   </div>
                 </td>
@@ -81,22 +49,10 @@
         </template>
       </Table>
     </div>
-    <CampaignsFilterDrawer
-      :show="showFilterDrawer"
-      @close="
-        () => {
-          showFilterDrawer = false;
-        }
-      "
-    />
-    <CampaignsSortDrawer
-      :show="showSortDrawer"
-      @close="
-        () => {
-          showSortDrawer = false;
-        }
-      "
-    />
+    <ConfirmationModal :show="deleteConfirmationModalVisible" title="Delete Bank" type="danger" confirmText="Delete"
+      @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
+      <template #message>Are you sure you want to continue? This cannot be undone.</template>
+    </ConfirmationModal>
   </div>
 </template>
 
@@ -106,54 +62,55 @@ definePageMeta({
 });
 export default {
   setup() {
-    const data = [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-      isLoading = ref(false),
-      showFilterDrawer = ref(false),
-      showSortDrawer = ref(false),
-      queryStringParameters = reactive({
-        search: "",
-        filters: "",
-        sorts: "",
-        page: 1,
-        page_size: 10,
-      });
+    const { $api, $_ } = useNuxtApp();
 
-    function paginateAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        page: event,
-      };
-      console.log("paginate", queryStringParameters.value);
+    // PAGINATION
+    let previousEvaluatedKey = ref([]);
+    let nextEvaluatedKey = ref(null);
+
+    const { data, pending, refresh } = $api.banks.getBanks(
+      {
+        limit: 10,
+        last_evaluated_sort_key: nextEvaluatedKey,
+      },
+      [nextEvaluatedKey]
+    )
+
+    console.log(data)
+
+    function prevPage() {
+      nextEvaluatedKey.value = $_.last(previousEvaluatedKey.value);
+      if (previousEvaluatedKey.value.length) {
+        previousEvaluatedKey.value.pop();
+      }
     }
-    function searchAction(event) {
-      queryStringParameters.value = {
-        ...queryStringParameters.value,
-        search: event,
-      };
-      console.log("search", queryStringParameters.value);
+    function nextPage() {
+      previousEvaluatedKey.value.push(nextEvaluatedKey.value);
+      nextEvaluatedKey.value = $_.last(data?.value?.resource?.banks).account_number;
     }
-    function exportAction(event) {
-      console.log("export", event);
+
+    // DELETE BUSINESS
+    const deleteConfirmationModalVisible = ref(false);
+    const selectedBank = ref(null);
+    function deleteBank(account_number) {
+      selectedBank.value = account_number;
+      deleteConfirmationModalVisible.value = true;
+    }
+
+    async function confirmDelete() {
+      pending.value = true;
+      await $api.banks.deleteBank(selectedBank.value);
+      refresh();
     }
 
     return {
       data,
-      isLoading,
-      showFilterDrawer,
-      showSortDrawer,
-      paginateAction,
-      searchAction,
-      exportAction,
+      pending,
+      nextPage,
+      prevPage,
+      deleteBank,
+      deleteConfirmationModalVisible,
+      confirmDelete
     };
   },
 };

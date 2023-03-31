@@ -11,4 +11,7 @@ export default () => ({
     getBusinessDetails(id, defaultValue) {
         return useFetch(`/business/${id}`, { method: 'GET', default: () => defaultValue, ...interceptors() });
     },
+    updateBusiness(id, data) {
+        return useFetch(`/business/${id}`, { method: 'PATCH', body: data, ...interceptors() });
+    },
 })

@@ -125,7 +125,7 @@
               v-model="formData.due_date_duration"
               v-model:isDirty="dirtyFieldValidator.due_date_duration"
               :rules="{
-                digits: 2,
+                numeric: true,
                 required: edit ? false : true,
               }"
             >
@@ -137,7 +137,7 @@
               v-model="formData.follow_up_intervals"
               v-model:isDirty="dirtyFieldValidator.follow_up_intervals"
               :rules="{
-                digits: 1,
+                numeric: true,
                 required: edit ? false : true,
               }"
             >
@@ -296,6 +296,8 @@ export default {
     const { $api, $_, $toast } = useNuxtApp();
     const formData = reactive(props.businessDetails);
 
+    console.log(formData)
+
     const serviceName = ref(null);
     const serviceDescription = ref(null);
 
@@ -447,6 +449,9 @@ export default {
       delete values["service-name"];
       delete values["service-description"];
 
+      values["due_date_duration"] = parseInt(values["due_date_duration"])
+      values["follow_up_intervals"] = parseInt(values["follow_up_intervals"])
+
       const singatoryExists = $_.some(formData.approval_heirarchy, {
         type: "signatory",
       });
@@ -489,7 +494,7 @@ export default {
         if (approvalHeirarchyIsDirty) {
           payload["approval_heirarchy"] = formData.approval_heirarchy;
         }
-
+        
         await props.submitHandler(payload);
       } else {
         // we append approval heirarchy and services on this point

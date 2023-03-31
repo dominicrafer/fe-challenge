@@ -1,12 +1,8 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/campaigns" title="Campaigns">
-      <template #right-panel>
-        <Button>Save</Button>
-      </template>
-    </PageHeader>
+    <PageHeader backRoute="/banks" title="Create Bank" />
     <div class="page__body">
-      <CampaignsForm />
+      <BanksForm :submitHandler="submitHandler" />
     </div>
   </div>
 </template>
@@ -16,7 +12,27 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  setup() {},
+  props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props) {
+    async function submitHandler(data) {
+      const { $api, $toast } = useNuxtApp();
+      try {
+        await $api.banks.createBank(data).then((response) => {
+          const router = useRouter();
+          router.push("/banks");
+          $toast.success("Bank successfully created.");
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    return { submitHandler };
+  },
 };
 </script>
 

@@ -66,7 +66,7 @@ export default {
       try {
         const router = useRouter();
         const route = useRoute();
-        await $api.business.updateBusiness(route.params.id, data);
+        await $api.businesses.updateBusiness(route.params.id, data);
         router.push("/businesses");
         $toast.success("Business successfully updated.");
         router.push();
