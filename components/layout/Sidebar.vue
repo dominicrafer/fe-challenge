@@ -146,22 +146,34 @@ export default {
       },
       {
         name: "Businesses",
-        icon: "mdi:account-multiple-outline",
+        icon: "mdi:domain",
         permission: "businesses",
         submenus: [
           {
-            name: "Businesses",
+            name: "List",
             path: "/businesses",
-            icon: "mdi:account-multiple-outline",
+            icon: "mdi:card-account-details-outline",
             permission: "businesses",
           },
           {
             name: "Banks",
             path: "/banks",
-            icon: "mdi:badge-account-horizontal-outline",
+            icon: "mdi:bank",
             permission: "banks",
           },
         ],
+      },
+      {
+        name: "Customers",
+        icon: "mdi:handshake-outline",
+        permission: "customers",
+        path: "/customers",
+      },
+      {
+        name: "Projects",
+        icon: "mdi:notebook-outline",
+        permission: "projects",
+        path: "/projects",
       },
     ];
 
@@ -198,7 +210,10 @@ export default {
     // Active menu checker
     function isMenuActive(menuDetails) {
       if ($_.has(menuDetails, "submenus")) {
-        return $_.some(menuDetails.submenus, { name: activeMenu.value }) || menuDetails.name === activeMenu.value;
+        return (
+          $_.some(menuDetails.submenus, { name: activeMenu.value }) ||
+          menuDetails.name === activeMenu.value
+        );
       }
       return menuDetails.name === activeMenu.value;
     }

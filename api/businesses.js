@@ -2,6 +2,9 @@ export default () => ({
     getBusinesses(params, watch) {
         return useFetch(() => '/business/list', { method: 'GET', params, ...interceptors(), watch });
     },
+    getBusinessServices(business, watch) {
+        return useFetch(() => `/business/${business}/service`, { method: 'GET', ...interceptors(), watch });
+    },
     deleteBusiness(business) {
         return useFetch(`/business/${business}`, { method: 'DELETE', ...interceptors() });
     },

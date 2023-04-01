@@ -1,5 +1,5 @@
 <template>
-  <div class="bank">
+  <div class="customer">
     <Container
       :loading="isLoading"
       :key="isLoading"
@@ -9,75 +9,81 @@
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
-        :initialValues="banksDetails"
+        :initialValues="customerDetails"
       >
-        <SectionTitle title="Bank Details" class="rounded-t-sm" />
-        <div class="bank__form">
+        <SectionTitle title="Customer Details" class="rounded-t-sm" />
+        <div class="customer__form">
+          <InputField
+            class="w-1/2"
+            name="name"
+            placeholder="Enter name"
+            v-model="formData.name"
+            v-model:isDirty="dirtyFieldValidator.name"
+            :rules="edit ? null : 'required'"
+          >
+            <template #label> Customer Name </template>
+          </InputField>
+          <Textarea
+            name="address"
+            label="Customer Address"
+            placeholder="Enter address"
+            v-model="formData.address"
+            v-model:isDirty="dirtyFieldValidator.address"
+            :rules="edit ? null : 'required'"
+          />
           <div class="col__auto">
             <InputField
               class="w-full"
-              name="account_number"
-              placeholder="Enter account number"
-              v-model="formData.account_number"
-              v-model:isDirty="dirtyFieldValidator.account_number"
+              name="tin"
+              placeholder="Enter tin"
+              v-model="formData.tin"
+              v-model:isDirty="dirtyFieldValidator.tin"
               :rules="
                 edit
-                  ? {
-                      numeric: true,
-                    }
+                  ? null
                   : {
                       required: true,
                       numeric: true,
                     }
               "
             >
-              <template #label> Account Number </template>
+              <template #label> TIN </template>
             </InputField>
             <InputField
               class="w-full"
-              name="beneficiary_bank"
-              placeholder="Enter beneficiary bank"
-              v-model="formData.beneficiary_bank"
-              v-model:isDirty="dirtyFieldValidator.beneficiary_bank"
+              name="contact_name"
+              placeholder="Enter Contact Name"
+              v-model="formData.contact_name"
+              v-model:isDirty="dirtyFieldValidator.contact_name"
               :rules="edit ? null : 'required'"
             >
-              <template #label> Beneficiary Bank </template>
+              <template #label> Contact Name </template>
             </InputField>
           </div>
           <div class="col__auto">
             <InputField
               class="w-full"
-              name="account_name"
-              placeholder="Enter account name"
-              v-model="formData.account_name"
-              v-model:isDirty="dirtyFieldValidator.account_name"
+              name="contact_phone_number"
+              placeholder="Enter contact phone number"
+              v-model="formData.contact_phone_number"
+              v-model:isDirty="dirtyFieldValidator.contact_phone_number"
               :rules="edit ? null : 'required'"
             >
-              <template #label> Account Name </template>
+              <template #label> Contact Phone Number </template>
             </InputField>
             <InputField
               class="w-full"
-              name="swift_code"
-              placeholder="Enter swift code"
-              v-model="formData.swift_code"
-              v-model:isDirty="dirtyFieldValidator.swift_code"
+              name="contact_email"
+              placeholder="Enter contact email"
+              v-model="formData.contact_email"
+              v-model:isDirty="dirtyFieldValidator.contact_email"
               :rules="edit ? null : 'required'"
             >
-              <template #label> Swift Code </template>
+              <template #label> Contact Email </template>
             </InputField>
           </div>
-          <InputField
-            class="w-1/2"
-            name="currency"
-            placeholder="Enter currency"
-            v-model="formData.currency"
-            v-model:isDirty="dirtyFieldValidator.currency"
-            :rules="edit ? null : 'required'"
-          >
-            <template #label> Currency </template>
-          </InputField>
         </div>
-        <div class="bank__footer">
+        <div class="customer__footer">
           <Button variant="success" type="submit" :loading="isSubmitting"
             >Save</Button
           >
@@ -94,15 +100,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    banksDetails: {
+    customerDetails: {
       type: Object,
       default() {
         return {
-          account_number: null,
-          beneficiary_bank: null,
-          account_name: null,
-          swift_code: null,
-          currency: null,
+          name: null,
+          tin: null,
+          address: null,
+          contact_name: null,
+          contact_phone_number: null,
+          contact_email: null,
         };
       },
     },
@@ -117,14 +124,15 @@ export default {
   },
   setup(props) {
     const { $_, $toast } = useNuxtApp();
-    const formData = reactive(props.banksDetails);
+    const formData = reactive(props.customerDetails);
 
     const dirtyFieldValidator = reactive({
-      account_number: false,
-      beneficiary_bank: false,
-      account_name: false,
-      swift_code: false,
-      currency: false,
+      name: false,
+      tin: false,
+      address: false,
+      contact_name: false,
+      contact_phone_number: false,
+      contact_email: false,
     });
 
     async function onSubmit(values) {
@@ -152,7 +160,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.bank {
+.customer {
   @apply flex justify-center;
 
   &__form {

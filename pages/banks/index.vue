@@ -2,16 +2,25 @@
   <div class="page">
     <PageHeader title="Banks">
       <template #right-panel>
-        <router-link :to="{
-          path: '/banks/create',
-        }">
-          <Button>Create</Button>
-        </router-link>
+        <NuxtLink
+          :to="{
+            path: '/banks/create',
+          }"
+          v-has:banks.action-permission="`banks:write`"
+        >
+          <Button variant="success" type="button"> Create </Button>
+        </NuxtLink>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table :loading="pending" :filterable="false" :searchable="false" :exportable="false" :sortable="false"
-        paginationType="dynamodb">
+      <Table
+        :loading="pending"
+        :filterable="false"
+        :searchable="false"
+        :exportable="false"
+        :sortable="false"
+        paginationType="dynamodb"
+      >
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -24,22 +33,39 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(bankDetails, index) in data?.resource?.banks" :key="index">
+              <tr
+                v-for="(bankDetails, index) in data?.resource?.banks"
+                :key="index"
+              >
                 <td align="left">{{ bankDetails.account_number }}</td>
                 <td align="left">{{ bankDetails.beneficiary_bank }}</td>
                 <td align="left">{{ bankDetails.account_name }}</td>
                 <td align="left">{{ bankDetails.swift_code }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link :to="{
-                      name: 'banks-id',
-                      params: { id: bankDetails.account_number },
-                    }">
-                      <Icon width="20" height="20" style="color: #29335c" name="material-symbols:preview" />
+                    <router-link
+                      :to="{
+                        name: 'banks-id',
+                        params: { id: bankDetails.account_number },
+                      }"
+                    >
+                      <Icon
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                        v-has:banks.action-permission="`banks:read`"
+                      />
                     </router-link>
                     <div>
-                      <Icon width="20" height="20" color="#E45959" @click="deleteBank(bankDetails.account_number)"
-                        name="material-symbols:delete-outline" />
+                      <Icon
+                        width="20"
+                        height="20"
+                        color="#E45959"
+                        @click="deleteBank(bankDetails.account_number)"
+                        name="material-symbols:delete-outline"
+                        v-has:banks.action-permission="`banks:delete`"
+                      />
                     </div>
                   </div>
                 </td>
@@ -49,9 +75,17 @@
         </template>
       </Table>
     </div>
-    <ConfirmationModal :show="deleteConfirmationModalVisible" title="Delete Bank" type="danger" confirmText="Delete"
-      @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
-      <template #message>Are you sure you want to continue? This cannot be undone.</template>
+    <ConfirmationModal
+      :show="deleteConfirmationModalVisible"
+      title="Delete Bank"
+      type="danger"
+      confirmText="Delete"
+      @close="deleteConfirmationModalVisible = false"
+      @confirm="confirmDelete"
+    >
+      <template #message
+        >Are you sure you want to continue? This cannot be undone.</template
+      >
     </ConfirmationModal>
   </div>
 </template>
@@ -74,9 +108,9 @@ export default {
         last_evaluated_sort_key: nextEvaluatedKey,
       },
       [nextEvaluatedKey]
-    )
+    );
 
-    console.log(data)
+    console.log(data);
 
     function prevPage() {
       nextEvaluatedKey.value = $_.last(previousEvaluatedKey.value);
@@ -86,7 +120,9 @@ export default {
     }
     function nextPage() {
       previousEvaluatedKey.value.push(nextEvaluatedKey.value);
-      nextEvaluatedKey.value = $_.last(data?.value?.resource?.banks).account_number;
+      nextEvaluatedKey.value = $_.last(
+        data?.value?.resource?.banks
+      ).account_number;
     }
 
     // DELETE BUSINESS
@@ -110,7 +146,7 @@ export default {
       prevPage,
       deleteBank,
       deleteConfirmationModalVisible,
-      confirmDelete
+      confirmDelete,
     };
   },
 };

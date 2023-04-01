@@ -59,7 +59,7 @@ export default {
       required: true,
     },
     rules: {
-      type: String,
+      type: [String, Object],
     },
     modelValue: {
       type: [Object, String, Number, Array, null],

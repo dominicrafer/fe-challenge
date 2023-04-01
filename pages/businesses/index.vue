@@ -2,16 +2,25 @@
   <div class="page">
     <PageHeader title="Businesses">
       <template #right-panel>
-        <router-link :to="{
-          path: '/businesses/create',
-        }">
-          <Button>Create</Button>
-        </router-link>
+        <NuxtLink
+          :to="{
+            path: '/businesses/create',
+          }"
+          v-has:businesses.action-permission="`businesses:write`"
+        >
+          <Button variant="success" type="button"> Create </Button>
+        </NuxtLink>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table :loading="pending" :filterable="false" :searchable="false" :exportable="false" :sortable="false"
-        paginationType="dynamodb">
+      <Table
+        :loading="pending"
+        :filterable="false"
+        :searchable="false"
+        :exportable="false"
+        :sortable="false"
+        paginationType="dynamodb"
+      >
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -22,20 +31,37 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(businessDetails, index) in data?.resource?.businesses" :key="index">
+              <tr
+                v-for="(businessDetails, index) in data?.resource?.businesses"
+                :key="index"
+              >
                 <td align="left">{{ businessDetails.business }}</td>
                 <td align="left">{{ businessDetails.address }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link :to="{
-                      name: 'businesses-id',
-                      params: { id: businessDetails.business },
-                    }">
-                      <Icon width="20" height="20" style="color: #29335c" name="material-symbols:preview" />
+                    <router-link
+                      :to="{
+                        name: 'businesses-id',
+                        params: { id: businessDetails.business },
+                      }"
+                      v-has:businesses.action-permission="`businesses:read`"
+                    >
+                      <Icon
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                      />
                     </router-link>
                     <div>
-                      <Icon width="20" height="20" color="#E45959" @click="deleteBusiness(businessDetails.business)"
-                        name="material-symbols:delete-outline" />
+                      <Icon
+                        width="20"
+                        height="20"
+                        color="#E45959"
+                        @click="deleteBusiness(businessDetails.business)"
+                        name="material-symbols:delete-outline"
+                        v-has:businesses.action-permission="`businesses:delete`"
+                      />
                     </div>
                   </div>
                 </td>
@@ -45,9 +71,17 @@
         </template>
       </Table>
     </div>
-    <ConfirmationModal :show="deleteConfirmationModalVisible" title="Delete Business" type="danger" confirmText="Delete"
-      @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
-      <template #message>Are you sure you want to continue? This cannot be undone.</template>
+    <ConfirmationModal
+      :show="deleteConfirmationModalVisible"
+      title="Delete Business"
+      type="danger"
+      confirmText="Delete"
+      @close="deleteConfirmationModalVisible = false"
+      @confirm="confirmDelete"
+    >
+      <template #message
+        >Are you sure you want to continue? This cannot be undone.</template
+      >
     </ConfirmationModal>
   </div>
 </template>
@@ -70,7 +104,7 @@ export default {
         last_evaluated_sort_key: nextEvaluatedKey,
       },
       [nextEvaluatedKey]
-    )
+    );
 
     function prevPage() {
       nextEvaluatedKey.value = $_.last(previousEvaluatedKey.value);
@@ -80,7 +114,9 @@ export default {
     }
     function nextPage() {
       previousEvaluatedKey.value.push(nextEvaluatedKey.value);
-      nextEvaluatedKey.value = $_.last(data?.value?.resource?.businesses).business;
+      nextEvaluatedKey.value = $_.last(
+        data?.value?.resource?.businesses
+      ).business;
     }
 
     // DELETE BUSINESS
@@ -104,7 +140,7 @@ export default {
       prevPage,
       deleteBusiness,
       deleteConfirmationModalVisible,
-      confirmDelete
+      confirmDelete,
     };
   },
 };

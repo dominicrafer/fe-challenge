@@ -296,8 +296,6 @@ export default {
     const { $api, $_, $toast } = useNuxtApp();
     const formData = reactive(props.businessDetails);
 
-    console.log(formData)
-
     const serviceName = ref(null);
     const serviceDescription = ref(null);
 
@@ -449,8 +447,8 @@ export default {
       delete values["service-name"];
       delete values["service-description"];
 
-      values["due_date_duration"] = parseInt(values["due_date_duration"])
-      values["follow_up_intervals"] = parseInt(values["follow_up_intervals"])
+      values["due_date_duration"] = parseInt(values["due_date_duration"]);
+      values["follow_up_intervals"] = parseInt(values["follow_up_intervals"]);
 
       const singatoryExists = $_.some(formData.approval_heirarchy, {
         type: "signatory",
@@ -494,7 +492,7 @@ export default {
         if (approvalHeirarchyIsDirty) {
           payload["approval_heirarchy"] = formData.approval_heirarchy;
         }
-        
+
         await props.submitHandler(payload);
       } else {
         // we append approval heirarchy and services on this point

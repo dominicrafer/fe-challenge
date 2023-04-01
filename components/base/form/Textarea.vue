@@ -35,7 +35,7 @@ export default {
       default: null,
     },
     rules: {
-      type: String,
+      type: [String, Object],
     },
     modelValue: {
       type: [String, Number],

@@ -52,7 +52,7 @@ export default {
       default: "Y/MM/d HH:mm",
     },
     rules: {
-      type: String,
+      type: [String, Object],
     },
     placeholder: {
       type: String,

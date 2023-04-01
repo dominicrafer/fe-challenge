@@ -28,6 +28,7 @@
             <thead>
               <tr>
                 <th align="left">Policy</th>
+                <th align="left">Description</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
@@ -37,6 +38,7 @@
                 :key="index"
               >
                 <td align="left">{{ policyDetails.policy }}</td>
+                <td align="left">{{ policyDetails.description }}</td>
                 <td align="center">
                   <div class="table__data-actions">
                     <NuxtLink
@@ -79,7 +81,7 @@
   </div>
 </template>
 
-<script >
+<script>
 definePageMeta({
   layout: "default",
 });
