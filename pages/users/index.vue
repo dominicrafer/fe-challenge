@@ -19,15 +19,13 @@
       <Table
         :loading="pending"
         :pages="
-          Math.round(
-            data?.resource?.pagination.total_count / pagination.page_size
-          )
+          Math.ceil(data?.resource?.pagination.total_count / params.page_size)
         "
+        @sort="usersSortDrawerVisible = true"
+        @filter="usersFilterDrawerVisible = true"
         @paginate="paginate"
         @search="searchUsers"
-        :filterable="false"
         :exportable="false"
-        :sortable="false"
       >
         <template #table-data>
           <table class="table__data">
@@ -38,6 +36,7 @@
                 <th align="left">Mobile Number</th>
                 <th align="left">Role</th>
                 <th align="left">Status</th>
+                <th align="left">Created At</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
@@ -51,6 +50,7 @@
                 <td align="left">{{ userDetails.phone_number }}</td>
                 <td align="left">{{ userDetails.role }}</td>
                 <td align="left">{{ userDetails.status }}</td>
+                <td align="left">{{ userDetails.created_at }}</td>
                 <td align="center">
                   <div class="table__data-actions">
                     <router-link
@@ -68,6 +68,7 @@
                       />
                     </router-link>
                     <div>
+                      {{ search }}
                       <Icon
                         v-has:users.action-permission="`users:delete`"
                         width="20"
@@ -97,6 +98,18 @@
         >Are you sure you want to continue? This cannot be undone.</template
       >
     </ConfirmationModal>
+    <UsersFilterDrawer
+      :filters="filters"
+      :show="usersFilterDrawerVisible"
+      @close="usersFilterDrawerVisible = false"
+      @apply="applyFilters"
+    />
+    <UsersSortDrawer
+      :sorts="sorts"
+      :show="usersSortDrawerVisible"
+      @close="usersSortDrawerVisible = false"
+      @apply="applySorts"
+    />
   </div>
 </template>
 
@@ -113,20 +126,60 @@ export default {
   },
   setup() {
     const { $api, $_ } = useNuxtApp();
+    const usersFilterDrawerVisible = ref(false);
+    const usersSortDrawerVisible = ref(false);
     // PAGINATION
-    let pagination = reactive({
+    let search = ref(null);
+    let filters = reactive(["name", "email"]);
+    let sorts = reactive({
+      name: "created_at:desc",
+    });
+    let params = reactive({
       page: 1,
       page_size: 10,
       return_count: true,
+      sorts: $_.values(sorts),
+      //search_filters
+      //sorts
     });
-    const { data, pending, refresh } = $api.users.getUsers(pagination, [
-      pagination.page,
-    ]);
-    function paginate(page) {
-      pagination.page = page;
-    }
 
+    const { data, pending, refresh } = $api.users.getUsers(params, [
+      params.page,
+    ]);
+
+    function paginate(page) {
+      params.page = page;
+    }
     // PAGINATION
+
+    // SEARCH USER
+    async function searchUsers(searchValue) {
+      search.value = searchValue;
+      if (!searchValue) {
+        delete params.search_filters;
+      } else {
+        params.search_filters = [
+          {
+            search_keys: filters,
+            value: searchValue,
+          },
+        ];
+      }
+
+      refresh();
+    }
+    // SEARCH USER
+
+    function applyFilters(appliedFilters) {
+      filters = appliedFilters.filterBy;
+      usersFilterDrawerVisible.value = false;
+    }
+    function applySorts(appliedSorts) {
+      sorts = appliedSorts;
+      params.sorts = $_.values(sorts);
+      refresh();
+      usersSortDrawerVisible.value = false;
+    }
 
     // DELETE POLICY
     const deleteConfirmationModalVisible = ref(false);
@@ -143,24 +196,23 @@ export default {
     }
     // DELETE POLICY
 
-    // SEARCH USER
-    async function searchUsers(search) {
-      pending.value = true;
-      await $api.users.searchUsers({ like_value: search });
-      pending.value = false;
-    }
-    // SEARCH USER
-
     return {
       data,
       pending,
       selectedUser,
       deleteUser,
       deleteConfirmationModalVisible,
+      usersFilterDrawerVisible,
+      usersSortDrawerVisible,
       confirmDelete,
-      pagination,
+      filters,
+      sorts,
+      params,
       paginate,
       searchUsers,
+      search,
+      applyFilters,
+      applySorts,
     };
   },
 };
