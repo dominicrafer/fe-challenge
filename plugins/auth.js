@@ -3,14 +3,7 @@ import dayjs from "dayjs";
 
 export default defineNuxtPlugin(({ $dayjs }) => {
   const authStore = useAuthStore();
-  // authStore.load();
-  const tokenExpirationDayjs = dayjs(authStore.tokenExpiration);
-  const currentTimeDayjs = dayjs();
-
-  const tokenExpirationDuration = dayjs
-    .duration(tokenExpirationDayjs.diff(currentTimeDayjs))
-    .asMinutes();
-
+  authStore.load();
   const expirationInMinutes = dayjs
     .duration(dayjs.unix(authStore.tokenExpiration).diff(dayjs()))
     .asMinutes();

@@ -1,6 +1,6 @@
 <template>
   <div class="date-picker">
-    <label :name="name" class="date-picker__label">
+    <label :name="name" class="date-picker__label" v-if="$slots.label">
       <slot name="label"></slot>
     </label>
     <VField
@@ -27,6 +27,7 @@
         :range="range"
         :enable-time-picker="enableTimePicker"
         :time-picker="timePicker"
+        :input-class-name="inputClassName"
         :class="!meta.valid ? `has-error` : null"
       />
     </VField>
@@ -77,6 +78,10 @@ export default {
     timePicker: {
       type: Boolean,
       default: false,
+    },
+    inputClassName: {
+      type: String,
+      default: null,
     },
   },
   setup(props) {

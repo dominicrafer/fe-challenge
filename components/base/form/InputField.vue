@@ -2,14 +2,21 @@
   <div class="input">
     <div class="input__label-height-placeholder" v-if="$slots.label"></div>
     <div class="input__input-container">
+      <!-- inputClass -->
       <input
         :id="name"
         :name="name"
         :value="value"
         :type="showPassword ? 'text' : type"
-        :class="`${type === 'password' || $slots.icon ? 'has-icon' : null} ${
-          !meta.valid && meta.dirty ? 'has-error' : null
-        } ${!$slots.label ? 'show-placeholder' : null}`"
+        :class="{
+          'has-icon': type === 'password' || $slots.icon,
+          'has-error': !meta.valid && meta.dirty,
+          'show-placeholder': !$slots.label,
+          [padding]: true,
+          [fontSize]: true,
+          [inputWidth]: true,
+          [align]: true,
+        }"
         :disabled="disabled"
         :placeholder="placeholder"
         @blur="meta.touched = true"
@@ -69,6 +76,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    inputClass: {
+      type: String,
+      default: null,
+    },
     rules: {
       type: [String, Object],
     },
@@ -78,6 +89,22 @@ export default {
     isDirty: {
       type: Boolean,
       default: false,
+    },
+    padding: {
+      type: String,
+      default: 'py-[6px] px-[12px]'
+    },
+    fontSize: {
+      type: String,
+      default: 'text-[0.875rem]'
+    },
+    inputWidth: {
+      type: String,
+      default: 'w-full'
+    },
+    align: {
+      type: String,
+      default: 'text-left'
     },
   },
   setup(props, { emit }) {
@@ -121,11 +148,10 @@ export default {
     @apply relative;
 
     .input-container__input {
-      @apply w-full;
       @apply border-b border-gray-200;
-      @apply py-[6px] px-[12px];
+      /* @apply py-[6px] px-[12px]; */
+      
       @apply outline-none;
-      @apply text-[0.875rem];
 
       &.has-error {
         @apply border-paprika;

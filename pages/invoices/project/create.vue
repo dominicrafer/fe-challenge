@@ -2,7 +2,8 @@
   <div class="page">
     <PageHeader backRoute="/invoices" title="Create Project Invoice" />
     <div class="page__body">
-      <ProjectInvoiceForm :submitHandler="submitHandler" />
+      <!-- <ProjectInvoiceForm :submitHandler="submitHandler" /> -->
+      <TemplateInvoiceForm :submitHandler="submitHandler" />
     </div>
   </div>
 </template>
@@ -39,5 +40,6 @@ export default {
 <style lang="postcss" scoped>
 .page__body {
   @apply w-full;
+  
 }
 </style>
