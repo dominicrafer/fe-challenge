@@ -10,6 +10,7 @@
       :placeholder="placeholder"
       :class="!meta.valid && meta.dirty ? 'has-error' : null"
       :id="name"
+      :disabled="disabled"
     ></textarea>
     <div class="textarea__error" v-if="errorMessage">
       {{ errorMessage }}
@@ -41,6 +42,10 @@ export default {
       type: [String, Number],
     },
     isDirty: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

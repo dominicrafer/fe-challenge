@@ -175,6 +175,12 @@ export default {
         permission: "projects",
         path: "/projects",
       },
+      {
+        name: "Invoices",
+        icon: "mdi:receipt-text-outline",
+        permission: "invoices",
+        path: "/invoices",
+      },
     ];
 
     // Get active menu on page load

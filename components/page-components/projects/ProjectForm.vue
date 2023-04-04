@@ -58,6 +58,7 @@
               :options="businessOptions"
               trackBy="value"
               label="label"
+              :hideSelected="true"
               openDirection="top"
               :rules="edit ? null : 'required'"
             >
@@ -199,7 +200,7 @@ export default {
 
     async function getBusinessServices(business) {
       const { data } = await $api.businesses.getBusinessServices(business, []);
-
+      serviceTypeOptions.splice(0);
       $_.forEach(data.value.resource.business_services, (item) => {
         serviceTypeOptions.push({
           label: item["service"],
@@ -263,7 +264,6 @@ export default {
       (result) => {
         fetchServiceOptions.value = true;
         formData.service = null;
-        serviceTypeOptions.splice(0);
         getBusinessServices(result.value);
       }
     );

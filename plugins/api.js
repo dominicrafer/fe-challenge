@@ -5,6 +5,7 @@ import Roles from '@/api/roles';
 import Users from '@/api/users';
 import Customers from '@/api/customers';
 import Projects from '@/api/projects';
+import Invoices from '@/api/invoices';
 
 
 export default defineNuxtPlugin(() => {
@@ -15,7 +16,8 @@ export default defineNuxtPlugin(() => {
         roles: Roles(),
         users: Users(),
         customers: Customers(),
-        projects: Projects()
+        projects: Projects(),
+        invoices: Invoices()
     };
     return {
         provide: {

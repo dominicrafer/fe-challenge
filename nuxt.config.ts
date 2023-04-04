@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     "@/assets/css/select.css",
     "@/assets/css/pagination.css",
     "@/assets/css/vue3-toastify.css",
+    "@/assets/css/vue3-popper.css"
   ],
   alias: {
     './runtimeConfig': './runtimeConfig.browser',

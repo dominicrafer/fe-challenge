@@ -37,8 +37,10 @@
       :placeholder="null"
       :tag-placeholder="tagPlaceholder"
       @search-change="asyncSearch"
+      @select="select"
       :open-direction="openDirection"
       :loading="isLoading"
+      :disabled="disabled"
     >
       <!-- <slots name="drop-down"></slots> -->
     </VueMultiselect>
@@ -62,7 +64,7 @@ export default {
       type: [String, Object],
     },
     modelValue: {
-      type: [Object, String, Number, Array, null],
+      type: [Object, String, Number, Array],
       default: [],
     },
     placeholder: {
@@ -111,6 +113,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
@@ -129,6 +135,10 @@ export default {
     function asyncSearch(value) {
       emit("asyncSearch", value);
     }
+
+    function select(value) {
+      emit("update:modelValue", value);
+    }
     watch(
       meta,
       (meta) => {
@@ -142,6 +152,7 @@ export default {
       selected,
       addTag,
       asyncSearch,
+      select,
       showOptions,
     };
   },
