@@ -1,6 +1,11 @@
 <template>
   <div class="invoice">
-    <Container :loading="isLoading" :key="isLoading" padding="p-0">
+    <Container
+      :loading="isLoading"
+      :key="isLoading"
+      padding="p-0"
+      class="w-[1000px]"
+    >
       <div class="p-5">
         <Select
           class="w-full"
@@ -25,6 +30,7 @@
       :loading="fetchBusinessDetails"
       :key="fetchBusinessDetails"
       padding="p-0"
+      class="w-[1000px]"
     >
       <VForm
         @submit="onSubmit"
@@ -37,12 +43,26 @@
               <img src="@/assets/images/ecv.svg" />
               <div class="left-section__company-details">
                 <span> eCloudvalley Technology (Philippines) Inc.</span>
-                <span> TIN No. 009-937-009-000</span>
-                <span
-                  >14/F Net Cube Center, 30th Street corner 3rd Avenue,
-                  Bonifacio Global City,</span
-                >
-                <span> Taguig, 1634</span>
+                <div class="tin_details">
+                  <label> TIN NO.</label>
+                  <span>
+                    <InputField
+                      padding="p-0"
+                      inputWidth="w-auto"
+                      fontSize="text-[12px]"
+                      class="inputfield"
+                      name="account_number"
+                      placeholder="Enter account number"
+                      modelValue="0998-533-1531"
+                  /></span>
+                </div>
+                <Textarea
+                  fontSize="text-xs"
+                  padding="px-2 py-0"
+                  name="address"
+                  placeholder="Enter address"
+                  modelValue="Warehouse 1 900 Romualdez Street Barangay 664-A Zone 71 Paco, Manila 1007"
+                />
               </div>
               <div class="left-section__contact-details">
                 <label> CONTACT:</label>
@@ -81,11 +101,7 @@
               <p><strong>BILL TO</strong></p>
               <div class="left-section__billing-details">
                 <label> CUSTOMER:</label>
-                <!-- <span>
-                  <select>
-                    <option value="test">test</option>
-                  </select>
-                </span> -->
+
                 <Select class="w-full" name="selected-approver" :options="[]" />
                 <label> ADDRESS:</label>
                 <Textarea
@@ -191,7 +207,6 @@
               <strong>AMOUNT</strong>
             </div>
             <div class="body__table-content">
-              <!-- v-for -->
               <div
                 class="table-content__content"
                 v-for="(invoiceItemDetails, index) in invoiceItems"
@@ -584,7 +599,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" >
+<style lang="postcss">
 .invoice {
   @apply flex flex-col gap-5 justify-center items-center;
 
@@ -601,6 +616,13 @@ export default {
 
         .left-section__company-details {
           @apply flex flex-col;
+
+          .tin_details {
+            @apply flex flex-row gap-2;
+            .input-container__input {
+              @apply p-0 !important;
+            }
+          }
         }
         .left-section__contact-details {
           @apply grid gap-1;
@@ -681,11 +703,9 @@ export default {
           @apply flex items-start w-full border-b border-gray-300;
           &.vat {
             @apply border-b-4 border-[#50C4FF];
-           
           }
           &.total {
             @apply border-none border-b;
-           
           }
           &.sales,
           &.vat,
