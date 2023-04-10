@@ -16,6 +16,7 @@
           [fontSize]: true,
           [inputWidth]: true,
           [align]: true,
+          [borderStyle]: true,
         }"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -106,6 +107,10 @@ export default {
       type: String,
       default: 'text-left'
     },
+    borderStyle: {
+      type: String,
+      default: null
+    }
   },
   setup(props, { emit }) {
     const { errorMessage, meta, value, handleBlur } = useField(

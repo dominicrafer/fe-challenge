@@ -3,12 +3,6 @@
     <label :name="name" class="date-picker__label" v-if="$slots.label">
       <slot name="label"></slot>
     </label>
-    <VField
-      v-slot="{ meta, field }"
-      :value="modelValue"
-      :rules="rules"
-      :name="name"
-    >
       <!-- 
         NOTES:
             > time-picker -> converts datepicker into a time picker
@@ -19,7 +13,6 @@
             > format -> define displayed format
       -->
       <Datepicker
-        v-bind="field"
         v-model="date"
         :placeholder="placeholder"
         :format="format"
@@ -28,20 +21,19 @@
         :enable-time-picker="enableTimePicker"
         :time-picker="timePicker"
         :input-class-name="inputClassName"
-        :class="!meta.valid ? `has-error` : null"
+        :disabled="disabled"
+        @update:model-value="onChange"
       />
-    </VField>
-    <VErrorMessage :name="name" v-slot="{ message }">
-      <div class="date-picker__error">
-        {{ message }}
+      <div class="date-picker__error" v-if="errorMessage">
+        {{ errorMessage }}
       </div>
-    </VErrorMessage>
   </div>
 </template>
 
 <script>
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { useField } from "vee-validate";
 export default {
   props: {
     name: {
@@ -64,7 +56,7 @@ export default {
       default: [],
     },
     modelValue: {
-      type: [String, Array],
+      type: [String, Array, Date],
       default: new Date(),
     },
     range: {
@@ -83,12 +75,34 @@ export default {
       type: String,
       default: null,
     },
+    rules: {
+      type: [String, Object],
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
-  setup(props) {
-    const date = ref(props.modelValue);
+  setup(props, {emit}) {
+    // const date = ref(props.modelValue);
 
+    const {
+      errorMessage,
+      meta,
+      value: date,
+    } = useField(props.name, props.rules, {
+      initialValue: props.modelValue,
+    });
+
+    console.log(date)
+    
+    async function onChange(event) {
+      emit("update:modelValue", event);
+    }
     return {
+      errorMessage,
       date,
+      onChange,
     };
   },
   components: {

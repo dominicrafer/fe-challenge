@@ -28,7 +28,6 @@
 
     <Container
       :loading="fetchBusinessDetails"
-      :key="fetchBusinessDetails"
       padding="p-0"
       class="w-[1000px]"
     >
@@ -42,169 +41,187 @@
             <div class="header__left-section">
               <img src="@/assets/images/ecv.svg" />
               <div class="left-section__company-details">
-                <span> eCloudvalley Technology (Philippines) Inc.</span>
-                <div class="tin_details">
-                  <label> TIN NO.</label>
-                  <span>
-                    <InputField
-                      padding="p-0"
-                      inputWidth="w-auto"
-                      fontSize="text-[12px]"
-                      class="inputfield"
-                      name="account_number"
-                      placeholder="Enter account number"
-                      modelValue="0998-533-1531"
-                  /></span>
-                </div>
+                <label>Business: </label>
+                <Select 
+                  class="w-8/12" 
+                  name="business" 
+                  v-model="selectedBusiness" 
+                  :options="businessOptions"       
+                  trackBy="value"
+                  label="label"
+                  openDirection="bottom"
+                  disabled
+                />
+                <label > TIN NO. </label>
+                <span>
+                  <InputField
+                    padding="p-0"
+                    fontSize="text-xs"
+                    inputWidth="w-8/12"
+                    name="business_tin"
+                    v-model="formData.business.tin"
+                /></span>
+                <label>Address: </label>
                 <Textarea
                   fontSize="text-xs"
-                  padding="px-2 py-0"
-                  name="address"
-                  placeholder="Enter address"
-                  modelValue="Warehouse 1 900 Romualdez Street Barangay 664-A Zone 71 Paco, Manila 1007"
+                  class="w-8/12 "
+                  padding="px-0"
+                  name="business_address"
+                  v-model="formData.business.address"
                 />
               </div>
               <div class="left-section__contact-details">
                 <label> CONTACT:</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="khrisel Rea"
-                >
-                </InputField>
+                <Select 
+                  class="w-8/12 text-xs" 
+                  name="business_user_name" 
+                  v-model="selectedBusinessUser" 
+                  :options="businessUserOptions"   
+                  searchable
+                  @asyncSearch="searchBusinessUser"
+                  :isLoading="fetchBusinessUserOptions" 
+                  trackBy="value"
+                  label="label"
+                  openDirection="bottom"
+                  hideSelected
+                />
                 <label> EMAIL:</label>
                 <InputField
                   padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="khrisel.rea@ecloudvalley.com"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="business_contact_email"
+                  v-model="formData.business.business_contact_email" 
+                  disabled
                 >
                 </InputField>
                 <label> CONTACT NO.</label>
                 <InputField
                   padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="0998-533-1531"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="business_contact_phone_number"
+                  v-model="formData.business.business_contact_phone_number" 
+                  disabled
                 />
               </div>
               <p><strong>BILL TO</strong></p>
               <div class="left-section__billing-details">
                 <label> CUSTOMER:</label>
-
-                <Select class="w-full" name="selected-approver" :options="[]" />
+                <Select 
+                  class="w-8/12 text-xs" 
+                  name="customer_name" 
+                  v-model="selectedCustomer" 
+                  :options="customerOptions"   
+                  searchable
+                  trackBy="value"
+                  label="label"
+                  openDirection="bottom"
+                  hideSelected
+                  disabled
+                />
                 <label> ADDRESS:</label>
                 <Textarea
                   fontSize="text-xs"
-                  padding="px-2 py-0"
-                  name="address"
-                  placeholder="Enter address"
-                  modelValue="Warehouse 1 900 Romualdez Street Barangay 664-A Zone 71 Paco, Manila 1007"
+                  class="w-8/12 "
+                  padding="py-0"
+                  name="customer_address"
+                  v-model="formData.customer.address"
                 />
                 <label> CONTACT</label>
-                <span>
-                  <InputField
-                    padding="p-0"
-                    inputWidth="w-auto"
-                    fontSize="text-[12px]"
-                    class="inputfield"
-                    name="account_number"
-                    placeholder="Enter account number"
-                    modelValue="0998-533-1531"
-                /></span>
-                <label> EMAIL ADD.:</label>
-                <span>
-                  <InputField
-                    padding="p-0"
-                    inputWidth="w-auto"
-                    fontSize="text-[12px]"
-                    class="inputfield"
-                    name="account_number"
-                    placeholder="Enter account number"
-                    modelValue="0998-533-1531"
-                /></span>
-                <label> CONTACT NO.:</label>
-                <span>
-                  <InputField
-                    padding="p-0"
-                    inputWidth="w-auto"
-                    fontSize="text-[12px]"
-                    class="inputfield"
-                    name="account_number"
-                    placeholder="Enter account number"
-                    modelValue="0998-533-1531"
-                /></span>
-                <label> TIN NO.</label>
-                <span>
-                  <InputField
-                    padding="p-0"
-                    inputWidth="w-auto"
-                    fontSize="text-[12px]"
-                    class="inputfield"
-                    name="account_number"
-                    placeholder="Enter account number"
-                    modelValue="0998-533-1531"
-                /></span>
+                <InputField
+                  padding="p-0"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="customer_contact_name"
+                  v-model="formData.customer.customer_contact_name" 
+                />
+                <label> EMAIL: </label>
+                <InputField
+                  padding="p-0"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="customer_contact_email"
+                  v-model="formData.customer.customer_contact_email" 
+                />
+                <label> CONTACT NO.: </label>
+                <InputField
+                  padding="p-0"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="customer_contact_phone_number"
+                  v-model="formData.customer.customer_contact_phone_number" 
+                />
+                <label> TIN: </label>
+                <InputField
+                  padding="p-0"
+                  inputWidth="w-8/12"
+                  fontSize="text-xs"
+                  name="customer_tin"
+                  v-model="formData.customer.tin" 
+                />
               </div>
             </div>
             <div class="header__right-section">
               <div class="right-section__header">INVOICE</div>
-              <div class="right-section__invoice-details">
-                <label>INVOICE NO.:</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="0998-533-1531"
-                >
-                </InputField>
-                <label>INVOICE DATE:</label>
-                <DatePicker
-                  name="account_number"
-                  inputClassName="dp-custom-input"
-                />
-                <label>DUE DATE:</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="0998-533-1531"
-                >
-                </InputField>
-                <label>P.O NO/Quote NO:</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-auto"
-                  fontSize="text-[12px]"
-                  class="inputfield"
-                  name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="0998-533-1531"
-                >
-                </InputField>
-              </div>
+                <div class="right-section__invoice-details">
+                  <label class="w-1/2"> INVOICE NO.: </label>
+                  <InputField
+                    padding="p-0"
+                    fontSize="text-xs"
+                    name="business_invoice_number_template"
+                    v-model="formData.name" 
+                    disabled
+                  />
+                </div>
+                <div class="right-section__invoice-details">
+                  <label class="w-1/2"> INVOICE DATE: </label>
+                  <DatePicker
+                    v-model="formData.invoice_date"
+                    name="invoice_date"
+                    format="Y/M/d"
+                    :timePicker="false"
+                    :enableTimePicker="false"
+                  />
+                </div>
+           
+                <div class="right-section__invoice-details">
+                  <label class="w-1/2"> DUE DATE: </label>
+                  <DatePicker
+                    v-model="formData.due_date"
+                    name="invoice_due_date"
+                    format="Y/M/d"
+                    :timePicker="false"
+                    :enableTimePicker="false"
+                    disabled
+                  />
+                </div>
+
+                <div class="right-section__invoice-details">
+                  <label class="w-full"> P.O NO/Quote NO: </label>
+                  <Textarea
+                    class="w-1/2"
+                    fontSize="text-xs"
+                    padding="px-1 py-0"
+                    name="customer_references"
+                    v-model="formData.customer.references"
+                  />
+                </div>
             </div>
           </div>
           <div class="form__body">
             <div class="body__table-header">
               <strong>DESCRIPTION</strong>
               <strong>AMOUNT</strong>
+              <div class="header__actions">
+                <Icon
+                  width="20"
+                  height="20"
+                  style="color: #16a34a"
+                  name="mdi:plus-circle-outline"
+                  @click="invoiceItems.push(1)"
+                />
+              </div>
             </div>
             <div class="body__table-content">
               <div
@@ -212,42 +229,31 @@
                 v-for="(invoiceItemDetails, index) in invoiceItems"
                 :key="index"
               >
-                <Textarea
-                  class="w-full"
-                  fontSize="text-xs"
-                  padding="px-2 py-0"
-                  name="address"
-                  placeholder="Enter address"
-                  modelValue="Warehouse 1 900 Romualdez Street Barangay 664-A Zone 71 Paco, Manila 1007"
-                />
                 <InputField
                   padding="p-0"
-                  fontSize="text-[12px]"
-                  align="text-right"
+                  fontSize="text-xs"
                   class="field w-full"
                   name="account_number"
-                  placeholder="Enter account number"
-                  modelValue="0998-533-1531"
+                  modelValue=""
                 >
                 </InputField>
-                <div class="content__actions">
-                  <Button variant="success" @click="invoiceItems.push(1)"
-                    >Add</Button
-                  >
-                  <Button variant="danger" @click="invoiceItems.push(1)"
-                    >Remove</Button
-                  >
-                </div>
-              </div>
-              <div class="table-content__content">
-                <label>PureGo Phase 2: Milestone 2</label>
-                <div>Php 1,199,709.00</div>
-              </div>
-              <div class="table-content__content">
-                <label>PureGo Phase 2: Milestone 2</label>
+                <InputField
+                  padding="p-0"
+                  fontSize="text-xs"
+                  class="field w-2/12"
+                  name="account_number"
+                  modelValue=""
+                >
+                </InputField>
                 <div>
-                  Php 1,199,709.00ceqwceqw qwec qwq eqwe qwiunye qwigunev
-                  iuqwygbncqwuic gnkqewbruyv geqwknrv byqwg
+                  <Icon
+                    width="20"
+                    height="20"
+                    style="color: #DC2626"
+                    class="cursor-pointer"
+                    name="mdi:close-circle-outline"
+                    @click="invoiceItems.pop(1)"
+                  />
                 </div>
               </div>
               <div class="table-content__content">
@@ -280,24 +286,31 @@
             <Textarea
               class="w-full footer__description"
               fontSize="text-xs"
-              padding="px-2 py-0"
+              padding="py-0"
               name="address"
               rows="5"
-              placeholder="Enter address"
-              modelValue="To all withholding agents: To claim withholding tax subsidies, you
-              must submit the corresponding Certificate of Creditable Tax
-              Withheld (BIR Form No. 2307) upon remittance of payment."
+              v-model="formData.business.notes"
             />
             <p class="footer__payments">REMIT PAYMENT TO :</p>
-            <ul>
-              <li>
-                BENEFICIARY’S BANK : Mega International Commercial Bank Co.,
-                Ltd. Manila Branch
-              </li>
-              <li>SWIFT CODE : ICBCPHMM</li>
-              <li>A/C NO. : 56110-001852-5 (PHP)</li>
-              <li>A/C NAME : ECLOUDVALLEY TECHNOLOGY (PHILIPPINES) INC.</li>
-            </ul>
+            <div class="payments__section">
+              <ul>
+                <li>
+                  <div class="left-section__payment-details">
+                    <label> BENEFICIARY’S BANK: </label>
+                    <InputField
+                      padding="p-0"
+                      fontSize="text-xs"
+                      name="business_invoice_number_template"
+                      v-model="formData.name" 
+                    />
+                  </div>
+                </li>
+                <li>SWIFT CODE : {{ formData.bank.swift_code }}</li>
+                <li>A/C NO. : {{ formData.bank.account_number }} ({{ formData.bank.currency }})</li>
+                <li>A/C NAME : {{ formData.bank.account_name }}.</li>
+              </ul>
+            </div>
+           
 
             <div class="footer__signatory">
               <div class="signatory__line">
@@ -339,8 +352,15 @@ export default {
             business_contact_email: null,
             business_contact_phone_number: null,
             business_contact_uuid: null,
+            notes: null,
           },
-          bank: null,
+          bank: {
+            account_number: null,
+            beneficiary_bank: null,
+            swift_code: null,
+            account_name: null,
+            currency: null
+          },
           customer: {
             name: null,
             tin: null,
@@ -348,11 +368,14 @@ export default {
             customer_contact_name: null,
             customer_contact_email: null,
             customer_contact_phone_number: null,
+            references: null,
           },
+          name: null,
           line_items: null,
-          invoice_date: null,
           invoice_amount: null,
           status: null,
+          invoice_date: null,
+          due_date: null,
         };
       },
     },
@@ -366,9 +389,10 @@ export default {
     },
   },
   setup(props) {
-    const { $api, $_ } = useNuxtApp();
+    const { $api, $_, $dayjs } = useNuxtApp();
     const formData = reactive(props.invoiceDetails);
     const invoiceItems = reactive([1]);
+
     // PROJECT DETAILS
     const selectedProject = ref(null);
     const dirtyFieldValidator = reactive({
@@ -416,7 +440,7 @@ export default {
       businessOptions.splice(0);
       $_.forEach(data.value.resource.businesses, (item) => {
         businessOptions.push({
-          label: item["business"],
+          label: item["business_name"],
           value: item["business"],
         });
       });
@@ -437,7 +461,7 @@ export default {
       let details = data.value.resource?.business;
 
       selectedBusiness.value = {
-        label: details?.business,
+        label: details?.business_name,
         value: details?.business,
       };
       formData.business = {
@@ -445,6 +469,12 @@ export default {
         ...details,
         name: details?.business,
       };
+
+      formData.invoice_date = $dayjs().format('YYYY/M/D')
+
+      if (formData.name === null) {
+        formData.name = details?.invoice_number_template
+      }
     }
 
     async function getBusinessUserData(cognito_id) {
@@ -482,7 +512,6 @@ export default {
             value: item["cognito_id"],
           });
         });
-
         fetchBusinessUserOptions.value = false;
       }
     }
@@ -496,14 +525,51 @@ export default {
       fetchBusinessDetails.value = false;
     }
 
+    // BANK DETAILS
+
+    const fetchBankDetails = ref(false);
+    const selectedBank = ref(null);
+    let bankOptions = reactive([]);
+
+    async function getBankOptions() {
+      const { data } = await $api.banks.getBanks({}, []);
+      bankOptions.splice(0);
+      $_.forEach(data.value.resource.banks, (item) => {
+        bankOptions.push({
+          label: `${item["beneficiary_bank"]} - ${item["account_number"]}`,
+          value: item["account_number"],
+        });
+      });
+    }
+
+    async function setBankFormData(account_number) {
+      fetchBankDetails.value = true;
+      const { data } = await $api.banks.getBankDetails(account_number, {
+        beneficiary_bank: null,
+        account_number: null,
+        account_name: null,
+        swift_code: null,
+        currency: null,
+      });
+      let details = data.value.resource?.bank;
+
+      selectedBank.value = {
+        label: `${details?.beneficiary_bank} - ${details?.account_number}`,
+        value: details?.account_number,
+      };
+      formData.bank = {
+        ...formData.bank,
+        ...details,
+      };
+      fetchBankDetails.value = false;
+    }
+
     // CUSTOMER DETAILS
 
-    const fetchCustomerDetails = ref(false);
     const selectedCustomer = ref(null);
     let customerOptions = reactive([]);
 
     async function setCustomerFormData(customer_id) {
-      fetchCustomerDetails.value = true;
       const { data } = await $api.customers.getCustomerDetails(customer_id, {
         name: null,
         tin: null,
@@ -530,7 +596,6 @@ export default {
         customer_contact_phone_number: details?.contact_phone_number,
       };
 
-      fetchCustomerDetails.value = false;
     }
     // WATCHERS
     watch(
@@ -541,6 +606,8 @@ export default {
           result.value.business_name,
           result.value.account_manager_uuid
         );
+        getBankOptions();
+        setBankFormData(result.value.bank_account_number);
         setCustomerFormData(result.value.customer_id);
       },
       { deep: true }
@@ -560,6 +627,12 @@ export default {
       if (formData.business.business_contact_uuid != result.value) {
         getBusinessUserData(result.value);
       }
+    });
+
+    watch(() => formData.invoice_date, (result) => {
+      formData.due_date = $dayjs(result).add(formData.business.due_date_duration, 'day').format('YYYY/M/D')
+    }, {
+      deep: true
     });
 
     async function onSubmit(values) {
@@ -589,7 +662,6 @@ export default {
       selectedBusinessUser,
       businessUserOptions,
       searchBusinessUser,
-      fetchCustomerDetails,
       customerOptions,
       selectedCustomer,
       onSubmit,
@@ -602,7 +674,7 @@ export default {
 <style lang="postcss">
 .invoice {
   @apply flex flex-col gap-5 justify-center items-center;
-
+  
   &__form {
     @apply p-10 text-xs;
     .form__header {
@@ -615,14 +687,11 @@ export default {
         }
 
         .left-section__company-details {
-          @apply flex flex-col;
-
-          .tin_details {
-            @apply flex flex-row gap-2;
-            .input-container__input {
-              @apply p-0 !important;
-            }
+          @apply grid gap-1;
+          .input-container__input {
+            @apply p-0 !important;
           }
+          grid-template-columns: 150px 1fr;
         }
         .left-section__contact-details {
           @apply grid gap-1;
@@ -640,27 +709,26 @@ export default {
         }
       }
       .header__right-section {
-        @apply w-[40%] flex flex-col gap-6;
+        @apply w-[40%] flex flex-col gap-3;
         .right-section__header {
           @apply justify-center flex items-end h-[55px];
           @apply text-[32px] font-semibold;
         }
         .right-section__invoice-details {
-          @apply grid grid-cols-2;
-          label {
-            @apply py-[5px];
-            @apply border-t border-gray-200;
-            &:last-of-type {
-              @apply border-b border-gray-200;
-            }
+          /* @apply grid grid-cols-2; */
+          @apply flex flex-row gap-x-5;
+          @apply border-t border-gray-200;
+
+          &:last-of-type {
+            @apply border-b border-gray-200;
           }
 
-          .inputfield {
-            @apply py-[5px];
-            @apply border-t border-gray-200;
-            &:last-of-type {
-              @apply border-b border-gray-200;
-            }
+          label, input, textarea {
+            @apply mt-2;
+          }
+
+          label, textarea {
+            @apply mb-2;
           }
         }
       }
@@ -669,31 +737,26 @@ export default {
     .form__body {
       @apply w-full flex flex-col mt-5;
       .body__table-header {
-        @apply flex items-center;
+        @apply flex items-center mb-2;
         @apply border-b-4 border-[#50C4FF];
         strong {
           @apply block w-full text-[#50C4FF] text-center;
         }
-      }
-      .body__table-content {
-        @apply flex flex-col;
-        .table-content__content {
-          @apply py-[3px] gap-4;
-          @apply flex items-end w-full border-b border-gray-300;
-          .field {
-            input {
-              @apply text-right;
-            }
-          }
-          .content__actions {
-            @apply flex gap-2;
-            button {
-              @apply text-xs !important;
-            }
+        .header__actions {
+            @apply flex gap-2 mb-2;
+            @apply cursor-pointer;
             div {
               @apply rounded-md;
             }
-          }
+        }
+
+      }
+      .body__table-content {
+        @apply flex flex-col;
+ 
+        .table-content__content {
+          @apply py-[3px] gap-4;
+          @apply flex items-end w-full border-b border-gray-300;
         }
       }
       .body__table-footer {
@@ -736,6 +799,18 @@ export default {
       }
       .footer__payments {
         @apply mb-[12px] font-bold;
+
+        .payments__section {
+          @apply w-[40%] flex flex-col gap-3;
+          /* .left-section__payment-details {
+            @apply grid gap-1;
+            .input-container__input {
+              @apply p-0 !important;
+            }
+            grid-template-columns: 150px 1fr;
+          } */
+        }
+
       }
       .footer__signatory {
         @apply mt-[40px];
@@ -754,40 +829,51 @@ export default {
         @apply list-disc;
       }
     }
-    /* PLUGINS CUSTOM CSS */
-    .dp-custom-input {
-      @apply pl-[25px] pt-0 pr-0 pb-0 text-xs h-full !important;
-    }
-    .dp__input_icons {
-      padding: 0px 6px;
-    }
-    .dp__main,
-    .dp__input_wrap,
-    .dp__main > div {
-      @apply h-full;
-    }
 
-    .multiselect {
-      @apply min-h-[25px] cursor-pointer;
-      &:hover {
-        .multiselect__tags {
-          @apply bg-gray-100;
-        }
-      }
+    textarea {
+      @apply border-none border-b-4 border-gray-200;
+      @apply resize-y !important;
     }
-    .multiselect__tags {
-      @apply min-h-[25px] p-0 !important;
+    /* PLUGINS CUSTOM CSS */
+    .dp__input {
+      @apply   text-xs !important;
+      /* @apply border-none border-b; */
     }
-    .multiselect__content-wrapper {
-      @apply top-[25px];
-    }
-    .multiselect__select {
-      @apply h-[30px];
+    .dp__icon {
+      @apply pt-3;
     }
     textarea:hover,
     input:hover {
       @apply bg-gray-100 !important;
     }
+    .multiselect {
+      @apply cursor-pointer;
+      @apply text-xs;
+    }
+    .multiselect__input:hover {
+      @apply bg-white !important;
+    }
+    .multiselect__tags {
+      @apply min-h-[16px] p-0 !important;
+      @apply h-[25px] !important
+    }
+    .multiselect__select {
+      @apply text-xs;
+      @apply h-[16px];
+    }
+    .multiselect__single {
+      @apply text-xs !important;
+      @apply p-0;
+    }
+    .multiselect__spinner {
+      @apply z-40;
+      @apply h-[16px] w-[16[x]];
+    }
+
+    .multiselect--disabled, .multiselect__select{
+      @apply bg-white;
+    }
+
   }
 
   .col__fixed {
