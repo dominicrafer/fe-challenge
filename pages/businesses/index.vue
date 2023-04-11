@@ -25,6 +25,7 @@
           <table class="table__data">
             <thead>
               <tr>
+                <th align="left">Business</th>
                 <th align="left">Name</th>
                 <th align="left">Address</th>
                 <th align="center">Actions</th>
@@ -36,6 +37,7 @@
                 :key="index"
               >
                 <td align="left">{{ businessDetails.business }}</td>
+                <td align="left">{{ businessDetails.business_name }}</td>
                 <td align="left">{{ businessDetails.address }}</td>
                 <td align="center">
                   <div class="table__data-actions">

@@ -22,6 +22,7 @@ export default {
     const route = useRoute();
     let businessDetails = {
       business: null,
+      business_name: null,
       address: null,
       services: [],
       approval_heirarchy: [],
@@ -30,6 +31,7 @@ export default {
       invoice_number_template: null,
       tax: null,
       tin: null,
+      note: null,
     };
     const { data, pending } = $api.businesses.getBusinessDetails(
       route.params.id,
@@ -40,6 +42,7 @@ export default {
       (result) => {
         let data = result.resource?.business;
         businessDetails.business = data?.business;
+        businessDetails.business_name = data?.business_name;
         businessDetails.address = data?.address;
 
         $_.forEach(data?.services, (item) => {
@@ -58,6 +61,7 @@ export default {
         businessDetails.invoice_number_template = data?.invoice_number_template;
         businessDetails.tax = data?.tax;
         businessDetails.tin = data?.tin;
+        businessDetails.notes = data?.notes;
       }
     );
 

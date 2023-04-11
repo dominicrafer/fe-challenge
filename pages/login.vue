@@ -3,27 +3,54 @@
     <div class="login">
       <div class="login__header">
         <Icon name="mdi:account-circle" color="white" width="80" height="80" />
-        <span class="header__title">
-          USER LOGIN
-        </span>
+        <span class="header__title"> USER LOGIN </span>
       </div>
       <div class="login__body">
-        <Alert type="danger" v-if="hasError" title="Incorrect username or password" />
-        <InputField name="username" placeholder="Enter email" v-model="email" rules="email" v-if="!newPasswordRequired">
+        <Alert
+          type="danger"
+          v-if="hasError"
+          title="Incorrect username or password"
+        />
+        <InputField
+          name="username"
+          placeholder="Enter email"
+          v-model="email"
+          rules="email"
+          v-if="!newPasswordRequired"
+        >
           <template #label> Email </template>
         </InputField>
-        <InputField name="password" placeholder="Enter password" v-model="password" type="password" rules="alpha_num"
-          v-if="!newPasswordRequired">
+        <InputField
+          name="password"
+          placeholder="Enter password"
+          v-model="password"
+          type="password"
+          rules="alpha_num"
+          v-if="!newPasswordRequired"
+        >
           <template #label> Password </template>
         </InputField>
-        <InputField name="new-password" placeholder="Enter new password" v-model="newPassword" type="password"
-          rules="alpha_num" v-if="newPasswordRequired">
+        <InputField
+          name="new-password"
+          placeholder="Enter new password"
+          v-model="newPassword"
+          type="password"
+          rules="alpha_num"
+          v-if="newPasswordRequired"
+        >
           <template #label> New Password </template>
         </InputField>
       </div>
       <div class="login__footer">
-        <Button radius="rounded-xl" type="submit" :loading="isLoading" showLoading>
-          <span v-if="!isLoading">{{ newPasswordRequired ? 'Continue' : 'Login' }}</span>
+        <Button
+          radius="rounded-xl"
+          type="submit"
+          :loading="isLoading"
+          showLoading
+        >
+          <span v-if="!isLoading">{{
+            newPasswordRequired ? "Continue" : "Login"
+          }}</span>
         </Button>
       </div>
     </div>
@@ -32,7 +59,7 @@
 
 <script>
 import { Form as VeeForm } from "vee-validate";
-import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from "@/store/auth";
 definePageMeta({
   layout: "login",
 });
@@ -47,54 +74,64 @@ export default {
     const newPasswordRequired = ref(false);
     function submitHandler() {
       if (newPasswordRequired.value) {
-        doConfirmLogin()
+        doConfirmLogin();
       } else {
-        doLogin()
+        doLogin();
       }
     }
 
     // Login
-    const email = ref(null);
-    const password = ref(null);
+    const email = ref("prod.super.admin@ecloudvalley.com");
+    const password = ref("KxK0g7e7");
     const { login } = authStore;
     let user = null;
     async function doLogin() {
       isLoading.value = true;
-      await login(email.value, password.value).then((res) => {
-        if (res.challengeName) {
-          user = res;
+      await login(email.value, password.value)
+        .then((res) => {
+          if (res.challengeName) {
+            user = res;
+            isLoading.value = false;
+            return (newPasswordRequired.value = true);
+          }
+          if (authStore.isUserAuthenticated) {
+            router.push("/");
+          }
           isLoading.value = false;
-          return newPasswordRequired.value = true
-
-        }
-        if (authStore.isUserAuthenticated) {
-          router.push('/')
-        }
-        isLoading.value = false;
-      }).catch((error) => {
-        console.log(error)
-        hasError.value = true;
-        isLoading.value = false;
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+          hasError.value = true;
+          isLoading.value = false;
+        });
     }
 
     // Login with change password
     const { completeNewPassword } = authStore;
     const newPassword = ref(null);
     async function doConfirmLogin() {
-      console.log('doconfirmlogin', user, email.value, newPassword.value)
+      console.log("doconfirmlogin", user, email.value, newPassword.value);
       isLoading.value = true;
-      await completeNewPassword(user, email.value, newPassword.value).then(() => {
-        router.push('/')
-      })
-
+      await completeNewPassword(user, email.value, newPassword.value).then(
+        () => {
+          router.push("/");
+        }
+      );
     }
-    return { email, password, doLogin, isLoading, hasError, newPasswordRequired, newPassword, doConfirmLogin, submitHandler };
-
+    return {
+      email,
+      password,
+      doLogin,
+      isLoading,
+      hasError,
+      newPasswordRequired,
+      newPassword,
+      doConfirmLogin,
+      submitHandler,
+    };
   },
   components: {
     VeeForm,
-
   },
 };
 </script>

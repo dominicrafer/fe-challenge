@@ -13,16 +13,28 @@
       >
         <SectionTitle title="Business Details" class="rounded-t-sm" />
         <div class="business__form">
-          <InputField
-            class="w-1/2"
-            name="business"
-            placeholder="Enter business"
-            v-model="formData.business"
-            v-model:isDirty="dirtyFieldValidator.business"
-            :rules="edit ? null : 'required'"
-          >
-            <template #label> Business Name </template>
-          </InputField>
+          <div class="col__auto">
+            <InputField
+              class="w-full"
+              name="business"
+              placeholder="Enter business"
+              v-model="formData.business"
+              v-model:isDirty="dirtyFieldValidator.business"
+              :rules="edit ? null : 'required'"
+            >
+              <template #label> Business </template>
+            </InputField>
+            <InputField
+              class="w-full"
+              name="business_name"
+              placeholder="Enter business_name"
+              v-model="formData.business_name"
+              v-model:isDirty="dirtyFieldValidator.business_name"
+              :rules="edit ? null : 'required'"
+            >
+              <template #label> Business Name </template>
+            </InputField>
+          </div>
           <Textarea
             name="address"
             label="Address"
@@ -144,6 +156,15 @@
               <template #label> Follow Up Intervals </template>
             </InputField>
           </div>
+          <Textarea
+            name="notes"
+            label="Notes"
+            placeholder="Enter notes"
+            v-model="formData.notes"
+            v-model:isDirty="dirtyFieldValidator.notes"
+            :rules="edit ? null : 'required'"
+          />
+
           <div class="col__auto">
             <Select
               class="w-full"
@@ -265,6 +286,7 @@ export default {
       default() {
         return {
           business: null,
+          business_name: null,
           address: null,
           services: [],
           approval_heirarchy: [
@@ -280,6 +302,7 @@ export default {
           invoice_number_template: null,
           tax: null,
           tin: null,
+          notes: null,
         };
       },
     },
@@ -315,6 +338,7 @@ export default {
     // we handle their dirty validation manually on the onSubmit() function
     const dirtyFieldValidator = reactive({
       business: false,
+      business_name: false,
       address: false,
       due_date_duration: false,
       follow_up_intervals: false,

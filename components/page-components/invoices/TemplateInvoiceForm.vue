@@ -4,7 +4,7 @@
       :loading="isLoading"
       :key="isLoading"
       padding="p-0"
-      class="w-[1000px]"
+      class="w-[1024px]"
     >
       <div class="p-5">
         <Select
@@ -24,153 +24,170 @@
           <template #label> Select Project </template>
         </Select>
       </div>
-    </Container>
 
-    <Container
-      :loading="fetchBusinessDetails"
-      padding="p-0"
-      class="w-[1000px]"
-    >
-      <VForm
-        @submit="onSubmit"
-        v-slot="{ isSubmitting }"
-        :initialValues="invoiceDetails"
+      <Container
+        :loading="fetchInvoiceDetails"
+        padding="p-0"
+        class="w-[1024px]"
       >
-        <div class="invoice__form">
-          <div class="form__header">
-            <div class="header__left-section">
-              <img src="@/assets/images/ecv.svg" />
-              <div class="left-section__company-details">
-                <label>Business: </label>
-                <Select 
-                  class="w-8/12" 
-                  name="business" 
-                  v-model="selectedBusiness" 
-                  :options="businessOptions"       
-                  trackBy="value"
-                  label="label"
-                  openDirection="bottom"
-                  disabled
-                />
-                <label > TIN NO. </label>
-                <span>
+        <VForm
+          @submit="onSubmit"
+          v-slot="{ isSubmitting }"
+          :initialValues="invoiceDetails"
+        >
+          <div class="invoice__form">
+            <div class="form__header">
+              <div class="header__left-section">
+                <img src="@/assets/images/ecv.svg" />
+                <div class="left-section__company-details">
+                  <label>Business: </label>
+                  <Select
+                    class="w-8/12"
+                    name="business"
+                    v-model="selectedBusiness"
+                    :options="businessOptions"
+                    trackBy="value"
+                    label="label"
+                    openDirection="bottom"
+                    disabled
+                  />
+                  <label> TIN NO. </label>
+                  <span>
+                    <InputField
+                      padding="p-0"
+                      fontSize="text-xs"
+                      inputWidth="w-8/12"
+                      name="business_tin"
+                      v-model="formData.business_details.tin"
+                      :rules="{
+                        required: true,
+                        numeric: true,
+                      }"
+                  /></span>
+                  <label>Address: </label>
+                  <Textarea
+                    fontSize="text-xs"
+                    class="w-8/12"
+                    padding="px-0"
+                    name="business_address"
+                    v-model="formData.business_details.address"
+                    :rules="{
+                      required: true,
+                    }"
+                  />
+                </div>
+                <Container :loading="fetchBusinessUserDetails">
+                  <div class="left-section__contact-details">
+                    <label> CONTACT:</label>
+                    <Select
+                      class="w-8/12 text-xs"
+                      name="business_user_name"
+                      v-model="selectedBusinessUser"
+                      :options="businessUserOptions"
+                      searchable
+                      @asyncSearch="searchBusinessUser"
+                      :isLoading="fetchBusinessUserOptions"
+                      trackBy="value"
+                      label="label"
+                      openDirection="bottom"
+                      hideSelected
+                    />
+                    <label> EMAIL:</label>
+                    {{
+                      formData.business_details.business_contact_email === null
+                        ? "-"
+                        : formData.business_details.business_contact_email
+                    }}
+                    <label> CONTACT NO.</label>
+                    {{
+                      formData.business_details
+                        .business_contact_phone_number === null
+                        ? "-"
+                        : formData.business_details
+                            .business_contact_phone_number
+                    }}
+                  </div>
+                </Container>
+
+                <p><strong>BILL TO</strong></p>
+                <div class="left-section__billing-details">
+                  <label> CUSTOMER:</label>
+                  {{
+                    formData.customer_details.name === null
+                      ? "-"
+                      : formData.customer_details.name
+                  }}
+                  <label> ADDRESS:</label>
+                  <Textarea
+                    fontSize="text-xs"
+                    class="w-8/12"
+                    padding="py-0"
+                    name="customer_address"
+                    :rules="{
+                      required: true,
+                    }"
+                    v-model="formData.customer_details.address"
+                  />
+                  <label> CONTACT</label>
                   <InputField
                     padding="p-0"
-                    fontSize="text-xs"
                     inputWidth="w-8/12"
-                    name="business_tin"
-                    v-model="formData.business.tin"
-                /></span>
-                <label>Address: </label>
-                <Textarea
-                  fontSize="text-xs"
-                  class="w-8/12 "
-                  padding="px-0"
-                  name="business_address"
-                  v-model="formData.business.address"
-                />
+                    fontSize="text-xs"
+                    name="customer_contact_name"
+                    :rules="{
+                      required: true,
+                    }"
+                    v-model="formData.customer_details.customer_contact_name"
+                  />
+                  <label> EMAIL: </label>
+                  <InputField
+                    padding="p-0"
+                    inputWidth="w-8/12"
+                    fontSize="text-xs"
+                    name="customer_contact_email"
+                    :rules="{
+                      required: true,
+                      email: true,
+                    }"
+                    v-model="formData.customer_details.customer_contact_email"
+                  />
+                  <label> CONTACT NO.: </label>
+                  <InputField
+                    padding="p-0"
+                    inputWidth="w-8/12"
+                    fontSize="text-xs"
+                    name="customer_contact_phone_number"
+                    :rules="{
+                      required: true,
+                      phone_number: true,
+                    }"
+                    v-model="
+                      formData.customer_details.customer_contact_phone_number
+                    "
+                  />
+                  <label> TIN: </label>
+                  <InputField
+                    padding="p-0"
+                    inputWidth="w-8/12"
+                    fontSize="text-xs"
+                    name="customer_tin"
+                    :rules="{
+                      required: true,
+                      numeric: true,
+                    }"
+                    v-model="formData.customer_details.tin"
+                  />
+                </div>
               </div>
-              <div class="left-section__contact-details">
-                <label> CONTACT:</label>
-                <Select 
-                  class="w-8/12 text-xs" 
-                  name="business_user_name" 
-                  v-model="selectedBusinessUser" 
-                  :options="businessUserOptions"   
-                  searchable
-                  @asyncSearch="searchBusinessUser"
-                  :isLoading="fetchBusinessUserOptions" 
-                  trackBy="value"
-                  label="label"
-                  openDirection="bottom"
-                  hideSelected
-                />
-                <label> EMAIL:</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="business_contact_email"
-                  v-model="formData.business.business_contact_email" 
-                  disabled
-                >
-                </InputField>
-                <label> CONTACT NO.</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="business_contact_phone_number"
-                  v-model="formData.business.business_contact_phone_number" 
-                  disabled
-                />
-              </div>
-              <p><strong>BILL TO</strong></p>
-              <div class="left-section__billing-details">
-                <label> CUSTOMER:</label>
-                <Select 
-                  class="w-8/12 text-xs" 
-                  name="customer_name" 
-                  v-model="selectedCustomer" 
-                  :options="customerOptions"   
-                  searchable
-                  trackBy="value"
-                  label="label"
-                  openDirection="bottom"
-                  hideSelected
-                  disabled
-                />
-                <label> ADDRESS:</label>
-                <Textarea
-                  fontSize="text-xs"
-                  class="w-8/12 "
-                  padding="py-0"
-                  name="customer_address"
-                  v-model="formData.customer.address"
-                />
-                <label> CONTACT</label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="customer_contact_name"
-                  v-model="formData.customer.customer_contact_name" 
-                />
-                <label> EMAIL: </label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="customer_contact_email"
-                  v-model="formData.customer.customer_contact_email" 
-                />
-                <label> CONTACT NO.: </label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="customer_contact_phone_number"
-                  v-model="formData.customer.customer_contact_phone_number" 
-                />
-                <label> TIN: </label>
-                <InputField
-                  padding="p-0"
-                  inputWidth="w-8/12"
-                  fontSize="text-xs"
-                  name="customer_tin"
-                  v-model="formData.customer.tin" 
-                />
-              </div>
-            </div>
-            <div class="header__right-section">
-              <div class="right-section__header">INVOICE</div>
+              <div class="header__right-section">
+                <div class="right-section__header">INVOICE</div>
                 <div class="right-section__invoice-details">
                   <label class="w-1/2"> INVOICE NO.: </label>
                   <InputField
                     padding="p-0"
                     fontSize="text-xs"
                     name="business_invoice_number_template"
-                    v-model="formData.name" 
+                    v-model="formData.name"
                     disabled
                   />
                 </div>
@@ -184,11 +201,11 @@
                     :enableTimePicker="false"
                   />
                 </div>
-           
+
                 <div class="right-section__invoice-details">
                   <label class="w-1/2"> DUE DATE: </label>
                   <DatePicker
-                    v-model="formData.due_date"
+                    v-model="formData.invoice_due_date"
                     name="invoice_due_date"
                     format="Y/M/d"
                     :timePicker="false"
@@ -204,124 +221,192 @@
                     fontSize="text-xs"
                     padding="px-1 py-0"
                     name="customer_references"
-                    v-model="formData.customer.references"
+                    v-model="formData.customer_details.references"
                   />
                 </div>
-            </div>
-          </div>
-          <div class="form__body">
-            <div class="body__table-header">
-              <strong>DESCRIPTION</strong>
-              <strong>AMOUNT</strong>
-              <div class="header__actions">
-                <Icon
-                  width="20"
-                  height="20"
-                  style="color: #16a34a"
-                  name="mdi:plus-circle-outline"
-                  @click="invoiceItems.push(1)"
-                />
               </div>
             </div>
-            <div class="body__table-content">
-              <div
-                class="table-content__content"
-                v-for="(invoiceItemDetails, index) in invoiceItems"
-                :key="index"
-              >
-                <InputField
-                  padding="p-0"
-                  fontSize="text-xs"
-                  class="field w-full"
-                  name="account_number"
-                  modelValue=""
-                >
-                </InputField>
-                <InputField
-                  padding="p-0"
-                  fontSize="text-xs"
-                  class="field w-2/12"
-                  name="account_number"
-                  modelValue=""
-                >
-                </InputField>
-                <div>
+            <div class="form__body">
+              <div class="body__table-header">
+                <strong>DESCRIPTION</strong>
+                <strong>AMOUNT</strong>
+                <div class="header__actions">
                   <Icon
                     width="20"
                     height="20"
-                    style="color: #DC2626"
-                    class="cursor-pointer"
-                    name="mdi:close-circle-outline"
-                    @click="invoiceItems.pop(1)"
+                    style="color: #16a34a"
+                    name="mdi:plus-circle-outline"
+                    @click="
+                      formData.line_item_details.push({
+                        description: 'Line item description',
+                        value: '0.00',
+                      });
+                      calculate();
+                    "
                   />
                 </div>
               </div>
-              <div class="table-content__content">
-                <label><br /></label>
-                <div></div>
+              <div class="body__table-content">
+                <div
+                  class="table-content__content"
+                  v-for="(
+                    invoiceItemDetails, index
+                  ) in formData.line_item_details"
+                  :key="index"
+                >
+                  <InputField
+                    padding="p-0"
+                    fontSize="text-xs"
+                    class="field w-full"
+                    :name="`description_${index}`"
+                    rules="required"
+                    v-model="invoiceItemDetails.description"
+                  >
+                  </InputField>
+                  <InputField
+                    padding="p-0"
+                    fontSize="text-xs"
+                    class="field w-2/12"
+                    :name="`value_${index}`"
+                    :rules="{
+                      required: true,
+                    }"
+                    v-model="invoiceItemDetails.value"
+                    @input="calculate()"
+                  >
+                  </InputField>
+                  <div>
+                    <Icon
+                      width="20"
+                      height="20"
+                      style="color: #dc2626"
+                      class="cursor-pointer"
+                      name="mdi:close-circle-outline"
+                      @click="
+                        formData.line_item_details.splice(index, 1);
+                        calculate();
+                      "
+                    />
+                  </div>
+                </div>
+                <div class="table-content__content">
+                  <label><br /></label>
+                  <div></div>
+                </div>
+              </div>
+              <div class="body__table-footer">
+                <div class="footer__content sales">
+                  <label class="text-right"
+                    >Total Sales Amount (VAT-excluded)</label
+                  >
+                  <div class="text-right">
+                    {{ numberWithCommas(formData.invoice_excluded_vat_amount) }}
+                  </div>
+                </div>
+                <div class="footer__content vat">
+                  <label class="text-right"
+                    >VAT Amount (Tax Rate:
+                    {{ formData.business_details.tax * 100 }}%)</label
+                  >
+                  <div class="text-right">
+                    {{ numberWithCommas(formData.invoice_vat_amount) }}
+                  </div>
+                </div>
+                <div class="footer__content total">
+                  <label class="text-right"><strong>TOTAL</strong></label>
+                  <div class="text-right border-b border-gray-300">
+                    {{ numberWithCommas(formData.invoice_amount) }}
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="body__table-footer">
-              <div class="footer__content sales">
-                <label class="text-right"
-                  >Total Sales Amount (VAT-excluded)</label
-                >
-                <div class="text-right">1,199,709.00</div>
+            <div class="form__footer">
+              <p class="footer__title">IMPORTANT REMINDER</p>
+
+              <Textarea
+                class="w-full footer__description"
+                fontSize="text-xs"
+                padding="py-0"
+                name="notes"
+                rows="5"
+                v-model="formData.business_details.notes"
+              />
+              <div class="bank__section">
+                <p class="mb-[12px] font-bold w-full">REMIT PAYMENT TO :</p>
+                <Select
+                  class="w-full"
+                  v-model="selectedBank"
+                  name="bank"
+                  :options="bankOptions"
+                  trackBy="value"
+                  label="label"
+                  searchable
+                  :closeOnSelect="true"
+                  :hideSelected="true"
+                />
               </div>
-              <div class="footer__content vat">
-                <label class="text-right">VAT Amount (Tax Rate: 12%)</label>
-                <div class="text-right">143,965.08</div>
+              <div class="bank__details">
+                <Container :loading="fetchBankDetails">
+                  <ul>
+                    <div class="left-section__bank_details">
+                      <li>
+                        <label> BENEFICIARY’S BANK: </label>
+                      </li>
+                      {{ formData.bank_details.beneficiary_bank }}
+                    </div>
+                    <div class="left-section__bank_details">
+                      <li>
+                        <label> SWIFT CODE: </label>
+                      </li>
+                      {{ formData.bank_details.swift_code }}
+                    </div>
+                    <div class="left-section__bank_details">
+                      <li>
+                        <label> A/C NO. : </label>
+                      </li>
+                      {{ formData.bank_details.account_number }} ({{
+                        formData.bank_details.currency
+                      }})
+                    </div>
+                    <div class="left-section__bank_details">
+                      <li>
+                        <label> A/C NAME : </label>
+                      </li>
+                      {{ formData.bank_details.account_name }}
+                    </div>
+                  </ul>
+                </Container>
               </div>
-              <div class="footer__content total">
-                <label class="text-right"><strong>TOTAL</strong></label>
-                <div class="text-right border-b border-gray-300">
-                  Php 1,343,674.08
+
+              <div class="footer__signatory">
+                <div class="signatory__line">
+                  <div class="line__complimentory-close">Thank You</div>
+
+                  <strong>eCloudvalley Technology (Philippines) Inc. </strong>
                 </div>
               </div>
             </div>
           </div>
-          <div class="form__footer">
-            <p class="footer__title">IMPORTANT REMINDER</p>
-
-            <Textarea
-              class="w-full footer__description"
-              fontSize="text-xs"
-              padding="py-0"
-              name="address"
-              rows="5"
-              v-model="formData.business.notes"
-            />
-            <p class="footer__payments">REMIT PAYMENT TO :</p>
-            <div class="payments__section">
-              <ul>
-                <li>
-                  <div class="left-section__payment-details">
-                    <label> BENEFICIARY’S BANK: </label>
-                    <InputField
-                      padding="p-0"
-                      fontSize="text-xs"
-                      name="business_invoice_number_template"
-                      v-model="formData.name" 
-                    />
-                  </div>
-                </li>
-                <li>SWIFT CODE : {{ formData.bank.swift_code }}</li>
-                <li>A/C NO. : {{ formData.bank.account_number }} ({{ formData.bank.currency }})</li>
-                <li>A/C NAME : {{ formData.bank.account_name }}.</li>
-              </ul>
-            </div>
-           
-
-            <div class="footer__signatory">
-              <div class="signatory__line">
-                <div class="line__complimentory-close">Thank You</div>
-
-                <strong>eCloudvalley Technology (Philippines) Inc. </strong>
-              </div>
+          <div class="invoice__footer">
+            <div class="flex flex-row gap-5">
+              <Button
+                variant="success"
+                type="submit"
+                :loading="isSubmitting"
+                @click="formData.status = 'draft'"
+                >Save as draft</Button
+              >
+              <Button
+                variant="success"
+                type="submit"
+                @click="formData.status = 'for_approval'"
+                :loading="isSubmitting"
+                >Save</Button
+              >
             </div>
           </div>
-        </div>
-      </VForm>
+        </VForm>
+      </Container>
     </Container>
   </div>
 </template>
@@ -337,14 +422,10 @@ export default {
       type: Object,
       default() {
         return {
-          project: null,
-          business: {
+          business_details: {
             name: null,
             address: null,
-            services: [],
-            approval_heirarchy: [],
             due_date_duration: null,
-            follow_up_intervals: null,
             invoice_number_template: null,
             tax: null,
             tin: null,
@@ -354,57 +435,53 @@ export default {
             business_contact_uuid: null,
             notes: null,
           },
-          bank: {
+          bank_details: {
             account_number: null,
             beneficiary_bank: null,
             swift_code: null,
             account_name: null,
-            currency: null
+            currency: null,
           },
-          customer: {
+          customer_details: {
+            id: null,
             name: null,
             tin: null,
             address: null,
             customer_contact_name: null,
             customer_contact_email: null,
             customer_contact_phone_number: null,
-            references: null,
+            references: "N/A",
           },
-          name: null,
-          line_items: null,
+          approvers: [],
+          project_id: null,
+          project_name: null,
+          project_service_type: null,
+          business_name: null,
+          bank_account_number: null,
+          customer_name: null,
+          line_item_details: [],
+          invoice_excluded_vat_amount: null,
+          invoice_vat_amount: null,
           invoice_amount: null,
+          name: null,
           status: null,
           invoice_date: null,
-          due_date: null,
+          invoice_due_date: null,
         };
       },
     },
-    edit: {
-      type: Boolean,
-      default: false,
-    },
+
     submitHandler: {
       type: Function,
       required: true,
     },
   },
   setup(props) {
-    const { $api, $_, $dayjs } = useNuxtApp();
+    const { $api, $_, $dayjs, $toast } = useNuxtApp();
     const formData = reactive(props.invoiceDetails);
-    const invoiceItems = reactive([1]);
 
     // PROJECT DETAILS
     const selectedProject = ref(null);
-    const dirtyFieldValidator = reactive({
-      project: false,
-      business: false,
-      bank: false,
-      customer: false,
-      line_items: false,
-      invoice_date: false,
-      invoice_amount: false,
-      status: false,
-    });
 
     let projectOptions = reactive([]);
     const fetchProjectOptions = ref(false);
@@ -426,12 +503,22 @@ export default {
       }
     }
 
+    async function setProjectFormData(result) {
+      formData.project_id = result.value.id;
+      formData.project_name = result.value.name;
+      formData.project_service_type = result.value.service_type;
+      formData.business_name = result.value.business_name;
+      formData.bank_account_number = result.value.bank_account_number;
+      formData.customer_name = result.value.customer_name;
+    }
+
     // BUSINESS DETAILS
-    const fetchBusinessDetails = ref(false);
+    const fetchInvoiceDetails = ref(false);
     const selectedBusiness = ref(null);
     let businessOptions = reactive([]);
 
     const fetchBusinessUserOptions = ref(false);
+    const fetchBusinessUserDetails = ref(false);
     const selectedBusinessUser = ref(null);
     let businessUserOptions = reactive([]);
 
@@ -464,20 +551,27 @@ export default {
         label: details?.business_name,
         value: details?.business,
       };
-      formData.business = {
-        ...formData.business,
-        ...details,
+      formData.business_details = {
+        ...formData.business_details,
+        address: details?.address,
+        due_date_duration: details?.due_date_duration,
+        invoice_number_template: details?.invoice_number_template,
+        tin: details?.tin,
+        notes: details?.notes,
         name: details?.business,
+        tax: parseFloat(details?.tax),
       };
 
-      formData.invoice_date = $dayjs().format('YYYY/M/D')
+      formData.invoice_date = $dayjs().format("YYYY/M/D");
+      formData.approvers = details?.approval_heirarchy;
 
       if (formData.name === null) {
-        formData.name = details?.invoice_number_template
+        formData.name = details?.invoice_number_template;
       }
     }
 
     async function getBusinessUserData(cognito_id) {
+      fetchBusinessUserDetails.value = true;
       if (cognito_id === undefined) {
         return true;
       }
@@ -488,13 +582,14 @@ export default {
         value: details?.cognito_id,
       };
 
-      formData.business = {
-        ...formData.business,
+      formData.business_details = {
+        ...formData.business_details,
         business_contact_uuid: details?.cognito_id,
         business_contact_name: details?.name,
         business_contact_email: details?.email,
         business_contact_phone_number: details?.phone_number,
       };
+      fetchBusinessUserDetails.value = false;
     }
 
     async function searchBusinessUser(value) {
@@ -517,12 +612,12 @@ export default {
     }
 
     async function setBusinessFormData(business_name, cognito_id) {
-      fetchBusinessDetails.value = true;
+      fetchInvoiceDetails.value = true;
       await Promise.all([
         getBusinessData(business_name),
         getBusinessUserData(cognito_id),
       ]);
-      fetchBusinessDetails.value = false;
+      fetchInvoiceDetails.value = false;
     }
 
     // BANK DETAILS
@@ -557,17 +652,14 @@ export default {
         label: `${details?.beneficiary_bank} - ${details?.account_number}`,
         value: details?.account_number,
       };
-      formData.bank = {
-        ...formData.bank,
+      formData.bank_details = {
+        ...formData.bank_details,
         ...details,
       };
       fetchBankDetails.value = false;
     }
 
     // CUSTOMER DETAILS
-
-    const selectedCustomer = ref(null);
-    let customerOptions = reactive([]);
 
     async function setCustomerFormData(customer_id) {
       const { data } = await $api.customers.getCustomerDetails(customer_id, {
@@ -581,13 +673,9 @@ export default {
 
       let details = data.value.resource;
 
-      selectedCustomer.value = {
-        label: details?.name,
-        value: details?.id,
-      };
-
-      formData.customer = {
-        ...formData.customer,
+      formData.customer_details = {
+        ...formData.customer_details,
+        id: details?.id,
         name: details?.name,
         tin: details?.tin,
         address: details?.address,
@@ -595,12 +683,44 @@ export default {
         customer_contact_email: details?.contact_email,
         customer_contact_phone_number: details?.contact_phone_number,
       };
-
     }
+
+    // LINE ITEMS
+    const salesVatExcludedValue = ref(null);
+    const salesTaxableValue = ref(null);
+    const salesTotalValue = ref(null);
+
+    function calculate() {
+      let vatExcluded = $_.reduce(
+        formData.line_item_details,
+        (sum, items) => {
+          let parsedValue = items.value.replaceAll(",", "");
+
+          return sum + parseFloat(parsedValue);
+        },
+        0
+      );
+      const taxable = vatExcluded * formData.business_details.tax;
+      const total = vatExcluded + taxable;
+
+      formData.invoice_excluded_vat_amount = vatExcluded.toFixed(2);
+      formData.invoice_vat_amount = taxable.toFixed(2);
+      formData.invoice_amount = total.toFixed(2);
+    }
+
+    function numberWithCommas(x) {
+      if (x !== null) {
+        return `${formData.bank_details.currency} ${x
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+      }
+    }
+
     // WATCHERS
     watch(
       selectedProject,
       (result) => {
+        setProjectFormData(result);
         getBusinessOptions();
         setBusinessFormData(
           result.value.business_name,
@@ -616,7 +736,7 @@ export default {
     watch(
       selectedBusiness,
       (result) => {
-        if (formData.business.name != result.value) {
+        if (formData.business_details.name != result.value) {
           setBusinessFormData(result.value);
         }
       },
@@ -624,48 +744,99 @@ export default {
     );
 
     watch(selectedBusinessUser, (result) => {
-      if (formData.business.business_contact_uuid != result.value) {
+      if (formData.business_details.business_contact_uuid != result.value) {
         getBusinessUserData(result.value);
       }
     });
 
-    watch(() => formData.invoice_date, (result) => {
-      formData.due_date = $dayjs(result).add(formData.business.due_date_duration, 'day').format('YYYY/M/D')
-    }, {
-      deep: true
-    });
+    watch(
+      () => formData.invoice_date,
+      (result) => {
+        formData.invoice_due_date = $dayjs(result)
+          .add(formData.business_details.due_date_duration, "day")
+          .format("YYYY/M/D");
+      },
+      {
+        deep: true,
+      }
+    );
+
+    watch(
+      selectedBank,
+      (result) => {
+        if (formData.bank_details.account_number != result.value) {
+          setBankFormData(result.value);
+        }
+      },
+      { deep: true }
+    );
+
+    // watch(
+    //   formData.line_item_details,
+    //   (result) => {
+    //     calculate();
+    //   },
+    //   { deep: true }
+    // );
 
     async function onSubmit(values) {
-      if (props.edit) {
-        let payload = {};
-        $_.forEach(dirtyFieldValidator, (isDirty, key) => {
-          if (isDirty) {
-            payload[key] = values[key];
-          }
-        });
-        await props.submitHandler(payload);
-      } else {
-        await props.submitHandler(values);
+      if (formData.line_item_details <= 0) {
+        return $toast.error("Please provide line items.");
       }
+      formData.approvers = $_.map(formData.approvers, (item) => {
+        if (item.type === "account_manager") {
+          return {
+            type: item.type,
+            approver: formData.business_details.business_contact_name,
+            approver_email: formData.business_details.business_contact_email,
+            approver_uuid: formData.business_details.business_contact_uuid,
+          };
+        } else if (["approver", "signatory"].includes(item.type)) {
+          return {
+            type: item.type,
+            approver: item.name || item.approver,
+            approver_email: item.email || item.approver_email,
+            approver_uuid: item.cognito_id || item.approver_uuid,
+          };
+        } else {
+          return item;
+        }
+      });
+
+      await props.submitHandler(formData);
+
+      // if (props.edit) {
+      //   let payload = {};
+      //   $_.forEach(dirtyFieldValidator, (isDirty, key) => {
+      //     if (isDirty) {
+      //       payload[key] = values[key];
+      //     }
+      //   });
+      //   await props.submitHandler(payload);
+      // } else {
+      //   await props.submitHandler(values);
+      // }
     }
     return {
       formData,
-      dirtyFieldValidator,
       projectOptions,
       selectedProject,
       fetchProjectOptions,
       searchProject,
-      fetchBusinessDetails,
+      fetchInvoiceDetails,
       selectedBusiness,
       businessOptions,
       fetchBusinessUserOptions,
       selectedBusinessUser,
+      fetchBusinessUserDetails,
       businessUserOptions,
       searchBusinessUser,
-      customerOptions,
-      selectedCustomer,
+      selectedBank,
+      bankOptions,
+      fetchBankDetails,
+      numberWithCommas,
+      calculate,
       onSubmit,
-      invoiceItems,
     };
   },
 };
@@ -674,7 +845,7 @@ export default {
 <style lang="postcss">
 .invoice {
   @apply flex flex-col gap-5 justify-center items-center;
-  
+
   &__form {
     @apply p-10 text-xs;
     .form__header {
@@ -723,11 +894,14 @@ export default {
             @apply border-b border-gray-200;
           }
 
-          label, input, textarea {
+          label,
+          input,
+          textarea {
             @apply mt-2;
           }
 
-          label, textarea {
+          label,
+          textarea {
             @apply mb-2;
           }
         }
@@ -743,17 +917,16 @@ export default {
           @apply block w-full text-[#50C4FF] text-center;
         }
         .header__actions {
-            @apply flex gap-2 mb-2;
-            @apply cursor-pointer;
-            div {
-              @apply rounded-md;
-            }
+          @apply flex gap-2 mb-2;
+          @apply cursor-pointer;
+          div {
+            @apply rounded-md;
+          }
         }
-
       }
       .body__table-content {
         @apply flex flex-col;
- 
+
         .table-content__content {
           @apply py-[3px] gap-4;
           @apply flex items-end w-full border-b border-gray-300;
@@ -797,21 +970,20 @@ export default {
       .footer__description {
         @apply mb-[12px];
       }
-      .footer__payments {
-        @apply mb-[12px] font-bold;
-
-        .payments__section {
-          @apply w-[40%] flex flex-col gap-3;
-          /* .left-section__payment-details {
-            @apply grid gap-1;
-            .input-container__input {
-              @apply p-0 !important;
-            }
-            grid-template-columns: 150px 1fr;
-          } */
-        }
-
+      .bank__section {
+        @apply w-[40%] flex flex-row;
       }
+      .bank__details {
+        @apply w-[40%] flex flex-col gap-3;
+        .left-section__bank_details {
+          @apply grid gap-1;
+          .input-container__input {
+            @apply p-0 !important;
+          }
+          grid-template-columns: 150px 1fr;
+        }
+      }
+
       .footer__signatory {
         @apply mt-[40px];
         @apply flex flex-col w-full items-end;
@@ -836,7 +1008,10 @@ export default {
     }
     /* PLUGINS CUSTOM CSS */
     .dp__input {
-      @apply   text-xs !important;
+      @apply text-xs !important;
+      &:disabled {
+        @apply text-gray-400;
+      }
       /* @apply border-none border-b; */
     }
     .dp__icon {
@@ -855,7 +1030,7 @@ export default {
     }
     .multiselect__tags {
       @apply min-h-[16px] p-0 !important;
-      @apply h-[25px] !important
+      @apply h-[25px] !important;
     }
     .multiselect__select {
       @apply text-xs;
@@ -870,10 +1045,10 @@ export default {
       @apply h-[16px] w-[16[x]];
     }
 
-    .multiselect--disabled, .multiselect__select{
+    .multiselect--disabled,
+    .multiselect__select {
       @apply bg-white;
     }
-
   }
 
   .col__fixed {

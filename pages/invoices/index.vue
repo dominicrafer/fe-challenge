@@ -1,9 +1,6 @@
 <template>
   <div class="page">
     <PageHeader title="Invoices">
-      <!-- <template #left-panel>
-          <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
-        </template> -->
       <template #right-panel>
         <Popper arrow placement="left">
           <Button variant="success" type="button"> Create </Button>
@@ -47,12 +44,13 @@
             <thead>
               <tr>
                 <th align="left">Invoice</th>
-                <th align="left">Type</th>
+                <th align="left">Customer</th>
                 <th align="left">Project</th>
                 <th align="left">Business</th>
-                <th align="left">Customer</th>
+                <th align="left">Type</th>
                 <th align="left">Status</th>
                 <th align="left">Invoice Date</th>
+                <th align="left">Invoice Due Date</th>
                 <th align="center">Actions</th>
               </tr>
             </thead>
@@ -62,19 +60,36 @@
                 :key="index"
               >
                 <td align="left">{{ invoiceDetails.name }}</td>
-                <td align="left">{{ invoiceDetails.type }}</td>
+                <td align="left">{{ invoiceDetails.customer_name }}</td>
                 <td align="left">{{ invoiceDetails.project_name }}</td>
                 <td align="left">{{ invoiceDetails.business_name }}</td>
-                <td align="left">{{ invoiceDetails.customer_name }}</td>
+                <td align="left">{{ invoiceDetails.project_service_type }}</td>
                 <td align="left">{{ invoiceDetails.status }}</td>
                 <td align="left">{{ invoiceDetails.invoice_date }}</td>
+                <td align="left">{{ invoiceDetails.invoice_due_date }}</td>
                 <td align="center">
                   <div class="table__data-actions">
+                    <router-link
+                      :to="{
+                        name: 'invoices-project-id',
+                        params: { id: invoiceDetails.id },
+                      }"
+                      v-if="invoiceDetails.project_id !== null"
+                      v-has:invoices.action-permission="`invoices:read`"
+                    >
+                      <Icon
+                        width="20"
+                        height="20"
+                        style="color: #29335c"
+                        name="material-symbols:preview"
+                      />
+                    </router-link>
                     <router-link
                       :to="{
                         name: 'invoices-id',
                         params: { id: invoiceDetails.id },
                       }"
+                      v-else
                       v-has:invoices.action-permission="`invoices:read`"
                     >
                       <Icon

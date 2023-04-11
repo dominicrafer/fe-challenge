@@ -3,7 +3,7 @@
     <label :name="name" class="date-picker__label" v-if="$slots.label">
       <slot name="label"></slot>
     </label>
-      <!-- 
+    <!-- 
         NOTES:
             > time-picker -> converts datepicker into a time picker
             > enable-timepicker -> removes time selection on calendar
@@ -12,21 +12,21 @@
             > range -> convert datepicker to date range picker
             > format -> define displayed format
       -->
-      <Datepicker
-        v-model="date"
-        :placeholder="placeholder"
-        :format="format"
-        :flow="flow"
-        :range="range"
-        :enable-time-picker="enableTimePicker"
-        :time-picker="timePicker"
-        :input-class-name="inputClassName"
-        :disabled="disabled"
-        @update:model-value="onChange"
-      />
-      <div class="date-picker__error" v-if="errorMessage">
-        {{ errorMessage }}
-      </div>
+    <Datepicker
+      v-model="date"
+      :placeholder="placeholder"
+      :format="format"
+      :flow="flow"
+      :range="range"
+      :enable-time-picker="enableTimePicker"
+      :time-picker="timePicker"
+      :input-class-name="inputClassName"
+      :disabled="disabled"
+      @update:model-value="onChange"
+    />
+    <div class="date-picker__error" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
@@ -80,10 +80,10 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     // const date = ref(props.modelValue);
 
     const {
@@ -94,8 +94,6 @@ export default {
       initialValue: props.modelValue,
     });
 
-    console.log(date)
-    
     async function onChange(event) {
       emit("update:modelValue", event);
     }

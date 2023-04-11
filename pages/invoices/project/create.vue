@@ -40,6 +40,5 @@ export default {
 <style lang="postcss" scoped>
 .page__body {
   @apply w-full;
-  
 }
 </style>

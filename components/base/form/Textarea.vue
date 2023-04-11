@@ -1,6 +1,8 @@
 <template>
   <div class="textarea">
-    <label class="textarea__label" :for="name" resize v-if="label">{{ label }}</label>
+    <label class="textarea__label" :for="name" resize v-if="label">{{
+      label
+    }}</label>
     <textarea
       :name="name"
       :value="modelValue"
@@ -9,7 +11,9 @@
       :rows="rows"
       class="textarea__input"
       :placeholder="placeholder"
-      :class="`${!meta.valid && meta.dirty ? 'has-error' : null} ${padding} ${fontSize}`"
+      :class="`${
+        !meta.valid && meta.dirty ? 'has-error' : null
+      } ${padding} ${fontSize}`"
       :id="name"
       :disabled="disabled"
     ></textarea>
@@ -26,7 +30,7 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
+      required: false,
     },
     name: {
       type: String,
@@ -52,15 +56,15 @@ export default {
     },
     padding: {
       type: String,
-      default: 'py-2 py-4'
+      default: "py-2 py-4",
     },
     fontSize: {
       type: String,
-      default: 'text-[0.875rem]'
+      default: "text-[0.875rem]",
     },
     rows: {
       type: [String, Number],
-      default: '3'
+      default: "3",
     },
   },
   setup(props, { emit }) {

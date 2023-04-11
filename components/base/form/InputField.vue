@@ -93,24 +93,24 @@ export default {
     },
     padding: {
       type: String,
-      default: 'py-[6px] px-[12px]'
+      default: "py-[6px] px-[12px]",
     },
     fontSize: {
       type: String,
-      default: 'text-[0.875rem]'
+      default: "text-[0.875rem]",
     },
     inputWidth: {
       type: String,
-      default: 'w-full'
+      default: "w-full",
     },
     align: {
       type: String,
-      default: 'text-left'
+      default: "text-left",
     },
     borderStyle: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props, { emit }) {
     const { errorMessage, meta, value, handleBlur } = useField(
@@ -155,7 +155,7 @@ export default {
     .input-container__input {
       @apply border-b border-gray-200;
       /* @apply py-[6px] px-[12px]; */
-      
+
       @apply outline-none;
 
       &.has-error {
@@ -184,6 +184,10 @@ export default {
           @apply text-transparent;
           transition: 0.2s ease all;
         }
+      }
+
+      &:disabled {
+        @apply text-gray-400;
       }
     }
 
