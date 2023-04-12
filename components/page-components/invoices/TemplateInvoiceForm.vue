@@ -20,6 +20,7 @@
           openDirection="bottom"
           :isLoading="fetchProjectOptions"
           @asyncSearch="searchProject"
+          :disabled="![null].includes(invoiceDetails.status)"
         >
           <template #label> Select Project </template>
         </Select>
@@ -41,7 +42,12 @@
                 <img src="@/assets/images/ecv.svg" />
                 <div class="left-section__company-details">
                   <label>Business: </label>
-                  <Select
+                  {{
+                    formData.business_details.name === null
+                      ? "-"
+                      : formData.business_details.name
+                  }}
+                  <!-- <Select
                     class="w-8/12"
                     name="business"
                     v-model="selectedBusiness"
@@ -50,7 +56,7 @@
                     label="label"
                     openDirection="bottom"
                     disabled
-                  />
+                  /> -->
                   <label> TIN NO. </label>
                   <span>
                     <InputField
@@ -352,27 +358,41 @@
                       <li>
                         <label> BENEFICIARY’S BANK: </label>
                       </li>
-                      {{ formData.bank_details.beneficiary_bank }}
+                      {{ 
+                        formData.bank_details.beneficiary_bank === null 
+                        ? "-" 
+                        : formData.bank_details.beneficiary_bank 
+                      }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> SWIFT CODE: </label>
                       </li>
-                      {{ formData.bank_details.swift_code }}
+                      {{ 
+                        formData.bank_details.swift_code === null 
+                        ? "-" 
+                        : formData.bank_details.swift_code 
+                      }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> A/C NO. : </label>
                       </li>
-                      {{ formData.bank_details.account_number }} ({{
-                        formData.bank_details.currency
-                      }})
+                      {{ 
+                        formData.bank_details.account_number === null 
+                        ? "-" 
+                        : formData.bank_details.account_number +  " (" + formData.bank_details.currency + ")"
+                      }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> A/C NAME : </label>
                       </li>
-                      {{ formData.bank_details.account_name }}
+                      {{ 
+                        formData.bank_details.account_name === null 
+                        ? "-" 
+                        : formData.bank_details.account_name 
+                      }}
                     </div>
                   </ul>
                 </Container>
@@ -470,7 +490,22 @@ export default {
         };
       },
     },
-
+    selectedProject: {
+      type: Object,
+      default: null,
+    },
+    selectedBusinessUser: {
+      type: Object,
+      default: null,
+    },
+    selectedBank: {
+      type: Object,
+      default: null,
+    },
+    bankOptions: {
+      type: Array,
+      default: []
+    },
     submitHandler: {
       type: Function,
       required: true,
@@ -481,7 +516,7 @@ export default {
     const formData = reactive(props.invoiceDetails);
 
     // PROJECT DETAILS
-    const selectedProject = ref(null);
+    const selectedProject = ref(props.selectedProject);
 
     let projectOptions = reactive([]);
     const fetchProjectOptions = ref(false);
@@ -514,28 +549,16 @@ export default {
 
     // BUSINESS DETAILS
     const fetchInvoiceDetails = ref(false);
-    const selectedBusiness = ref(null);
-    let businessOptions = reactive([]);
 
     const fetchBusinessUserOptions = ref(false);
     const fetchBusinessUserDetails = ref(false);
-    const selectedBusinessUser = ref(null);
+    const selectedBusinessUser = ref(props.selectedBusinessUser);
     let businessUserOptions = reactive([]);
-
-    async function getBusinessOptions() {
-      const { data } = await $api.businesses.getBusinesses({}, []);
-      businessOptions.splice(0);
-      $_.forEach(data.value.resource.businesses, (item) => {
-        businessOptions.push({
-          label: item["business_name"],
-          value: item["business"],
-        });
-      });
-    }
 
     async function getBusinessData(business) {
       const { data } = await $api.businesses.getBusinessDetails(business, {
-        business: null,
+        business: null, // services as acronym and sk in dyanmodb
+        business_name: null, // serves as acronym descirption and is an attribute
         address: null,
         services: [],
         approval_heirarchy: [],
@@ -547,10 +570,6 @@ export default {
       });
       let details = data.value.resource?.business;
 
-      selectedBusiness.value = {
-        label: details?.business_name,
-        value: details?.business,
-      };
       formData.business_details = {
         ...formData.business_details,
         address: details?.address,
@@ -558,7 +577,7 @@ export default {
         invoice_number_template: details?.invoice_number_template,
         tin: details?.tin,
         notes: details?.notes,
-        name: details?.business,
+        name: details?.business_name,
         tax: parseFloat(details?.tax),
       };
 
@@ -623,8 +642,8 @@ export default {
     // BANK DETAILS
 
     const fetchBankDetails = ref(false);
-    const selectedBank = ref(null);
-    let bankOptions = reactive([]);
+    const selectedBank = ref(props.selectedBank);
+    let bankOptions = reactive(props.bankOptions);
 
     async function getBankOptions() {
       const { data } = await $api.banks.getBanks({}, []);
@@ -709,7 +728,7 @@ export default {
     }
 
     function numberWithCommas(x) {
-      if (x !== null) {
+      if (x !== null && x !== undefined) {
         return `${formData.bank_details.currency} ${x
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
@@ -721,7 +740,6 @@ export default {
       selectedProject,
       (result) => {
         setProjectFormData(result);
-        getBusinessOptions();
         setBusinessFormData(
           result.value.business_name,
           result.value.account_manager_uuid
@@ -729,16 +747,6 @@ export default {
         getBankOptions();
         setBankFormData(result.value.bank_account_number);
         setCustomerFormData(result.value.customer_id);
-      },
-      { deep: true }
-    );
-
-    watch(
-      selectedBusiness,
-      (result) => {
-        if (formData.business_details.name != result.value) {
-          setBusinessFormData(result.value);
-        }
       },
       { deep: true }
     );
@@ -771,14 +779,6 @@ export default {
       { deep: true }
     );
 
-    // watch(
-    //   formData.line_item_details,
-    //   (result) => {
-    //     calculate();
-    //   },
-    //   { deep: true }
-    // );
-
     async function onSubmit(values) {
       if (formData.line_item_details <= 0) {
         return $toast.error("Please provide line items.");
@@ -805,17 +805,6 @@ export default {
 
       await props.submitHandler(formData);
 
-      // if (props.edit) {
-      //   let payload = {};
-      //   $_.forEach(dirtyFieldValidator, (isDirty, key) => {
-      //     if (isDirty) {
-      //       payload[key] = values[key];
-      //     }
-      //   });
-      //   await props.submitHandler(payload);
-      // } else {
-      //   await props.submitHandler(values);
-      // }
     }
     return {
       formData,
@@ -824,8 +813,6 @@ export default {
       fetchProjectOptions,
       searchProject,
       fetchInvoiceDetails,
-      selectedBusiness,
-      businessOptions,
       fetchBusinessUserOptions,
       selectedBusinessUser,
       fetchBusinessUserDetails,

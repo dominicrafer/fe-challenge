@@ -6,14 +6,14 @@
           <Button variant="success" type="button"> Create </Button>
           <template #content>
             <div class="col__auto">
-              <NuxtLink
+              <!-- <NuxtLink
                 :to="{
                   path: '/invoices/manual/create',
                 }"
                 v-has:invoices.action-permission="`invoices:write`"
               >
                 <Button variant="primary" type="button"> Manual </Button>
-              </NuxtLink>
+              </NuxtLink> -->
               <NuxtLink
                 :to="{
                   path: '/invoices/project/create',

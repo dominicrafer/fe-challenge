@@ -2,7 +2,6 @@
   <div class="page">
     <PageHeader backRoute="/invoices" title="Create Project Invoice" />
     <div class="page__body">
-      <!-- <ProjectInvoiceForm :submitHandler="submitHandler" /> -->
       <TemplateInvoiceForm :submitHandler="submitHandler" />
     </div>
   </div>

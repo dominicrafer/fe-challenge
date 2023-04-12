@@ -3,10 +3,13 @@
     <PageHeader backRoute="/invoices" title="Edit Project Invoice" />
     <div class="page__body">
       <TemplateInvoiceForm
-        v-if="!pending"
         :invoiceDetails="invoiceDetails"
+        :selectedProject="selectedProject"
+        :selectedBusinessUser="selectedBusinessUser"
+        :selectedBank="selectedBank"
+        :bankOptions="bankOptions"
         :submitHandler="submitHandler"
-        :isLoading="pending"
+        :isLoading="invoicePending || optionsPending"
       />
     </div>
   </div>
@@ -20,6 +23,7 @@ export default {
   async setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
+    let editable = true
     let selectedProject = {
       label: null,
       value: {
@@ -81,12 +85,25 @@ export default {
       invoice_date: null,
       invoice_due_date: null,
     };
-    const { data, pending } = $api.invoices.getInvoiceDetails(
+    let selectedBusinessUser = {
+      label: null,
+      value: null,
+    }
+    let selectedBank = {
+      label: null,
+      value: null,
+    }
+    let bankOptions = []
+
+    const { data: invoice, pending: invoicePending } = $api.invoices.getInvoiceDetails(
       route.params.id,
       invoiceDetails
     );
+
+    const { data: options, pending: optionsPending } = $api.banks.getBanks({}, [])
+
     watch(
-      () => data.value,
+      () => invoice.value,
       (result) => {
         let data = result.resource;
         invoiceDetails.business_details = {
@@ -112,7 +129,6 @@ export default {
           account_name: data?.bank_details?.account_name,
           currency: data?.bank_details?.currency,
         };
-
         invoiceDetails.customer_details = {
           id: data?.customer_details?.id,
           name: data?.customer_details?.name,
@@ -157,27 +173,48 @@ export default {
         invoiceDetails.invoice_date = data?.invoice_date;
         invoiceDetails.invoice_due_date = data?.invoice_due_date;
 
-        // let am_details = $_.find(invoiceDetails?.approvers, {
-        //   type: "account_manager",
-        // });
+        let am_details = $_.find(invoiceDetails?.approvers, {
+          type: "account_manager",
+        });
 
-        // selectedProject.label = `${invoiceDetails?.project_name} - ${invoiceDetails?.customer_name}`;
-        // selectedProject.value = {
-        //   account_manager_uuid: am_details.approver_uuid,
-        //   account_manager_name: am_details.approver_uuid,
-        //   bank_account_number: invoiceDetails?.bank_account_number,
-        //   business_name: invoiceDetails?.business_name,
-        //   customer_id: invoiceDetails?.customer_details?.id,
-        //   customer_name: invoiceDetails?.customer_name,
-        //   id: invoiceDetails?.project_id,
-        //   name: invoiceDetails?.project_name,
-        //   service_type: invoiceDetails?.project_service_type,
-        // };
+        selectedProject.label = `${invoiceDetails?.project_name} - ${invoiceDetails?.customer_name}`;
+        selectedProject.value = {
+          account_manager_uuid: am_details.approver_uuid,
+          account_manager_name: am_details.approver,
+          bank_account_number: invoiceDetails?.bank_account_number,
+          business_name: invoiceDetails?.business_name,
+          customer_id: invoiceDetails?.customer_details?.id,
+          customer_name: invoiceDetails?.customer_name,
+          id: invoiceDetails?.project_id,
+          name: invoiceDetails?.project_name,
+          service_type: invoiceDetails?.project_service_type,
+        };
+
+        selectedBusinessUser.label = am_details.approver
+        selectedBusinessUser.value = am_details.approver_uuid
+
+        selectedBank.label = `${invoiceDetails.bank_details.beneficiary_bank} - ${invoiceDetails?.bank_account_number}`,
+        selectedBank.value = invoiceDetails?.bank_account_number
       },
       {
         deep: true,
       }
     );
+
+    watch(
+      () => options.value,
+      (result) => {
+        $_.forEach(result.resource.banks, (item) => {
+          bankOptions.push({
+            label: `${item["beneficiary_bank"]} - ${item["account_number"]}`,
+            value: item["account_number"],
+          });
+        });
+      },
+      {
+        deep: true
+      }
+    )
 
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
@@ -193,8 +230,13 @@ export default {
       }
     }
     return {
-      pending,
       invoiceDetails,
+      invoicePending,
+      selectedBusinessUser,
+      selectedProject,
+      selectedBank,
+      bankOptions,
+      optionsPending,
       submitHandler,
     };
   },
