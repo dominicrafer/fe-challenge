@@ -56,7 +56,7 @@ export default {
     },
     padding: {
       type: String,
-      default: "py-2 py-4",
+      default: "px-2 py-4",
     },
     fontSize: {
       type: String,

@@ -41,14 +41,47 @@
           >
             <template #label> Customer </template>
           </Select>
-          <Textarea
-            name="references"
-            label="Project References"
-            placeholder="Enter references"
-            v-model="formData.references"
-            v-model:isDirty="dirtyFieldValidator.references"
-            :rules="edit ? null : 'required'"
-          />
+          <div class="col__auto">
+            <InputField
+              class="w-full"
+              name="reference_code"
+              placeholder="Enter reference code"
+              v-model="referenceCode"
+              :rules="edit ? null : 'required'"
+            >
+              <template #label> Reference Code </template>
+            </InputField>
+            <InputField
+              class="w-full"
+              name="reference_value"
+              placeholder="Enter reference value"
+              v-model="referenceValue"
+              :rules="edit ? null : 'required'"
+            >
+              <template #label> Reference Value </template>
+            </InputField>
+            <Button variant="success" @click="addReference(referenceCode, referenceValue)">Add</Button>
+          </div>
+          <template v-for="(value, key) in formData.references">
+            <div class="col__auto references">
+              <div class="references__details">
+                <p class="details__default_badge">{{ key }}</p>
+                <p class="details__service_info">
+                  {{ value }}
+                </p>
+              </div>
+              <div>
+                <Icon
+                  width="20"
+                  height="20"
+                  color="#E45959"
+                  @click="() => { delete formData.references[key]}"
+                  name="material-symbols:delete-outline"
+                  class="cursor-pointer"
+                />
+              </div>
+            </div>
+          </template>
           <div class="col__auto">
             <Select
               class="w-full"
@@ -140,7 +173,7 @@ export default {
           service: null,
           account_manager: null,
           customer: null,
-          references: null,
+          references: {},
         };
       },
     },
@@ -156,6 +189,9 @@ export default {
   setup(props) {
     const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.projectDetails);
+
+    const referenceCode = ref(null)
+    const referenceValue = ref(null)
 
     let businessOptions = reactive([]);
     let bankOptions = reactive([]);
@@ -173,30 +209,10 @@ export default {
       service: false,
       account_manager: false,
       customer: false,
-      references: false,
     });
 
-    async function getBusinesses() {
-      const { data } = await $api.businesses.getBusinesses({}, []);
-
-      $_.forEach(data.value.resource.businesses, (item) => {
-        businessOptions.push({
-          label: item["business"],
-          value: item["business"],
-        });
-      });
-    }
-
-    async function getBanks() {
-      const { data } = await $api.banks.getBanks({}, []);
-
-      $_.forEach(data.value.resource.banks, (item) => {
-        bankOptions.push({
-          label: `${item["beneficiary_bank"]} - ${item["account_number"]}`,
-          value: item["account_number"],
-        });
-      });
-    }
+    const { data: business_data } =  $api.businesses.getBusinesses({}, []);
+    const { data: bank_data } =  $api.banks.getBanks({}, []);
 
     async function getBusinessServices(business) {
       const { data } = await $api.businesses.getBusinessServices(business, []);
@@ -256,9 +272,11 @@ export default {
       }
     }
 
-    getBusinesses();
-    getBanks();
-
+    function addReference(code, value) {
+      if (code && value) {
+        formData.references[code] = value
+      }
+    }
     watch(
       () => formData.business,
       (result) => {
@@ -267,6 +285,28 @@ export default {
         getBusinessServices(result.value);
       }
     );
+    watch(
+      () => business_data.value,
+      (result) => {
+        $_.forEach(result.resource.businesses, (item) => {
+          businessOptions.push({
+            label: item["business_name"],
+            value: item["business"],
+          });
+        });
+      }
+    )
+    watch(
+      () => bank_data.value,
+      (result) => {
+        $_.forEach(result.resource.banks, (item) => {
+          bankOptions.push({
+            label: `${item["beneficiary_bank"]} - ${item["account_number"]}`,
+            value: item["account_number"],
+          });
+        });
+      }
+    )
 
     async function onSubmit(values) {
       if (props.edit) {
@@ -305,7 +345,10 @@ export default {
         values["customer_id"] = values["customer"]["value"]["id"];
         values["customer_name"] = values["customer"]["value"]["name"];
         values["service_type"] = values["service"]["value"];
+        values["references"] = formData.references;
 
+        delete values["reference_code"];
+        delete values["reference_value"];
         delete values["account_manager"];
         delete values["account_number"];
         delete values["business"];
@@ -330,6 +373,9 @@ export default {
       searchCustomer,
       customerOptions,
       fetchCustomerOptions,
+      referenceCode,
+      referenceValue,
+      addReference,
     };
   },
 };
@@ -348,6 +394,23 @@ export default {
 
     .col__auto {
       @apply flex flex-row gap-5 items-end;
+    }
+
+    .references {
+      @apply flex justify-between rounded shadow-md;
+      @apply p-5;
+      &__details {
+        @apply flex flex-col;
+      }
+
+      .details__default_badge {
+        @apply text-sm font-medium rounded py-0.5 px-1;
+        @apply bg-purple-100 text-purple-800;
+      }
+
+      .details__service_info {
+        @apply ml-1 text-sm font-medium;
+      }
     }
   }
 
