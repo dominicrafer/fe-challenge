@@ -32,7 +32,7 @@ export default {
     watch(
       () => data.value,
       (policies) => {
-        console.log(policies, 'policies')
+        console.log(policies, "policies");
         roleDetails.role = policies.resource?.role;
         roleDetails.description = policies.resource?.description;
         roleDetails.policies = policies.resource?.policies;

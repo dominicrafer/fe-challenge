@@ -1,10 +1,6 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users/roles" title="Create Role">
-      <template #right-panel>
-        <Button variant="success">Save</Button>
-      </template>
-    </PageHeader>
+    <PageHeader backRoute="/users/roles" title="Create Role"/>
     <div class="page__body">
       <UsersRoleForm :submitHandler="submitHandler" />
     </div>
@@ -30,7 +26,7 @@ export default {
           console.log(response);
           const router = useRouter();
           router.push("/users/roles");
-          $toast.success("Policy successfully created.");
+          $toast.success("Role successfully created.");
         });
       } catch (error) {
         console.log(error)

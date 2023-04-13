@@ -4,7 +4,7 @@
       :loading="isLoading"
       padding="p-0"
       width="w-1/2"
-      :key="String(pending && isLoading)"
+      :key="String(isPolicyFetching && isLoading)"
     >
       <VForm
         @submit="onSubmit"
@@ -17,9 +17,10 @@
             class="w-1/2"
             name="role"
             placeholder="Enter Text"
-            rules="alpha_dash"
+            rules="no_spaces|max:128"
             v-model="formData.role"
             v-model:isDirty="dirtyFieldValidator.role"
+            :disabled="edit"
           >
             <template #label> Role </template>
           </InputField>
@@ -27,16 +28,17 @@
             name="description"
             label="Description"
             placeholder="Enter Text"
+            rules="max:255"
             v-model="formData.description"
             v-model:isDirty="dirtyFieldValidator.description"
           />
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
         <div class="role__form">
-          <Spinner class="m-auto" v-if="pending" />
+          <Spinner class="m-auto" v-if="isPolicyFetching" />
           <div class="form__col"></div>
           <Checkbox
-            v-if="!pending"
+            v-if="!isPolicyFetching"
             inputValue="*:*"
             label="Select All"
             id="actions"
@@ -45,7 +47,7 @@
             v-model="formData.policies"
           />
           <div
-            v-show="!pending"
+            v-show="!isPolicyFetching"
             class="form__policy"
             v-for="(policyDetails, index) in policies?.resource"
             :key="index"
@@ -123,15 +125,19 @@ export default {
       description: false,
       policies: false,
     });
+    const isPolicyFetching = ref(false);
+    // only execute once the fetching of role details finishes
     const {
       data: policies,
+      execute,
       pending,
-      refresh,
     } = $api.policies.getAllPolicies(!props.edit);
     watch(
       () => props.isLoading,
-      () => {
-        refresh();
+      async () => {
+        isPolicyFetching.value = true;
+        await execute();
+        isPolicyFetching.value = false;
       }
     );
     watch(
@@ -170,12 +176,22 @@ export default {
     function selectPolicy(e, policyGroup, policyActionDetails) {
       const action = $_.split(policyActionDetails.slug, ":");
       if (e.target.checked) {
-        // if All Module's Policy is selected
-        if (action[1] === "*") {
-          formData.policies = $_.uniq([
-            ...formData.policies,
-            ...$_.map(policyGroup.policies, "slug"),
-          ]);
+        switch (action[1]) {
+          case "delete":
+          case "export":
+          case "write":
+          case "edit":
+            formData.policies.push(`${action[0]}:read`, `${action[0]}:list`);
+            break;
+          case "read":
+            formData.policies.push(`${action[0]}:list`);
+            break;
+          case "*":
+            formData.policies = [
+              ...formData.policies,
+              ...$_.map(policyGroup.policies, "slug"),
+            ];
+            break;
         }
         // if all module's policy is selected, automatically tick 'All' checkbox
         if (
@@ -191,6 +207,7 @@ export default {
             `${$_.toLower(policyGroup.policy_group_name)}:*`
           );
         }
+        formData.policies = $_.uniq(formData.policies);
       } else {
         // if All Module's Policy is unselected
         if (action[1] === "*") {
@@ -199,14 +216,38 @@ export default {
             $_.map(policyGroup.policies, "slug")
           );
         }
+        switch (action[1]) {
+          case "list":
+            formData.policies = $_.pull(
+              formData.policies,
+              `${action[0]}:read`,
+              `${action[0]}:write`,
+              `${action[0]}:export`,
+              `${action[0]}:delete`,
+              `${action[0]}:edit`,
+            );
+            break;
+          case "delete":
+          case "export":
+          case "write":
+            formData.policies = $_.pull(
+              formData.policies,
+              `${action[0]}:read`,
+              `${action[0]}:list`
+            );
+            console.log(formData.policies, `${action[0]}:read`);
+            break;
+          case "*":
+            formData.policies = $_.difference(
+              formData.policies,
+              $_.map(policyGroup.policies, "slug")
+            );
+            break;
+        }
         formData.policies = $_.pull(
           formData.policies,
           `${$_.toLower(policyGroup.policy_group_name)}:*`
         );
-        // if All Policy is unselected
-        if ($_.includes(formData.policies, "*:*")) {
-          formData.policies = $_.pull(formData.policies, "*:*");
-        }
       }
     }
     function selectAllPolicies(e) {
@@ -267,7 +308,7 @@ export default {
       return parsedPayload;
     }
     return {
-      pending,
+      isPolicyFetching,
       policies,
       formData,
       dirtyFieldValidator,

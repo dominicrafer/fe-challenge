@@ -96,7 +96,7 @@ export const useAuthStore = defineStore({
       };
     },
     async refresh() {
-      const { $auth } = useNuxtApp();
+      const { $auth, $api } = useNuxtApp();
       try {
         const cognitoUser = await $auth.currentAuthenticatedUser();
         const currentSession = await $auth.currentSession();

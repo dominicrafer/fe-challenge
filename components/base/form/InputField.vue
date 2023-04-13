@@ -113,7 +113,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { errorMessage, meta, value, handleBlur } = useField(
+    const { errorMessage,meta, setErrors, value, handleBlur } = useField(
       props.name,
       props.rules,
       {

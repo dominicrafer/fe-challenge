@@ -9,7 +9,7 @@
         <Alert
           type="danger"
           v-if="hasError"
-          title="Incorrect username or password"
+          :title="errorMessage"
         />
         <InputField
           name="username"
@@ -25,7 +25,7 @@
           placeholder="Enter password"
           v-model="password"
           type="password"
-          rules="alpha_num"
+          rules="required"
           v-if="!newPasswordRequired"
         >
           <template #label> Password </template>
@@ -35,7 +35,7 @@
           placeholder="Enter new password"
           v-model="newPassword"
           type="password"
-          rules="alpha_num"
+          rules="required|min:8"
           v-if="newPasswordRequired"
         >
           <template #label> New Password </template>
@@ -69,7 +69,7 @@ export default {
     const isLoading = ref(false);
     const hasError = ref(false);
     const authStore = useAuthStore();
-
+    const errorMessage = ref(null)
     // Submit handler for conditional login type
     const newPasswordRequired = ref(false);
     function submitHandler() {
@@ -100,7 +100,7 @@ export default {
           isLoading.value = false;
         })
         .catch((error) => {
-          console.log(error);
+          errorMessage.value = error.message;
           hasError.value = true;
           isLoading.value = false;
         });
@@ -124,10 +124,12 @@ export default {
       doLogin,
       isLoading,
       hasError,
+      errorMessage,
       newPasswordRequired,
       newPassword,
       doConfirmLogin,
       submitHandler,
+      
     };
   },
   components: {

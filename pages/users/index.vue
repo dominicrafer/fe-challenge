@@ -11,7 +11,7 @@
           }"
           v-has:users.action-permission="`users:write`"
         >
-          <Button variant="success" type="button"> Create </Button>
+          <Button variant="success" type="button"> New User </Button>
         </NuxtLink>
       </template>
     </PageHeader>

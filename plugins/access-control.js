@@ -1,7 +1,6 @@
 import { useAuthStore } from '@/store/auth';
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive("has", (el, binding, vnode) => {
-    console.log(binding, 'binding')
     const myModules = useAuthStore().auth.userDetails.modules
     const myPolicies = useAuthStore().auth.userDetails.policies
     const { $_, $toast, } = useNuxtApp();
@@ -44,6 +43,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     function hasModulePermission() {
       if ($_.includes(myModules, 'All')) {
         return true;
+      }
+      if ($_.isArray(binding.arg)) {
+        return $_.difference(binding.arg, myModules).length !== binding.arg.length
       }
       return $_.includes(myModules, binding.arg);
     }

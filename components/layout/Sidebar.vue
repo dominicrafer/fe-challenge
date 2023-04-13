@@ -21,6 +21,9 @@
               ? 'active-menu'
               : 'inactive-menu'
           "
+          v-has:[menuDetails.permission].module-permission="
+            menuDetails.permission
+          "
         >
           <router-link
             :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''"
@@ -42,7 +45,7 @@
                       : '#FFFFFF'
                   "
                 />
-                {{ menuDetails.name }}
+                {{ menuDetails.label }}
               </div>
               <Icon
                 name="mdi:chevron-down"
@@ -56,7 +59,7 @@
             v-for="(submenuDetails, submenuIndex) in menuDetails.submenus"
             :key="submenuIndex"
             class="menu__submenus"
-            :class="isMenuActive(menuDetails) ? 'uncollapsed' : 'collapsed'"
+            :class="!menuDetails.collapsed ? 'uncollapsed' : 'collapsed'"
             v-has:[submenuDetails.permission].module-permission="
               submenuDetails.permission
             "
@@ -83,7 +86,7 @@
                   height="20"
                   v-else
                 />
-                {{ submenuDetails.name }}
+                {{ submenuDetails.label }}
               </div>
             </router-link>
           </div>
@@ -119,25 +122,31 @@ export default {
     const route = useRoute();
     const activeMenu = ref(null);
 
-    const menus = [
+    const menus = reactive([
       {
-        name: "Users",
+        label: "Users",
+        name: "users",
         icon: "mdi:account-multiple-outline",
+        permission: ["Users", "Roles", "Policies"],
+        collapsed: true,
         submenus: [
           {
-            name: "List",
+            name: "user-list",
+            label: "List",
             path: "/users",
             icon: "mdi:account-multiple-outline",
             permission: "Users",
           },
           {
-            name: "Roles",
+            name: "user-roles",
+            label: "Roles",
             path: "/users/roles",
             icon: "mdi:badge-account-horizontal-outline",
             permission: "Roles",
           },
           {
-            name: "Policies",
+            name: "user-policies",
+            label: "Policies",
             path: "/users/policies",
             icon: "mdi:shield-account-variant-outline",
             permission: "Policies",
@@ -145,43 +154,50 @@ export default {
         ],
       },
       {
-        name: "Businesses",
+        label: "Businesses",
+        name: "businesses",
         icon: "mdi:domain",
-        permission: "businesses",
+        permission: ["Businesses"],
+        collapsed: true,
         submenus: [
           {
-            name: "List",
+            name: "business-list",
+            label: "List",
             path: "/businesses",
             icon: "mdi:card-account-details-outline",
-            permission: "businesses",
+            permission: "Businesses",
           },
           {
-            name: "Banks",
+            name: "business-banks",
+            label: "Banks",
             path: "/banks",
             icon: "mdi:bank",
-            permission: "banks",
+            permission: "Banks",
           },
         ],
       },
       {
-        name: "Customers",
+        name: "customers",
+        label: "Customers",
         icon: "mdi:handshake-outline",
-        permission: "customers",
+        permission: "Customers",
         path: "/customers",
       },
       {
-        name: "Projects",
+        name: "projects",
+        label: "Projects",
         icon: "mdi:notebook-outline",
-        permission: "projects",
+        permission: "Projects",
         path: "/projects",
       },
       {
-        name: "Invoices",
+        name: "invoices",
+        label: "Invoices",
         icon: "mdi:receipt-text-outline",
-        permission: "invoices",
+        permission: "Invoices",
         path: "/invoices",
       },
-    ];
+    ]);
 
     // Get active menu on page load
     $_.forEach(menus, (menuDetails) => {
@@ -193,14 +209,14 @@ export default {
       ) {
         activeMenu.value = $_.find(menuDetails.submenus, {
           path: route.path,
-        }).name;
+        }).label;
         return false;
       } else if (
         !$_.has(menuDetails, "submenus") &&
         menuDetails.path === route.path
       ) {
         activeMenu.value =
-          menuDetails.path === route.path ? menuDetails.name : null;
+          menuDetails.path === route.path ? menuDetails.label : null;
         return false;
       }
     });
@@ -226,6 +242,10 @@ export default {
 
     // Select menu
     function selectMenu(menuDetails) {
+      if ($_.has(menuDetails, "submenus")) {
+        const index = $_.findIndex(menus, { name: menuDetails.name });
+        return (menus[index].collapsed = !menus[index].collapsed);
+      }
       return (activeMenu.value = menuDetails.name);
     }
 
@@ -268,7 +288,7 @@ export default {
 .sidebar {
   @apply min-w-[300px] bg-primary;
   @apply flex flex-col relative;
-  @apply px-3 py-8  z-[100];
+  @apply px-3 py-8  z-[100] overflow-y-auto;
   box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
     0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
   transition: all 0.3s ease;

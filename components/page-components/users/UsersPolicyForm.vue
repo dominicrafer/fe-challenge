@@ -15,7 +15,7 @@
             v-model:modelValue="formData.policy"
             v-model:isDirty="dirtyFieldValidator.policy"
             :disabled="edit"
-            rules="required"
+            rules="required|max:128"
           >
             <template #label> Name </template>
           </InputField>
@@ -25,7 +25,7 @@
             name="description"
             label="Description"
             placeholder="Enter description"
-            :rules="edit ? null : 'required'"
+            :rules="edit ? null : 'required|max:255'"
           />
           <Select
             v-model:modelValue="formData.actions"
@@ -39,7 +39,7 @@
             taggable
             searchable
             :closeOnSelect="false"
-            rules="required"
+            rules="select_required"
           >
             <template #label> Actions </template>
           </Select>

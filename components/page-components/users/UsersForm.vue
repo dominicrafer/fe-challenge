@@ -1,6 +1,7 @@
 <template>
   <VForm
     @submit="onSubmit"
+    @keydown.enter.prevent
     v-slot="{ isSubmitting }"
     :initialValues="userDetails"
     :key="isLoading"
@@ -16,8 +17,8 @@
           <div class="form__col">
             <InputField
               name="first_name"
-              placeholder="Enter Text"
-              rules="alpha_spaces"
+              placeholder="First Name"
+              rules="max:128|required"
               v-model="formData.first_name"
               v-model:isDirty="dirtyFieldValidator.first_name"
             >
@@ -25,8 +26,8 @@
             </InputField>
             <InputField
               name="last_name"
-              placeholder="Enter Text"
-              rules="alpha"
+              placeholder="Last Name"
+              rules="max:128|required"
               v-model="formData.last_name"
               v-model:isDirty="dirtyFieldValidator.last_name"
             >
@@ -41,6 +42,7 @@
               v-model="formData.role"
               v-model:isDirty="dirtyFieldValidator.role"
               :options="roleOptions"
+              rules="select_required"
               trackBy="value"
               label="label"
             >
@@ -51,7 +53,7 @@
               placeholder="Enter Text"
               v-model="formData.phone_number"
               v-model:isDirty="dirtyFieldValidator.phone_number"
-              rules="phone_number"
+              rules="required|ph_phone_number"
             >
               <template #label> Mobile Number </template>
             </InputField>
@@ -59,17 +61,24 @@
           <InputField
             name="email"
             placeholder="Enter Text"
-            rules="email"
+            rules="required|email|max:128"
             v-model="formData.email"
             v-model:isDirty="dirtyFieldValidator.email"
           >
             <template #label> Email </template>
           </InputField>
+          <!-- min:8|has_upper_lower_case|has_special_char|has_number|required -->
           <InputField
             type="password"
             name="password"
             placeholder="Enter Text"
-            rules="min:8"
+            :rules="{
+              required: true,
+              min: 8,
+              has_upper_lower_case: true,
+              has_special_char: true,
+              has_number: true,
+            }"
             v-model="formData.password"
             v-model:isDirty="dirtyFieldValidator.password"
           >

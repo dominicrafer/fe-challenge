@@ -19,21 +19,66 @@ export default defineNuxtPlugin((nuxtApp) => {
     return true;
   });
 
+  defineRule('has_number', value => {
+    if (!/\d/.test(value)) {
+      return 'Must contain at least one number';
+    }
+    return true;
+  })
+  defineRule('has_special_char', value => {
+    if (!/[!@#$%^&*]/.test(value)) {
+      return 'Must contain at least one special character';
+    }
+    return true;
+  })
+  defineRule('has_upper_lower_case', value => {
+    if (!/^(?=.*[a-z])(?=.*[A-Z])/.test(value)) {
+      return 'Must contain both uppercase and lowercase characters';
+    }
+    return true;
+  })
+  defineRule('no_spaces', (value) => {
+    if (/\s/g.test(value)) {
+      return 'This field cannot contain any spaces.';
+    }
+    return true;
+  });
+
+  defineRule('ph_phone_number', (value) => {
+    if (!/^\+639\d{9}$/g.test(value)) {
+      return 'Invalid mobile number format';
+    }
+    return true;
+  });
+
+  defineRule('select_required', (value) => {
+    if (!value || !value.length) {
+      return false;
+    }
+    return true;
+  });
+
+
   // Customize global validation rules error message
   configure({
     generateMessage: (context) => {
       const { $_ } = useNuxtApp()
+      console.log(context)
       switch (context.rule.name) {
         case "email":
-          return "This field must be a valid email";
+          return "Invalid email address";
         case "min":
-          return `${$_.startCase(context.field)} must be atleast ${context.rule.params[0]} characters`;
+          return `Must contain at least ${context.rule.params[0]} characters`;
         case "max":
           return `${$_.startCase(context.field)} must only contain ${context.rule.params[0]} characters`;
         case "required":
-          return `${$_.startCase(context.field)} is required`
+          return `Enter ${$_.startCase(context.field)}`
         case "digits":
           return `${$_.startCase(context.field)} exceeds expected value`
+        case "phone_number":
+          return `Invalid mobile number format`
+        case "select_required":
+          return `Select ${$_.startCase(context.field)}`
         default:
           return `${$_.startCase(context.field)} is invalid`;
       }
