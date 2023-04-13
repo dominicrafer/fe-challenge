@@ -47,7 +47,6 @@
               name="reference_code"
               placeholder="Enter reference code"
               v-model="referenceCode"
-              :rules="edit ? null : 'required'"
             >
               <template #label> Reference Code </template>
             </InputField>
@@ -56,11 +55,14 @@
               name="reference_value"
               placeholder="Enter reference value"
               v-model="referenceValue"
-              :rules="edit ? null : 'required'"
             >
               <template #label> Reference Value </template>
             </InputField>
-            <Button variant="success" @click="addReference(referenceCode, referenceValue)">Add</Button>
+            <Button
+              variant="success"
+              @click="addReference(referenceCode, referenceValue)"
+              >Add</Button
+            >
           </div>
           <template v-for="(value, key) in formData.references">
             <div class="col__auto references">
@@ -75,7 +77,11 @@
                   width="20"
                   height="20"
                   color="#E45959"
-                  @click="() => { delete formData.references[key]}"
+                  @click="
+                    () => {
+                      delete formData.references[key];
+                    }
+                  "
                   name="material-symbols:delete-outline"
                   class="cursor-pointer"
                 />
@@ -177,6 +183,10 @@ export default {
         };
       },
     },
+    initialReferenceValues: {
+      type: Object,
+      default: {},
+    },
     edit: {
       type: Boolean,
       default: false,
@@ -189,9 +199,10 @@ export default {
   setup(props) {
     const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.projectDetails);
+    const initialReferenceValues = reactive(props.initialReferenceValues);
 
-    const referenceCode = ref(null)
-    const referenceValue = ref(null)
+    const referenceCode = ref(null);
+    const referenceValue = ref(null);
 
     let businessOptions = reactive([]);
     let bankOptions = reactive([]);
@@ -211,8 +222,8 @@ export default {
       customer: false,
     });
 
-    const { data: business_data } =  $api.businesses.getBusinesses({}, []);
-    const { data: bank_data } =  $api.banks.getBanks({}, []);
+    const { data: business_data } = $api.businesses.getBusinesses({}, []);
+    const { data: bank_data } = $api.banks.getBanks({}, []);
 
     async function getBusinessServices(business) {
       const { data } = await $api.businesses.getBusinessServices(business, []);
@@ -274,7 +285,7 @@ export default {
 
     function addReference(code, value) {
       if (code && value) {
-        formData.references[code] = value
+        formData.references[code] = value;
       }
     }
     watch(
@@ -295,7 +306,7 @@ export default {
           });
         });
       }
-    )
+    );
     watch(
       () => bank_data.value,
       (result) => {
@@ -306,7 +317,7 @@ export default {
           });
         });
       }
-    )
+    );
 
     async function onSubmit(values) {
       if (props.edit) {
@@ -334,6 +345,11 @@ export default {
             }
           }
         });
+
+        if (!$_.isEqual(formData.references, initialReferenceValues)) {
+          payload["references"] = formData.references;
+        }
+
         await props.submitHandler(payload);
       } else {
         values["account_manager_uuid"] =
