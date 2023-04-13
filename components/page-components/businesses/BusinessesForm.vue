@@ -73,7 +73,7 @@
           <template v-for="(service, index) in formData.services">
             <div class="col__auto services">
               <div class="services__details">
-                <p class="details__default_badge">{{ service.name }}</p>
+                <p class="details__default_badge">{{ service.service }}</p>
                 <p class="details__service_info">
                   {{ service.description }}
                 </p>
@@ -221,34 +221,31 @@
                     >set as signatory</span
                   >
                 </div>
-                <p class="details__approver_info">{{ approver.name }}</p>
-                <p class="details__approver_info">{{ approver.email }}</p>
+                <p class="details__approver_info">
+                  {{ approver.approver_name }}
+                </p>
+                <p class="details__approver_info">
+                  {{ approver.approver_email }}
+                </p>
               </div>
               <div class="heirarchy__actions">
                 <div class="actions__swapper">
-                  <p
-                    class="swapper__select_target"
-                    @click="swapTargets(index)"
-                    v-if="
-                      initialSwapTarget !== false && initialSwapTarget !== index
-                    "
-                  >
-                    swap
-                  </p>
-                  <p
-                    class="swapper__select_initial"
-                    @click="initialSwapTarget = index"
-                    v-else-if="!initialSwapTarget"
-                  >
-                    select
-                  </p>
-                  <p
-                    class="swapper__select_cancel"
-                    @click="initialSwapTarget = false"
-                    v-else
-                  >
-                    cancel
-                  </p>
+                  <Icon
+                    width="20"
+                    height="20"
+                    name="material-symbols:keyboard-arrow-down"
+                    class="cursor-pointer"
+                    @click="moveTarget(index, 'down')"
+                    v-if="index !== formData.approval_heirarchy.length - 2"
+                  />
+                  <Icon
+                    width="20"
+                    height="20"
+                    name="material-symbols:keyboard-arrow-up"
+                    class="cursor-pointer"
+                    @click="moveTarget(index, 'up')"
+                    v-if="index !== 0"
+                  />
                 </div>
                 <div>
                   <Icon
@@ -291,9 +288,6 @@ export default {
           services: [],
           approval_heirarchy: [
             {
-              type: "account_manager",
-            },
-            {
               type: "creator",
             },
           ],
@@ -305,6 +299,14 @@ export default {
           notes: null,
         };
       },
+    },
+    initialApprovalHeirarchyValues: {
+      type: Array,
+      default: [],
+    },
+    initialServicesValues: {
+      type: Array,
+      default: [],
     },
     edit: {
       type: Boolean,
@@ -325,13 +327,12 @@ export default {
     const selectedApprover = reactive({});
     let approverOptions = reactive([]);
     let fetchingApproverOptions = ref(false);
-    const initialSwapTarget = ref(false);
 
-    // create copy of approval heirarchy and services
-    // for dirty validation onSubmit()
-    const initialApprovalHeirarchyData =
-      props.businessDetails.approval_heirarchy;
-    const initialServicesData = props.businessDetails.services;
+    const initialApprovalHeirarchyValues = reactive(
+      props.initialApprovalHeirarchyValues
+    );
+
+    const initialServicesValues = reactive(props.initialServicesValues);
 
     // approval_heirarchy and services are not included in dirty validation
     // as there are multiple complications when validating multiple fields
@@ -347,15 +348,15 @@ export default {
       tin: false,
     });
 
-    function addService(name, description) {
+    function addService(serviceName, serviceDescription) {
       const exists = $_.some(formData.services, {
-        name: name,
+        service: serviceName,
       });
 
-      if (!exists && name) {
+      if (!exists && serviceName) {
         formData.services.push({
-          name: name,
-          description: description,
+          service: serviceName,
+          description: serviceDescription,
         });
       }
     }
@@ -371,7 +372,7 @@ export default {
         !$_.isEmpty(approver) &&
         !$_.some(
           formData.approval_heirarchy,
-          (obj) => obj.email === approver.value.email
+          (obj) => obj.approver_email === approver.value.approver_email
         ) &&
         formData.approval_heirarchy.length < 10
       ) {
@@ -420,7 +421,9 @@ export default {
           approverOptions.push({
             label: `${item["name"]} | ${item["email"]}`,
             value: {
-              ...item,
+              approver: item.name,
+              approver_email: item.email,
+              approver_uuid: item.cognito_id,
               type: "approver",
             },
           });
@@ -430,39 +433,18 @@ export default {
       }
     }
 
-    function swapTargets(index) {
-      const targetFrom = formData.approval_heirarchy[initialSwapTarget.value];
-      const targetTo = formData.approval_heirarchy[index];
-
-      formData.approval_heirarchy[index] = targetFrom;
-      formData.approval_heirarchy[initialSwapTarget.value] = targetTo;
-
-      initialSwapTarget.value = false;
-    }
-
-    function arrayValuesIsDirty(array1, array2, field) {
-      if (array1.length !== array2.length) {
-        return true;
+    function moveTarget(index, direction) {
+      if (direction === "up") {
+        const abovePosition = formData.approval_heirarchy[index - 1];
+        const belowPosition = formData.approval_heirarchy[index];
+        formData.approval_heirarchy[index - 1] = belowPosition;
+        formData.approval_heirarchy[index] = abovePosition;
+      } else {
+        const abovePosition = formData.approval_heirarchy[index];
+        const belowPosition = formData.approval_heirarchy[index + 1];
+        formData.approval_heirarchy[index + 1] = abovePosition;
+        formData.approval_heirarchy[index] = belowPosition;
       }
-
-      const matches = array1.every((obj, index) => {
-        if (field === "approval_heirarchy") {
-          return (
-            obj.email === array2[index].email && obj.type === array2[index].type
-          );
-        }
-
-        return (
-          obj.name === array2[index].name &&
-          obj.description === array2[index].description
-        );
-      });
-
-      if (!matches) {
-        return true;
-      }
-
-      return false;
     }
 
     async function onSubmit(values) {
@@ -497,23 +479,16 @@ export default {
           }
         });
 
-        const approvalHeirarchyIsDirty = arrayValuesIsDirty(
-          formData.approval_heirarchy,
-          initialApprovalHeirarchyData,
-          "approval_heirarchy"
-        );
-
-        const servicesIsDirty = arrayValuesIsDirty(
-          formData.services,
-          initialServicesData,
-          "services"
-        );
-
-        if (servicesIsDirty) {
+        if (!$_.isEqual(formData.services, initialServicesValues)) {
           payload["services"] = formData.services;
         }
 
-        if (approvalHeirarchyIsDirty) {
+        if (
+          !$_.isEqual(
+            formData.approval_heirarchy,
+            initialApprovalHeirarchyValues
+          )
+        ) {
           payload["approval_heirarchy"] = formData.approval_heirarchy;
         }
 
@@ -541,8 +516,7 @@ export default {
       addApprover,
       removeApprover,
       setAsSignatory,
-      initialSwapTarget,
-      swapTargets,
+      moveTarget,
       onSubmit,
     };
   },
@@ -578,7 +552,7 @@ export default {
 
       .details__default_badge {
         @apply text-sm font-medium rounded py-0.5 px-1;
-        @apply bg-purple-100 text-purple-800;
+        @apply text-purple-800;
       }
 
       .details__service_info {
@@ -593,16 +567,16 @@ export default {
 
         .details__default_badge {
           @apply text-sm font-medium rounded py-0.5 px-1;
-          @apply bg-gray-100 text-gray-800;
+          @apply text-gray-800;
         }
         .type__approver_badge {
           @apply text-sm font-medium rounded py-0.5 px-1;
-          @apply bg-green-100 text-green-800;
+          @apply text-green-800;
         }
 
         .type__signatory_badge {
           @apply text-sm font-medium rounded py-0.5 px-1;
-          @apply bg-blue-100 text-blue-800;
+          @apply text-blue-800;
         }
         .type__signatory_action {
           @apply text-xs text-blue-800;
@@ -618,13 +592,6 @@ export default {
       }
       &__actions {
         @apply flex flex-row gap-4;
-
-        .actions__swapper {
-          p {
-            @apply text-sm font-medium;
-            @apply cursor-pointer mt-1;
-          }
-        }
       }
 
       .details__fixed {

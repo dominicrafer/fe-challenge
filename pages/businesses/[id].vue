@@ -4,6 +4,8 @@
     <div class="page__body">
       <BusinessesForm
         :businessDetails="businessDetails"
+        :initialApprovalHeirarchyValues="initialApprovalHeirarchyValues"
+        :initialServicesValues="initialServicesValues"
         :submitHandler="submitHandler"
         :isLoading="pending"
         edit
@@ -33,6 +35,9 @@ export default {
       tin: null,
       note: null,
     };
+    let initialApprovalHeirarchyValues = [];
+    let initialServicesValues = [];
+
     const { data, pending } = $api.businesses.getBusinessDetails(
       route.params.id,
       businessDetails
@@ -44,24 +49,21 @@ export default {
         businessDetails.business = data?.business;
         businessDetails.business_name = data?.business_name;
         businessDetails.address = data?.address;
-
-        $_.forEach(data?.services, (item) => {
-          businessDetails.services.push({
-            name: item.service,
-            description: item.description,
-          });
-        });
-        $_.forEach(data?.approval_heirarchy, (item) => {
-          businessDetails.approval_heirarchy.push(item);
-        });
-
-        businessDetails.approval_heirarchy = data?.approval_heirarchy;
         businessDetails.due_date_duration = data?.due_date_duration;
         businessDetails.follow_up_intervals = data?.follow_up_intervals;
         businessDetails.invoice_number_template = data?.invoice_number_template;
         businessDetails.tax = data?.tax;
         businessDetails.tin = data?.tin;
         businessDetails.notes = data?.notes;
+
+        $_.forEach(data?.services, (service) => {
+          businessDetails.services.push(service);
+          initialServicesValues.push(service);
+        });
+        $_.forEach(data?.approval_heirarchy, (approver) => {
+          businessDetails.approval_heirarchy.push(approver);
+          initialApprovalHeirarchyValues.push(approver);
+        });
       }
     );
 
@@ -81,6 +83,8 @@ export default {
     return {
       pending,
       businessDetails,
+      initialApprovalHeirarchyValues,
+      initialServicesValues,
       submitHandler,
     };
   },

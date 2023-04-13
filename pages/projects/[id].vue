@@ -4,6 +4,7 @@
     <div class="page__body">
       <ProjectForm
         :projectDetails="projectDetails"
+        :initialReferenceValues="initialReferenceValues"
         :submitHandler="submitHandler"
         :isLoading="pending"
         edit
@@ -27,8 +28,9 @@ export default {
       service: null,
       account_manager: null,
       customer: null,
-      references: null,
+      references: {},
     };
+    let initialReferenceValues = {};
     const { data, pending } = $api.projects.getProjectDetails(
       route.params.id,
       projectDetails
@@ -64,7 +66,10 @@ export default {
             name: data?.customer_name,
           },
         };
-        projectDetails.references = data?.references;
+        $_.forEach(data?.references, (value, key) => {
+          projectDetails.references[key] = value;
+          initialReferenceValues[key] = value;
+        });
       }
     );
 
@@ -83,6 +88,7 @@ export default {
     }
     return {
       pending,
+      initialReferenceValues,
       projectDetails,
       submitHandler,
     };
