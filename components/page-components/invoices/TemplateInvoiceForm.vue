@@ -47,16 +47,7 @@
                       ? "-"
                       : formData.business_details.name
                   }}
-                  <!-- <Select
-                    class="w-8/12"
-                    name="business"
-                    v-model="selectedBusiness"
-                    :options="businessOptions"
-                    trackBy="value"
-                    label="label"
-                    openDirection="bottom"
-                    disabled
-                  /> -->
+
                   <label> TIN NO. </label>
                   <span>
                     <InputField
@@ -69,6 +60,9 @@
                         required: true,
                         numeric: true,
                       }"
+                      :disabled="
+                        ![null, 'draft'].includes(invoiceDetails.status)
+                      "
                   /></span>
                   <label>Address: </label>
                   <Textarea
@@ -80,6 +74,7 @@
                     :rules="{
                       required: true,
                     }"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                 </div>
                 <Container :loading="fetchBusinessUserDetails">
@@ -97,6 +92,9 @@
                       label="label"
                       openDirection="bottom"
                       hideSelected
+                      :disabled="
+                        ![null, 'draft'].includes(invoiceDetails.status)
+                      "
                     />
                     <label> EMAIL:</label>
                     {{
@@ -133,6 +131,7 @@
                       required: true,
                     }"
                     v-model="formData.customer_details.address"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                   <label> CONTACT</label>
                   <InputField
@@ -144,6 +143,7 @@
                       required: true,
                     }"
                     v-model="formData.customer_details.customer_contact_name"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                   <label> EMAIL: </label>
                   <InputField
@@ -156,6 +156,7 @@
                       email: true,
                     }"
                     v-model="formData.customer_details.customer_contact_email"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                   <label> CONTACT NO.: </label>
                   <InputField
@@ -170,6 +171,7 @@
                     v-model="
                       formData.customer_details.customer_contact_phone_number
                     "
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                   <label> TIN: </label>
                   <InputField
@@ -182,6 +184,7 @@
                       numeric: true,
                     }"
                     v-model="formData.customer_details.tin"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                 </div>
               </div>
@@ -205,6 +208,7 @@
                     format="Y/M/d"
                     :timePicker="false"
                     :enableTimePicker="false"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   />
                 </div>
 
@@ -220,15 +224,31 @@
                   />
                 </div>
 
-                <div class="right-section__invoice-details">
-                  <label class="w-full"> P.O NO/Quote NO: </label>
-                  <Textarea
-                    class="w-1/2"
-                    fontSize="text-xs"
-                    padding="px-1 py-0"
-                    name="customer_references"
-                    v-model="formData.customer_details.references"
-                  />
+                <div class="right-section__invoice-details mb-5">
+                  <label class="w-8/12"> P.O NO/Quote NO: </label>
+                  <div>
+                    <div
+                      class="reference_section"
+                      v-for="(value, key) in formData.customer_details
+                        .references"
+                    >
+                      <label class="text-[10px]"> {{ key }}: </label>
+                      <InputField
+                        class="w-full"
+                        padding="p-0"
+                        fontSize="text-xs"
+                        :name="key"
+                        :rules="{
+                          required: true,
+                          numeric: true,
+                        }"
+                        v-model="formData.customer_details.references[key]"
+                        :disabled="
+                          ![null, 'draft'].includes(invoiceDetails.status)
+                        "
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -243,10 +263,12 @@
                     style="color: #16a34a"
                     name="mdi:plus-circle-outline"
                     @click="
-                      formData.line_item_details.push({
-                        description: 'Line item description',
-                        value: '0.00',
-                      });
+                      ![null, 'draft'].includes(invoiceDetails.status)
+                        ? null
+                        : formData.line_item_details.push({
+                            description: 'Line item description',
+                            value: '0.00',
+                          });
                       calculate();
                     "
                   />
@@ -267,6 +289,7 @@
                     :name="`description_${index}`"
                     rules="required"
                     v-model="invoiceItemDetails.description"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                   >
                   </InputField>
                   <InputField
@@ -278,6 +301,7 @@
                       required: true,
                     }"
                     v-model="invoiceItemDetails.value"
+                    :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                     @input="calculate()"
                   >
                   </InputField>
@@ -289,7 +313,9 @@
                       class="cursor-pointer"
                       name="mdi:close-circle-outline"
                       @click="
-                        formData.line_item_details.splice(index, 1);
+                        ![null, 'draft'].includes(invoiceDetails.status)
+                          ? null
+                          : formData.line_item_details.splice(index, 1);
                         calculate();
                       "
                     />
@@ -336,6 +362,7 @@
                 name="notes"
                 rows="5"
                 v-model="formData.business_details.notes"
+                :disabled="![null, 'draft'].includes(invoiceDetails.status)"
               />
               <div class="bank__section">
                 <p class="mb-[12px] font-bold w-full">REMIT PAYMENT TO :</p>
@@ -349,6 +376,7 @@
                   searchable
                   :closeOnSelect="true"
                   :hideSelected="true"
+                  :disabled="![null, 'draft'].includes(invoiceDetails.status)"
                 />
               </div>
               <div class="bank__details">
@@ -358,40 +386,43 @@
                       <li>
                         <label> BENEFICIARY’S BANK: </label>
                       </li>
-                      {{ 
-                        formData.bank_details.beneficiary_bank === null 
-                        ? "-" 
-                        : formData.bank_details.beneficiary_bank 
+                      {{
+                        formData.bank_details.beneficiary_bank === null
+                          ? "-"
+                          : formData.bank_details.beneficiary_bank
                       }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> SWIFT CODE: </label>
                       </li>
-                      {{ 
-                        formData.bank_details.swift_code === null 
-                        ? "-" 
-                        : formData.bank_details.swift_code 
+                      {{
+                        formData.bank_details.swift_code === null
+                          ? "-"
+                          : formData.bank_details.swift_code
                       }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> A/C NO. : </label>
                       </li>
-                      {{ 
-                        formData.bank_details.account_number === null 
-                        ? "-" 
-                        : formData.bank_details.account_number +  " (" + formData.bank_details.currency + ")"
+                      {{
+                        formData.bank_details.account_number === null
+                          ? "-"
+                          : formData.bank_details.account_number +
+                            " (" +
+                            formData.bank_details.currency +
+                            ")"
                       }}
                     </div>
                     <div class="left-section__bank_details">
                       <li>
                         <label> A/C NAME : </label>
                       </li>
-                      {{ 
-                        formData.bank_details.account_name === null 
-                        ? "-" 
-                        : formData.bank_details.account_name 
+                      {{
+                        formData.bank_details.account_name === null
+                          ? "-"
+                          : formData.bank_details.account_name
                       }}
                     </div>
                   </ul>
@@ -410,6 +441,7 @@
           <div class="invoice__footer">
             <div class="flex flex-row gap-5">
               <Button
+                v-if="[null, 'draft'].includes(invoiceDetails.status)"
                 variant="success"
                 type="submit"
                 :loading="isSubmitting"
@@ -417,6 +449,7 @@
                 >Save as draft</Button
               >
               <Button
+                v-if="[null, 'draft'].includes(invoiceDetails.status)"
                 variant="success"
                 type="submit"
                 @click="formData.status = 'for_approval'"
@@ -470,7 +503,7 @@ export default {
             customer_contact_name: null,
             customer_contact_email: null,
             customer_contact_phone_number: null,
-            references: "N/A",
+            references: {},
           },
           approvers: [],
           project_id: null,
@@ -504,7 +537,7 @@ export default {
     },
     bankOptions: {
       type: Array,
-      default: []
+      default: [],
     },
     submitHandler: {
       type: Function,
@@ -545,6 +578,7 @@ export default {
       formData.business_name = result.value.business_name;
       formData.bank_account_number = result.value.bank_account_number;
       formData.customer_name = result.value.customer_name;
+      formData.customer_details.references = result.value.references;
     }
 
     // BUSINESS DETAILS
@@ -736,20 +770,16 @@ export default {
     }
 
     // WATCHERS
-    watch(
-      selectedProject,
-      (result) => {
-        setProjectFormData(result);
-        setBusinessFormData(
-          result.value.business_name,
-          result.value.account_manager_uuid
-        );
-        getBankOptions();
-        setBankFormData(result.value.bank_account_number);
-        setCustomerFormData(result.value.customer_id);
-      },
-      { deep: true }
-    );
+    watch(selectedProject, (result) => {
+      setProjectFormData(result);
+      setBusinessFormData(
+        result.value.business_name,
+        result.value.account_manager_uuid
+      );
+      getBankOptions();
+      setBankFormData(result.value.bank_account_number);
+      setCustomerFormData(result.value.customer_id);
+    });
 
     watch(selectedBusinessUser, (result) => {
       if (formData.business_details.business_contact_uuid != result.value) {
@@ -783,28 +813,8 @@ export default {
       if (formData.line_item_details <= 0) {
         return $toast.error("Please provide line items.");
       }
-      formData.approvers = $_.map(formData.approvers, (item) => {
-        if (item.type === "account_manager") {
-          return {
-            type: item.type,
-            approver: formData.business_details.business_contact_name,
-            approver_email: formData.business_details.business_contact_email,
-            approver_uuid: formData.business_details.business_contact_uuid,
-          };
-        } else if (["approver", "signatory"].includes(item.type)) {
-          return {
-            type: item.type,
-            approver: item.name || item.approver,
-            approver_email: item.email || item.approver_email,
-            approver_uuid: item.cognito_id || item.approver_uuid,
-          };
-        } else {
-          return item;
-        }
-      });
 
       await props.submitHandler(formData);
-
     }
     return {
       formData,
@@ -874,11 +884,11 @@ export default {
         }
         .right-section__invoice-details {
           /* @apply grid grid-cols-2; */
-          @apply flex flex-row gap-x-5;
+          @apply flex flex-row gap-x-2;
           @apply border-t border-gray-200;
 
           &:last-of-type {
-            @apply border-b border-gray-200;
+            @apply border-b border-gray-200 pb-2;
           }
 
           label,
@@ -890,6 +900,10 @@ export default {
           label,
           textarea {
             @apply mb-2;
+          }
+
+          .reference_section {
+            @apply w-full flex flex-row gap-1;
           }
         }
       }

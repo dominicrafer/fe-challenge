@@ -6,11 +6,7 @@
         <span class="header__title"> USER LOGIN </span>
       </div>
       <div class="login__body">
-        <Alert
-          type="danger"
-          v-if="hasError"
-          :title="errorMessage"
-        />
+        <Alert type="danger" v-if="hasError" :title="errorMessage" />
         <InputField
           name="username"
           placeholder="Enter email"
@@ -69,7 +65,7 @@ export default {
     const isLoading = ref(false);
     const hasError = ref(false);
     const authStore = useAuthStore();
-    const errorMessage = ref(null)
+    const errorMessage = ref(null);
     // Submit handler for conditional login type
     const newPasswordRequired = ref(false);
     function submitHandler() {
@@ -81,8 +77,8 @@ export default {
     }
 
     // Login
-    const email = ref("prod.super.admin@ecloudvalley.com");
-    const password = ref("KxK0g7e7");
+    const email = ref(null);
+    const password = ref(null);
     const { login } = authStore;
     let user = null;
     async function doLogin() {
@@ -129,7 +125,6 @@ export default {
       newPassword,
       doConfirmLogin,
       submitHandler,
-      
     };
   },
   components: {

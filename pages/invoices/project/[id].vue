@@ -23,7 +23,6 @@ export default {
   async setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
-    let editable = true
     let selectedProject = {
       label: null,
       value: {
@@ -67,7 +66,7 @@ export default {
         customer_contact_name: null,
         customer_contact_email: null,
         customer_contact_phone_number: null,
-        references: "N/A",
+        references: {},
       },
       approvers: [],
       project_id: null,
@@ -88,19 +87,20 @@ export default {
     let selectedBusinessUser = {
       label: null,
       value: null,
-    }
+    };
     let selectedBank = {
       label: null,
       value: null,
-    }
-    let bankOptions = []
+    };
+    let bankOptions = [];
 
-    const { data: invoice, pending: invoicePending } = $api.invoices.getInvoiceDetails(
-      route.params.id,
-      invoiceDetails
+    const { data: invoice, pending: invoicePending } =
+      $api.invoices.getInvoiceDetails(route.params.id, invoiceDetails);
+
+    const { data: options, pending: optionsPending } = $api.banks.getBanks(
+      {},
+      []
     );
-
-    const { data: options, pending: optionsPending } = $api.banks.getBanks({}, [])
 
     watch(
       () => invoice.value,
@@ -129,7 +129,13 @@ export default {
           account_name: data?.bank_details?.account_name,
           currency: data?.bank_details?.currency,
         };
+
+        $_.forEach(data?.customer_details?.references, function (value, key) {
+          invoiceDetails.customer_details.references[key] = value;
+        });
+
         invoiceDetails.customer_details = {
+          ...invoiceDetails.customer_details,
           id: data?.customer_details?.id,
           name: data?.customer_details?.name,
           tin: data?.customer_details?.tin,
@@ -139,7 +145,6 @@ export default {
             data?.customer_details?.customer_contact_email,
           customer_contact_phone_number:
             data?.customer_details?.customer_contact_phone_number,
-          references: data?.customer_details?.references,
         };
 
         $_.forEach(data?.line_item_details, function (item) {
@@ -173,14 +178,8 @@ export default {
         invoiceDetails.invoice_date = data?.invoice_date;
         invoiceDetails.invoice_due_date = data?.invoice_due_date;
 
-        let am_details = $_.find(invoiceDetails?.approvers, {
-          type: "account_manager",
-        });
-
         selectedProject.label = `${invoiceDetails?.project_name} - ${invoiceDetails?.customer_name}`;
         selectedProject.value = {
-          account_manager_uuid: am_details.approver_uuid,
-          account_manager_name: am_details.approver,
           bank_account_number: invoiceDetails?.bank_account_number,
           business_name: invoiceDetails?.business_name,
           customer_id: invoiceDetails?.customer_details?.id,
@@ -190,11 +189,13 @@ export default {
           service_type: invoiceDetails?.project_service_type,
         };
 
-        selectedBusinessUser.label = am_details.approver
-        selectedBusinessUser.value = am_details.approver_uuid
+        selectedBusinessUser.label =
+          data?.business_details?.business_contact_name;
+        selectedBusinessUser.value =
+          data?.business_details?.business_contact_uuid;
 
-        selectedBank.label = `${invoiceDetails.bank_details.beneficiary_bank} - ${invoiceDetails?.bank_account_number}`,
-        selectedBank.value = invoiceDetails?.bank_account_number
+        selectedBank.label = `${invoiceDetails.bank_details.beneficiary_bank} - ${invoiceDetails?.bank_account_number}`;
+        selectedBank.value = invoiceDetails?.bank_account_number;
       },
       {
         deep: true,
@@ -212,9 +213,9 @@ export default {
         });
       },
       {
-        deep: true
+        deep: true,
       }
-    )
+    );
 
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();

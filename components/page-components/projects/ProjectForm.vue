@@ -421,7 +421,7 @@ export default {
 
       .details__default_badge {
         @apply text-sm font-medium rounded py-0.5 px-1;
-        @apply bg-purple-100 text-purple-800;
+        @apply text-purple-800;
       }
 
       .details__service_info {
