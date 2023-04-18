@@ -20,14 +20,15 @@
         }"
         :disabled="disabled"
         :placeholder="placeholder"
-        @blur="meta.touched = true"
+        @blur="(meta.touched = true), (focused = false)"
+        @focus="focused = true"
         @input="updateValue"
         class="input-container__input"
       />
       <label
         :name="name"
         class="input-container__floating-label"
-        :class="modelValue ? 'float' : null"
+        :class="modelValue || focused ? 'float' : null"
         v-if="$slots.label"
       >
         <slot name="label"></slot>
@@ -113,7 +114,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { errorMessage,meta, setErrors, value, handleBlur } = useField(
+    const { errorMessage, meta, setErrors, value, handleBlur } = useField(
       props.name,
       props.rules,
       {
@@ -122,6 +123,8 @@ export default {
     );
 
     const showPassword = ref(false);
+    const focused = ref(false);
+
     const updateValue = (event) => {
       emit("update:modelValue", event.target.value);
     };
@@ -134,6 +137,7 @@ export default {
     );
     return {
       value,
+      focused,
       errorMessage,
       meta,
       showPassword,
