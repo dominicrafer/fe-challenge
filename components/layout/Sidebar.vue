@@ -153,50 +153,6 @@ export default {
           },
         ],
       },
-      {
-        label: "Businesses",
-        name: "businesses",
-        icon: "mdi:domain",
-        permission: ["Businesses"],
-        collapsed: true,
-        submenus: [
-          {
-            name: "business-list",
-            label: "List",
-            path: "/businesses",
-            icon: "mdi:card-account-details-outline",
-            permission: "Businesses",
-          },
-          {
-            name: "business-banks",
-            label: "Banks",
-            path: "/banks",
-            icon: "mdi:bank",
-            permission: "Banks",
-          },
-        ],
-      },
-      {
-        name: "customers",
-        label: "Customers",
-        icon: "mdi:handshake-outline",
-        permission: "Customers",
-        path: "/customers",
-      },
-      {
-        name: "projects",
-        label: "Projects",
-        icon: "mdi:notebook-outline",
-        permission: "Projects",
-        path: "/projects",
-      },
-      {
-        name: "invoices",
-        label: "Invoices",
-        icon: "mdi:receipt-text-outline",
-        permission: "Invoices",
-        path: "/invoices",
-      },
     ]);
 
     // Get active menu on page load
