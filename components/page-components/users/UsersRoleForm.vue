@@ -11,7 +11,7 @@
           <InputField
             class="w-1/2"
             name="role"
-            placeholder="Enter Text"
+            placeholder="Enter role name"
             rules="no_spaces|max:128"
             v-model="formData.role"
             v-model:isDirty="dirtyFieldValidator.role"
@@ -22,7 +22,7 @@
           <Textarea
             name="description"
             label="Description"
-            placeholder="Enter Text"
+            placeholder="Enter role description"
             rules="max:255"
             v-model="formData.description"
             v-model:isDirty="dirtyFieldValidator.description"
@@ -237,16 +237,6 @@ export default {
               `${action[0]}:delete`,
               `${action[0]}:edit`
             );
-            break;
-          case "delete":
-          case "export":
-          case "write":
-            formData.policies = $_.pull(
-              formData.policies,
-              `${action[0]}:read`,
-              `${action[0]}:list`
-            );
-            console.log(formData.policies, `${action[0]}:read`);
             break;
           case "*":
             formData.policies = $_.difference(
