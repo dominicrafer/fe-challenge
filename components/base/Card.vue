@@ -33,7 +33,7 @@ export default {
       default: null,
     },
   },
-  setup(props) {},
+  setup(props) {console.log('test')},
 };
 </script>
 
