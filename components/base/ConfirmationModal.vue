@@ -91,6 +91,9 @@ export default {
       &.danger {
         @apply bg-paprika;
       }
+      &.warning {
+        @apply bg-yellow-500;
+      }
     }
     .modal__body {
       z-index: 1;

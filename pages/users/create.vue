@@ -1,8 +1,13 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users" title="Users" />
+    <PageHeader backRoute="/users" title="Create User" />
     <div class="page__body">
-      <UsersForm :submitHandler="submitHandler" />
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
+      <UsersForm
+        :submitHandler="submitHandler"
+        :isLoading="isLoading"
+        ref="form"
+      />
     </div>
   </div>
 </template>
@@ -12,27 +17,33 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
   setup(props) {
+    const form = ref(null);
+    let errors = ref(null);
+    let isLoading = ref(false);
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      try {
-        await $api.users.createUser(data).then((response) => {
-          const router = useRouter();
-          router.push("/users");
-          $toast.success("User successfully created.");
-        });
-      } catch (error) {
-        console.log(error);
+      isLoading.value = true;
+      const { error } = await $api.users.createUser(data);
+      isLoading.value = false;
+      if (!error.value) {
+        const router = useRouter();
+        router.push("/users");
+        $toast.success("User successfully created.");
+      } else {
+        errors.value = error.value.data.errors;
+        form.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
     return {
       submitHandler,
+      isLoading,
+      errors,
+      form,
     };
   },
 };

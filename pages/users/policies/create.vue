@@ -1,8 +1,9 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users/policies" title="Policies" />
+    <PageHeader backRoute="/users/policies" title="Create Policy" />
     <div class="page__body">
-      <UsersPolicyForm :submitHandler="submitHandler" />
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
+      <UsersPolicyForm :submitHandler="submitHandler" ref="form" />
     </div>
   </div>
 </template>
@@ -20,19 +21,26 @@ export default {
   },
 
   setup(props) {
+    const form = ref(null);
+    let errors = ref(null);
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      try {
-        await $api.policies.createPolicy(data);
+      const { error } = await $api.policies.createPolicy(data);
+
+      if (!error.value) {
         const router = useRouter();
         router.push("/users/policies");
         $toast.success("Policy successfully created.");
-        router.push();
-      } catch (error) {
-        console.log(error);
+      } else {
+        errors.value = error.value.data.errors;
+        form.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
-    return { submitHandler };
+    return { submitHandler, errors, form };
   },
 };
 </script>

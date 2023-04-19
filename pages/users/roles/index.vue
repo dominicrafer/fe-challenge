@@ -8,13 +8,21 @@
           }"
           v-has:users.action-permission="`roles:write`"
         >
-          <Button variant="success">Create</Button>
+          <Button variant="success">New Role</Button>
         </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table :loading="pending" :filterable="false" :searchable="false" :exportable="false" :sortable="false"
-        paginationType="dynamodb">
+      <Table
+        :loading="pending"
+        @nextPage="nextPage"
+        @prevPage="prevPage"
+        :filterable="false"
+        :searchable="false"
+        :exportable="false"
+        :sortable="false"
+        paginationType="dynamodb"
+      >
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -25,7 +33,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(roleDetails, index) in data?.resource?.roles" :key="index">
+              <tr
+                v-for="(roleDetails, index) in data?.resource?.roles"
+                :key="index"
+              >
                 <td align="left">{{ roleDetails.role }}</td>
                 <td align="left">{{ roleDetails.description }}</td>
                 <td align="center">
@@ -62,9 +73,17 @@
         </template>
       </Table>
     </div>
-    <ConfirmationModal :show="deleteConfirmationModalVisible" title="Delete Role" type="danger" confirmText="Delete"
-      @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
-      <template #message>Are you sure you want to continue? This cannot be undone.</template>
+    <ConfirmationModal
+      :show="deleteConfirmationModalVisible"
+      title="Delete Role"
+      type="danger"
+      confirmText="Delete"
+      @close="deleteConfirmationModalVisible = false"
+      @confirm="confirmDelete"
+    >
+      <template #message
+        >Are you sure you want to continue? This cannot be undone.</template
+      >
     </ConfirmationModal>
   </div>
 </template>
@@ -94,7 +113,7 @@ export default {
     }
     function nextPage() {
       previousEvaluatedKey.value.push(nextEvaluatedKey.value);
-      nextEvaluatedKey.value = $_.last(data?.value?.resource?.policies).policy;
+      nextEvaluatedKey.value = $_.last(data?.value?.resource?.roles).role;
     }
     // PAGINATION
 

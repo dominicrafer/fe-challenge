@@ -118,12 +118,6 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    module: {
-      type: String,
-      default: "users",
-    },
-  },
   setup() {
     const { $api, $_ } = useNuxtApp();
     const usersFilterDrawerVisible = ref(false);
@@ -143,9 +137,7 @@ export default {
       //sorts
     });
 
-    const { data, pending, refresh } = $api.users.getUsers(params, [
-      params.page,
-    ]);
+    const { data, pending, refresh } = $api.users.getUsers(params);
 
     function paginate(page) {
       params.page = page;

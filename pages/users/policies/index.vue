@@ -8,7 +8,7 @@
           }"
           v-has:users.action-permission="`policies:write`"
         >
-          <Button variant="success">Create</Button>
+          <Button variant="success">New Policy</Button>
         </router-link>
       </template>
     </PageHeader>

@@ -8,8 +8,10 @@ export default () => ({
     getRoles(params, watch) {
         return useFetch(() => '/user/role', { method: 'GET', params, ...interceptors(), watch });
     },
-    getRoleDetails(id, defaultValue) {
-        return useFetch(`/user/role/${id}`, { method: 'GET', default: () => defaultValue, ...interceptors() });
+    getRoleDetails(id) {
+        return useFetch(`/user/role/${id}`, {
+            method: 'GET', ...interceptors()
+        });
     },
     updateRole(id, data) {
         return useFetch(`/user/role/${id}`, { method: 'PATCH', body: data, ...interceptors() });

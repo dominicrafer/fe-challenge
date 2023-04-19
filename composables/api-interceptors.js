@@ -19,11 +19,9 @@ export const interceptors = () => {
       return response._data;
     },
     onResponseError({ request, response, options }) {
-      //   throw response.status;
       const { $toast } = useNuxtApp();
       $toast.error(response._data.errorCode);
-      throw response.status
-      // Handle the response errors
+      throw createError({ statusCode: response.status, data: response._data })
     },
   };
 };

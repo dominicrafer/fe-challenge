@@ -2,10 +2,12 @@
   <div class="page">
     <PageHeader backRoute="/users/roles" title="Edit Role" />
     <div class="page__body">
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
       <UsersRoleForm
         :roleDetails="roleDetails"
         :submitHandler="submitHandler"
         :isLoading="pending"
+        ref="form"
         edit
       />
     </div>
@@ -13,6 +15,7 @@
 </template>
 
 <script>
+import { useRoute } from "vue-router";
 definePageMeta({
   layout: "default",
 });
@@ -20,42 +23,36 @@ export default {
   async setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
+    const form = ref(null);
+    const { data, pending } = await $api.roles.getRoleDetails(route.params.id);
     let roleDetails = {
-      role: null,
-      description: null,
-      policies: [],
+      role: data.value.resource.role,
+      description: data.value.resource.description,
+      policies: data.value.resource.policies,
     };
-    const { data, pending } = $api.roles.getRoleDetails(
-      route.params.id,
-      roleDetails
-    );
-    watch(
-      () => data.value,
-      (policies) => {
-        console.log(policies, "policies");
-        roleDetails.role = policies.resource?.role;
-        roleDetails.description = policies.resource?.description;
-        roleDetails.policies = policies.resource?.policies;
-      }
-    );
-
+    let errors = ref(null);
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      try {
+      const { error } = await $api.roles.updateRole(route.params.id, data);
+      if (!error.value) {
         const router = useRouter();
-        const route = useRoute();
-        await $api.roles.updateRole(route.params.id, data);
         router.push("/users/roles");
         $toast.success("Role successfully updated.");
-        router.push();
-      } catch (error) {
-        console.log(error);
+      } else {
+        errors.value = error.value.data.errors;
+        formRef.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
     return {
       pending,
       roleDetails,
       submitHandler,
+      errors,
+      form,
     };
   },
 };

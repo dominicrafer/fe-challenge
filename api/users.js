@@ -8,8 +8,8 @@ export default () => ({
     getAllUsers() {
         return useLazyFetch(() => '/user', { method: 'GET', ...interceptors() });
     },
-    getUsers(data, watch) {
-        return useLazyFetch(() => '/user/list', { method: 'POST', body: data, ...interceptors(), watch });
+    getUsers(data) {
+        return useLazyFetch(() => '/user/list', { method: 'POST', body: data, ...interceptors() });
     },
     getUserDetails(id) {
         return useFetch(`/user/${id}`, { method: 'GET', ...interceptors() });
@@ -20,4 +20,7 @@ export default () => ({
     deleteUser(id) {
         return useFetch(`/user/${id}`, { method: 'DELETE', ...interceptors() });
     },
+    resetPassword(data) {
+        return useFetch(`user/reset-password`, { method: 'PATCH', body: data, ...interceptors() })
+    }
 })

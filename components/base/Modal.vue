@@ -58,7 +58,7 @@ export default {
   background: rgba(30, 28, 28, 0.88);
 
   &__content {
-    @apply absolute;
+    @apply absolute flex flex-col;
     @apply bg-white;
     @apply rounded-md;
     @apply min-w-[320px];
@@ -68,18 +68,21 @@ export default {
       @apply border-b border-baking-soda bg-primary rounded-t-md;
       @apply font-bold text-white text-lg;
       @apply px-[16px] py-[12px];
+      @apply flex-grow-0;
       .modal__close-button {
         @apply cursor-pointer;
       }
     }
     .modal__body {
       z-index: 1;
+      @apply flex-grow;
       @apply max-h-[80vh] p-4;
       @apply w-full h-full;
       @apply overflow-y-auto;
       @apply text-sm text-currant;
     }
     .modal__footer {
+      @apply flex-grow-0;
       @apply border-t border-baking-soda;
       @apply flex flex-row justify-end items-center;
       @apply p-[16px] rounded-b-xl;

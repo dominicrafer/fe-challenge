@@ -1,12 +1,14 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users/policies" title="Policies" />
+    <PageHeader backRoute="/users/policies" title="Edit Policy" />
     <div class="page__body">
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
       <UsersPolicyForm
         :isLoading="pending"
         :policyDetails="policyDetails"
         :submitHandler="submitHandler"
         edit
+        ref="form"
       />
     </div>
   </div>
@@ -23,54 +25,47 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  async setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
+    const { data, pending } = await $api.policies.getPolicyDetails(
+      route.params.id
+    );
+    const form = ref(null);
+    let errors = ref(null);
     let policyDetails = {
-      policy: null,
-      description: null,
-      actions: [],
+      policy: data.value.resource.policy,
+      description: data.value.resource.description,
+      actions: $_.map(data.value.resource.actions, (actionDetails) => {
+        return {
+          label: actionDetails.action,
+          value: actionDetails.action,
+        };
+      }),
     };
-    const { data, pending } = $api.policies.getPolicyDetails(
-      route.params.id,
-      policyDetails
-    );
-    watch(
-      data,
-      (policy) => {
-        console.log(policy, "policy");
-        policyDetails.policy = policy.resource?.policy;
-        policyDetails.description = policy.resource?.description;
-        policyDetails.actions = $_.map(
-          policy.resource?.actions,
-          (actionDetails) => {
-            return {
-              label: actionDetails.action,
-              value: actionDetails.action,
-            };
-          }
-        );
-      },
-      { deep: true }
-    );
 
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      try {
+      const { error } = await $api.policies.updatePolicy(route.params.id, data);
+      if (!error.value) {
         const router = useRouter();
-        const route = useRoute();
-        await $api.policies.updatePolicy(route.params.id, data);
         router.push("/users/policies");
         $toast.success("Policy successfully updated.");
-        router.push();
-      } catch (error) {
-        console.log(error);
+      } else {
+        errors.value = error.value.data.errors;
+        form.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
     return {
       pending,
       policyDetails,
       submitHandler,
+      errors,
+      form,
     };
   },
 };

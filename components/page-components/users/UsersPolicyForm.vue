@@ -1,6 +1,6 @@
 <template>
   <div class="policy">
-    <Container :loading="isLoading" padding="p-0" width="w-1/2" :key="isLoading && pending">
+    <Container :loading="isLoading" padding="p-0" :key="isLoading && pending">
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
@@ -50,6 +50,20 @@
           >
         </div>
       </VForm>
+      <ConfirmationModal
+        :show="leaveWarningModalVisible"
+        title="Cancel User Creation"
+        type="warning"
+        confirmText="Proceed"
+        @close="leaveWarningModalVisible = false"
+        @confirm="confirmLeave"
+      >
+        <template #message
+          >Are you sure you want to cancel
+          {{ edit ? "updating" : "creating" }} this role? Changes will not be
+          saved.</template
+        >
+      </ConfirmationModal>
     </Container>
   </div>
 </template>
@@ -81,7 +95,19 @@ export default {
     },
   },
 
-  setup(props) {
+  setup(props, { expose }) {
+    const leaveWarningModalVisible = ref(false);
+    const leaveRoute = ref(null);
+    const allowRouteLeave = ref(false);
+    onBeforeRouteLeave((to, from, next) => {
+      if (allowRouteLeave.value) {
+        next();
+      } else {
+        leaveWarningModalVisible.value = true;
+        leaveRoute.value = to;
+      }
+    });
+    expose({ allowRouteLeave });
     const { $_ } = useNuxtApp();
     const actionOptions = [
       {
@@ -112,6 +138,7 @@ export default {
     });
     const formData = reactive(props.policyDetails);
     async function onSubmit(values) {
+      allowRouteLeave.value = true;
       if (props.edit) {
         let payload = {};
 
@@ -142,6 +169,7 @@ export default {
       formData,
       onSubmit,
       addTag,
+      leaveWarningModalVisible,
     };
   },
 };

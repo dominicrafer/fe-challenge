@@ -1,12 +1,14 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users" title="Users" />
+    <PageHeader backRoute="/users" title="Edit User" />
     <div class="page__body">
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
       <UsersForm
         :userDetails="userDetails"
         :isLoading="pending"
         edit
         :submitHandler="submitHandler"
+        ref="form"
       />
     </div>
   </div>
@@ -23,49 +25,45 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const { $api, $_ } = useNuxtApp();
+  async setup(props) {
+    const { $api, $_, $toast } = useNuxtApp();
     const route = useRoute();
+    const { data, pending } = await $api.users.getUserDetails(route.params.id);
+    const form = ref(null);
     let userDetails = {
-      first_name: null,
-      last_name: null,
-      password: null,
-      email: null,
-      phone_number: null,
-      role: null,
+      first_name: data.value.resource.first_name,
+      last_name: data.value.resource.last_name,
+      password: data.value.resource.email,
+      email: data.value.resource.email,
+      phone_number: data.value.resource.phone_number,
+      role: {
+        label: data.value.resource.role,
+        value: data.value.resource.role,
+      },
     };
-    const { data, pending } = $api.users.getUserDetails(route.params.id);
-
+    let errors = ref(null);
     async function submitHandler(data) {
-      try {
+      const { error } = await $api.users.updateUser(route.params.id, data);
+      if (!error.value) {
         const router = useRouter();
-        const route = useRoute();
-        await $api.users.updateUser(route.params.id, data);
         router.push("/users");
         $toast.success("Role successfully updated.");
-        router.push();
-      } catch (error) {
-        console.log(error);
+      } else {
+        errors.value = error.value.data.errors;
+        form.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
-    watch(
-      () => data.value,
-      (data) => {
-        userDetails.first_name = data.resource?.first_name;
-        userDetails.last_name = data.resource?.last_name;
-        userDetails.email = data.resource?.email;
-        userDetails.phone_number = data.resource?.phone_number;
-        userDetails.role = {
-          label: data.resource?.role,
-          value: data.resource?.role,
-        };
-      },
-      { deep: true }
-    );
+
     return {
       userDetails,
       pending,
       submitHandler,
+      errors,
+      form,
     };
   },
 };

@@ -1,11 +1,6 @@
 <template>
   <div class="role">
-    <Container
-      :loading="isLoading"
-      padding="p-0"
-      width="w-1/2"
-      :key="String(isPolicyFetching && isLoading)"
-    >
+    <Container padding="p-0">
       <VForm
         @submit="onSubmit"
         v-slot="{ isSubmitting }"
@@ -35,10 +30,10 @@
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
         <div class="role__form">
-          <Spinner class="m-auto" v-if="isPolicyFetching" />
+          <Spinner class="m-auto" v-if="pending" />
           <div class="form__col"></div>
           <Checkbox
-            v-if="!isPolicyFetching"
+            v-if="!pending"
             inputValue="*:*"
             label="Select All"
             id="actions"
@@ -47,7 +42,7 @@
             v-model="formData.policies"
           />
           <div
-            v-show="!isPolicyFetching"
+            v-show="!pending"
             class="form__policy"
             v-for="(policyDetails, index) in policies?.resource"
             :key="index"
@@ -79,20 +74,35 @@
             </div>
           </div>
           <div class="role__footer">
-            <Button variant="success" type="submit" :loading="isSubmitting"
+            <Button
+              variant="success"
+              type="submit"
+              :loading="isSubmitting || isLoading"
               >Save</Button
             >
           </div>
         </div>
       </VForm>
+      <ConfirmationModal
+        :show="leaveWarningModalVisible"
+        title="Cancel User Creation"
+        type="warning"
+        confirmText="Proceed"
+        @close="leaveWarningModalVisible = false"
+        @confirm="confirmLeave"
+      >
+        <template #message
+          >Are you sure you want to cancel
+          {{ edit ? "updating" : "creating" }} this role? Changes will not be
+          saved.</template
+        >
+      </ConfirmationModal>
     </Container>
   </div>
 </template>
 
 <script>
-import Button from "~~/components/base/form/Button.vue";
 export default {
-  components: { Button },
   props: {
     isLoading: {
       type: Boolean,
@@ -117,7 +127,19 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  async setup(props, { expose }) {
+    const leaveWarningModalVisible = ref(false);
+    const leaveRoute = ref(null);
+    const allowRouteLeave = ref(false);
+    onBeforeRouteLeave((to, from, next) => {
+      if (allowRouteLeave.value) {
+        next();
+      } else {
+        leaveWarningModalVisible.value = true;
+        leaveRoute.value = to;
+      }
+    });
+    expose({ allowRouteLeave });
     const { $api, $_ } = useNuxtApp();
     const formData = reactive(props.roleDetails);
     const dirtyFieldValidator = reactive({
@@ -126,27 +148,16 @@ export default {
       policies: false,
     });
     const isPolicyFetching = ref(false);
-    // only execute once the fetching of role details finishes
-    const {
-      data: policies,
-      execute,
-      pending,
-    } = $api.policies.getAllPolicies(!props.edit);
-    watch(
-      () => props.isLoading,
-      async () => {
-        isPolicyFetching.value = true;
-        await execute();
-        isPolicyFetching.value = false;
-      }
-    );
-    watch(
-      policies,
-      () => {
-        mapToFormData(props.roleDetails);
-      },
-      { deep: true }
-    );
+    const { data: policies, pending } = await $api.policies.getAllPolicies();
+    mapToFormData(props.roleDetails);
+
+    // watch(
+    //   policies,
+    //   () => {
+    //     mapToFormData(props.roleDetails);
+    //   },
+    //   { deep: true }
+    // );
     function mapToFormData(roleDetails) {
       if ($_.includes(roleDetails.policies, "*:*")) {
         let allPolicies = ["*:*"];
@@ -224,7 +235,7 @@ export default {
               `${action[0]}:write`,
               `${action[0]}:export`,
               `${action[0]}:delete`,
-              `${action[0]}:edit`,
+              `${action[0]}:edit`
             );
             break;
           case "delete":
@@ -266,6 +277,7 @@ export default {
       }
     }
     async function onSubmit(values) {
+      allowRouteLeave.value = true;
       if (props.edit) {
         let payload = {};
 
@@ -275,6 +287,7 @@ export default {
               key === "policies" ? filterPolicies(values[key]) : values[key];
           }
         });
+        console.log(payload);
         await props.submitHandler(parsePayload(payload));
       } else {
         props.submitHandler(parsePayload(values));
@@ -307,6 +320,13 @@ export default {
       };
       return parsedPayload;
     }
+
+    function confirmLeave() {
+      const router = useRouter();
+      leaveWarningModalVisible.value = false;
+      allowRouteLeave.value = true;
+      router.push(leaveRoute.value);
+    }
     return {
       isPolicyFetching,
       policies,
@@ -315,6 +335,9 @@ export default {
       selectPolicy,
       onSubmit,
       selectAllPolicies,
+      pending,
+      leaveWarningModalVisible,
+      confirmLeave,
     };
   },
 };
@@ -322,7 +345,7 @@ export default {
 
 <style lang="postcss" scoped>
 .role {
-  @apply flex justify-center;
+  /* @apply flex justify-center; */
 
   &__form {
     @apply flex flex-col gap-[24px] px-4 pt-4 pb-4;

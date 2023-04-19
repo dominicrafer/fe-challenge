@@ -1,8 +1,13 @@
 <template>
   <div class="page">
-    <PageHeader backRoute="/users/roles" title="Create Role"/>
+    <PageHeader backRoute="/users/roles" title="Create Role" />
     <div class="page__body">
-      <UsersRoleForm :submitHandler="submitHandler" />
+      <ErrorList :errors="errors" v-show="!$_.isEmpty(errors)" />
+      <UsersRoleForm
+        :submitHandler="submitHandler"
+        :isLoading="isLoading"
+        ref="form"
+      />
     </div>
   </div>
 </template>
@@ -12,27 +17,29 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
   setup(props) {
+    let errors = ref(null);
+    let isLoading = ref(false);
+    const form = ref(null);
     async function submitHandler(data) {
       const { $api, $toast } = useNuxtApp();
-      try {
-        await $api.roles.createRole(data).then((response) => {
-          console.log(response);
-          const router = useRouter();
-          router.push("/users/roles");
-          $toast.success("Role successfully created.");
-        });
-      } catch (error) {
-        console.log(error)
+      isLoading.value = true;
+      const { error } = await $api.roles.createRole(data);
+      isLoading.value = false;
+      if (!error.value) {
+        const router = useRouter();
+        router.push("/users/roles");
+        $toast.success("Role successfully created.");
+      } else {
+        errors.value = error.value.data.errors;
+        form.value.allowRouteLeave = false;
+        const errorList = document.getElementById("error-list");
+        setTimeout(() => {
+          errorList.scrollIntoView();
+        }, 200);
       }
     }
-    return { submitHandler };
+    return { submitHandler, errors, isLoading, form };
   },
 };
 </script>

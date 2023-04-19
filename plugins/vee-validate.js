@@ -5,6 +5,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('VForm', Form)
   nuxtApp.vueApp.component('VField', Field)
   nuxtApp.vueApp.component('VErrorMessage', ErrorMessage)
+  const { $_ } = useNuxtApp()
   Object.keys(AllRules)
     .filter((k) => k !== "default")
     .forEach((rule) => {
@@ -52,7 +53,10 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   defineRule('select_required', (value) => {
-    if (!value || !value.length) {
+    if ($_.isArray(value)) {
+      return !value.length ? false : true
+    }
+    if (!value) {
       return false;
     }
     return true;
@@ -62,7 +66,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Customize global validation rules error message
   configure({
     generateMessage: (context) => {
-      const { $_ } = useNuxtApp()
       console.log(context)
       switch (context.rule.name) {
         case "email":
