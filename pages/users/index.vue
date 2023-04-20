@@ -49,7 +49,14 @@
                 <td align="left">{{ userDetails.email }}</td>
                 <td align="left">{{ userDetails.phone_number }}</td>
                 <td align="left">{{ userDetails.role }}</td>
-                <td align="left">{{ userDetails.status }}</td>
+                <td align="left">
+                  <Badge
+                    :variant="
+                      userDetails.status === 'active' ? 'success' : 'secondary'
+                    "
+                    >{{ $_.startCase(userDetails.status) }}</Badge
+                  >
+                </td>
                 <td align="left">{{ userDetails.created_at }}</td>
                 <td align="center">
                   <div class="table__data-actions">
@@ -60,22 +67,43 @@
                       }"
                       v-has:users.action-permission="`users:read`"
                     >
-                      <Icon
-                        width="20"
-                        height="20"
-                        style="color: #29335c"
-                        name="material-symbols:preview"
-                      />
+                      <div
+                        class="flex items-center justify-center gap-1 border-b border-primary"
+                      >
+                        <span class="text-primary">Edit </span>
+                        <Icon
+                          width="20"
+                          height="20"
+                          color="#29335c"
+                          name="material-symbols:edit"
+                        />
+                      </div>
                     </router-link>
-                    <div>
-                      {{ search }}
+
+                    <div
+                      class="flex items-center justify-center gap-1 border-b border-paprika"
+                      @click="deactivateUser(userDetails.cognito_id)"
+                      v-if="userDetails.status === 'active'"
+                    >
+                      <span class="text-paprika">Deactivate</span>
                       <Icon
-                        v-has:users.action-permission="`users:delete`"
                         width="20"
                         height="20"
                         color="#E45959"
-                        name="material-symbols:delete-outline"
-                        @click="deleteUser(userDetails.cognito_id)"
+                        name="mdi:user-block"
+                      />
+                    </div>
+                    <div
+                      class="flex items-center justify-center gap-1 border-b border-green-600"
+                      @click="updateUserStatus(userDetails.cognito_id)"
+                      v-else
+                    >
+                      <span class="text-green-600">Activate</span>
+                      <Icon
+                        width="20"
+                        height="20"
+                        color="#18B351"
+                        name="mdi:user-check"
                       />
                     </div>
                   </div>
@@ -88,15 +116,13 @@
     </div>
     <ConfirmationModal
       :show="deleteConfirmationModalVisible"
-      title="Delete User"
+      title="Deactivate User"
       type="danger"
-      confirmText="Delete"
+      confirmText="Deactivate"
       @close="deleteConfirmationModalVisible = false"
-      @confirm="confirmDelete"
+      @confirm="updateUserStatus"
     >
-      <template #message
-        >Are you sure you want to continue? This cannot be undone.</template
-      >
+      <template #message>Are you sure you want to continue?</template>
     </ConfirmationModal>
     <UsersFilterDrawer
       :filters="filters"
@@ -176,14 +202,16 @@ export default {
     // DELETE POLICY
     const deleteConfirmationModalVisible = ref(false);
     const selectedUser = ref(null);
-    function deleteUser(id) {
+    function deactivateUser(id) {
       selectedUser.value = id;
       deleteConfirmationModalVisible.value = true;
     }
 
-    async function confirmDelete() {
+    async function updateUserStatus(id) {
       pending.value = true;
-      await $api.users.deleteUser(selectedUser.value);
+      await $api.users.updateUserStatus({
+        cognito_id: id ? id : selectedUser.value,
+      });
       refresh();
     }
     // DELETE POLICY
@@ -192,11 +220,11 @@ export default {
       data,
       pending,
       selectedUser,
-      deleteUser,
+      deactivateUser,
       deleteConfirmationModalVisible,
       usersFilterDrawerVisible,
       usersSortDrawerVisible,
-      confirmDelete,
+      updateUserStatus,
       filters,
       sorts,
       params,

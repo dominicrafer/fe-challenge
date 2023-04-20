@@ -85,7 +85,7 @@
       </VForm>
       <ConfirmationModal
         :show="leaveWarningModalVisible"
-        title="Cancel User Creation"
+        :title="`${edit ? 'Cancel Updating Role' : 'Cancel Role Creation'}`"
         type="warning"
         confirmText="Proceed"
         @close="leaveWarningModalVisible = false"

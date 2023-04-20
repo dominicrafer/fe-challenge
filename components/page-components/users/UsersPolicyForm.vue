@@ -1,68 +1,32 @@
 <template>
   <div class="policy">
     <Container :loading="isLoading" padding="p-0" :key="isLoading && pending">
-      <VForm
-        @submit="onSubmit"
-        v-slot="{ isSubmitting }"
-        :initialValues="policyDetails"
-      >
+      <VForm @submit="onSubmit" v-slot="{ isSubmitting }" :initialValues="policyDetails">
         <SectionTitle title="Policy Details" class="rounded-t-sm" />
         <div class="policy__form">
-          <InputField
-            class="w-1/2"
-            name="policy"
-            placeholder="Enter Text"
-            v-model:modelValue="formData.policy"
-            v-model:isDirty="dirtyFieldValidator.policy"
-            :disabled="edit"
-            rules="required|max:128"
-          >
+          <InputField class="w-1/2" name="policy" placeholder="Enter Text" v-model:modelValue="formData.policy"
+            v-model:isDirty="dirtyFieldValidator.policy" :disabled="edit" rules="required|max:128">
             <template #label> Name </template>
           </InputField>
-          <Textarea
-            v-model:modelValue="formData.description"
-            v-model:isDirty="dirtyFieldValidator.description"
-            name="description"
-            label="Description"
-            placeholder="Enter description"
-            :rules="edit ? null : 'required|max:255'"
-          />
-          <Select
-            v-model:modelValue="formData.actions"
-            v-model:isDirty="dirtyFieldValidator.actions"
-            name="actions"
-            :multiple="true"
-            :options="actionOptions"
-            @addTag="addTag"
-            trackBy="value"
-            label="label"
-            taggable
-            searchable
-            :closeOnSelect="false"
-            rules="select_required"
-          >
+          <Textarea v-model:modelValue="formData.description" v-model:isDirty="dirtyFieldValidator.description"
+            name="description" label="Description" placeholder="Enter description"
+            :rules="edit ? null : 'required|max:255'" />
+          <Select v-model:modelValue="formData.actions" v-model:isDirty="dirtyFieldValidator.actions" name="actions"
+            :multiple="true" :options="actionOptions" @addTag="addTag" trackBy="value" label="label" taggable searchable
+            :closeOnSelect="false" rules="select_required">
             <template #label> Actions </template>
           </Select>
         </div>
         <div class="policy__footer">
-          <Button variant="success" type="submit" :loading="isSubmitting"
-            >Save</Button
-          >
+          <Button variant="success" type="submit" :loading="isSubmitting">Save</Button>
         </div>
       </VForm>
-      <ConfirmationModal
-        :show="leaveWarningModalVisible"
-        title="Cancel User Creation"
-        type="warning"
-        confirmText="Proceed"
-        @close="leaveWarningModalVisible = false"
-        @confirm="confirmLeave"
-      >
-        <template #message
-          >Are you sure you want to cancel
-          {{ edit ? "updating" : "creating" }} this role? Changes will not be
-          saved.</template
-        >
+      <ConfirmationModal :show="leaveWarningModalVisible"
+        :title="`${edit ? 'Cancel Updating Policy' : 'Cancel Policy Creation'}`" type="warning" confirmText="Proceed"
+        @close="leaveWarningModalVisible = false" @confirm="confirmLeave">
+        <template #message>Are you sure you want to cancel
+          {{ edit ? "updating" : "creating" }} this policy? Changes will not be
+          saved.</template>
       </ConfirmationModal>
     </Container>
   </div>
@@ -163,6 +127,14 @@ export default {
       actionOptions.push(newOption);
       formData.actions.push(newOption);
     };
+
+    
+    function confirmLeave() {
+      const router = useRouter();
+      leaveWarningModalVisible.value = false;
+      allowRouteLeave.value = true;
+      router.push(leaveRoute.value);
+    }
     return {
       dirtyFieldValidator,
       actionOptions,
@@ -170,6 +142,7 @@ export default {
       onSubmit,
       addTag,
       leaveWarningModalVisible,
+      confirmLeave
     };
   },
 };

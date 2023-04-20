@@ -1,132 +1,70 @@
 <template>
-  <VForm
-    @submit="onSubmit"
-    @keydown.enter.prevent
-    v-slot="{ isSubmitting }"
-    :initialValues="userDetails"
-  >
+  <VForm @submit="onSubmit" @keydown.enter.prevent v-slot="{ isSubmitting }" :initialValues="userDetails">
     <div class="users">
       <Container :loading="isLoading || pending" padding="p-0">
         <SectionTitle title="User Details" class="rounded-t-sm" />
         <div class="users__form">
           <div class="form__col">
-            <InputField
-              name="first_name"
-              placeholder="First Name"
-              rules="max:128|required"
-              v-model="formData.first_name"
-              v-model:isDirty="dirtyFieldValidator.first_name"
-            >
+            <InputField name="first_name" placeholder="First Name" rules="max:128|required" v-model="formData.first_name"
+              v-model:isDirty="dirtyFieldValidator.first_name">
               <template #label> Name </template>
             </InputField>
-            <InputField
-              name="last_name"
-              placeholder="Last Name"
-              rules="max:128|required"
-              v-model="formData.last_name"
-              v-model:isDirty="dirtyFieldValidator.last_name"
-            >
+            <InputField name="last_name" placeholder="Last Name" rules="max:128|required" v-model="formData.last_name"
+              v-model:isDirty="dirtyFieldValidator.last_name">
               <template #label> Last Name </template>
             </InputField>
           </div>
 
           <div class="form__col">
-            <Select
-              name="role"
-              placeholder="Select role"
-              v-model="formData.role"
-              v-model:isDirty="dirtyFieldValidator.role"
-              :options="roleOptions"
-              rules="select_required"
-              trackBy="value"
-              label="label"
-            >
+            <Select name="role" placeholder="Select role" v-model="formData.role"
+              v-model:isDirty="dirtyFieldValidator.role" :options="roleOptions" rules="select_required" trackBy="value"
+              label="label">
               <template #label> Role </template>
             </Select>
-            <InputField
-              name="phone_number"
-              placeholder="Enter Text"
-              v-model="formData.phone_number"
-              v-model:isDirty="dirtyFieldValidator.phone_number"
-              rules="required|ph_phone_number"
-            >
+            <InputField name="phone_number" placeholder="Enter Text" v-model="formData.phone_number"
+              v-model:isDirty="dirtyFieldValidator.phone_number" rules="required|ph_phone_number">
               <template #label> Mobile Number </template>
             </InputField>
           </div>
-          <InputField
-            name="email"
-            placeholder="Enter Text"
-            rules="required|email|max:128"
-            v-model="formData.email"
-            v-model:isDirty="dirtyFieldValidator.email"
-          >
+          <InputField name="email" placeholder="Enter Text" rules="required|email|max:128" v-model="formData.email"
+            v-model:isDirty="dirtyFieldValidator.email">
             <template #label> Email </template>
           </InputField>
           <!-- min:8|has_upper_lower_case|has_special_char|has_number|required -->
-          <InputField
-            type="password"
-            name="password"
-            placeholder="Enter Text"
-            v-if="!edit"
-            :rules="{
-              required: true,
-              min: 8,
-              has_upper_lower_case: true,
-              has_special_char: true,
-              has_number: true,
-            }"
-            v-model="formData.password"
-            v-model:isDirty="dirtyFieldValidator.password"
-          >
+          <InputField type="password" name="password" placeholder="Enter Text" v-if="!edit" :rules="{
+            required: true,
+            min: 8,
+            has_upper_lower_case: true,
+            has_special_char: true,
+            has_number: true,
+          }" v-model="formData.password" v-model:isDirty="dirtyFieldValidator.password">
             <template #label> Password </template>
           </InputField>
           <div class="form__footer">
-            <Button
-              variant="warning"
-              v-if="edit"
-              @click="resetPassword"
-              :loading="isSubmitting"
-              >Reset Password</Button
-            >
-            <Button variant="success" type="submit" :loading="isSubmitting"
-              >Save</Button
-            >
+            <Button variant="warning" v-if="edit" @click="resetPassword" :loading="isSubmitting">Reset Password</Button>
+            <Button variant="success" type="submit" :loading="isSubmitting">Save</Button>
           </div>
         </div>
       </Container>
-      <Modal
-        :show="newPasswordModalVisible"
-        title="New Password"
-        type="success"
-        confirmText="Confirm"
-        @close="newPasswordModalVisible = false"
-        @confirm="newPasswordModalVisible = false"
-      >
+      <Modal :show="newPasswordModalVisible" title="New Password" type="success" confirmText="Confirm"
+        @close="newPasswordModalVisible = false" @confirm="newPasswordModalVisible = false">
         <div class="modal__message">
           <p class="text-xl">
             Password successfully generated for
             <strong>
-              {{ userDetails.first_name }} {{ userDetails.last_name }}</strong
-            >.
+              {{ userDetails.first_name }} {{ userDetails.last_name }}</strong>.
           </p>
           <p class="text-[32px] mt-5 font-bold text-center">
             {{ newPassword }}
           </p>
         </div>
       </Modal>
-      <ConfirmationModal
-        :show="leaveWarningModalVisible"
-        title="Cancel User Creation"
-        type="warning"
-        confirmText="Proceed"
-        @close="leaveWarningModalVisible = false"
-        @confirm="confirmLeave"
-      >
-        <template #message
-          >Are you sure you want to cancel
+      <ConfirmationModal :show="leaveWarningModalVisible"
+        :title="`${edit ? 'Cancel Updating User' : 'Cancel User Creation'}`" type="warning" confirmText="Proceed"
+        @close="leaveWarningModalVisible = false" @confirm="confirmLeave">
+        <template #message>Are you sure you want to cancel
           {{ edit ? "updating" : "creating" }} this user? Changes will not be
-          saved.</template
-        >
+          saved.</template>
       </ConfirmationModal>
     </div>
   </VForm>
@@ -265,6 +203,7 @@ export default {
 
   &__form {
     @apply flex flex-col gap-[24px] p-4;
+
     .form__footer {
       @apply flex items-end justify-end gap-3;
     }
@@ -278,6 +217,7 @@ export default {
     @apply mt-[28px];
   }
 }
+
 .modal__message {
   @apply flex flex-col gap-4;
 }

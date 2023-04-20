@@ -17,8 +17,8 @@ export default () => ({
     updateUser(id, data) {
         return useFetch(`/user/${id}`, { method: 'PATCH', body: data, ...interceptors() });
     },
-    deleteUser(id) {
-        return useFetch(`/user/${id}`, { method: 'DELETE', ...interceptors() });
+    updateUserStatus(data) {
+        return useFetch(`/user/user-status`, { method: 'PATCH', body:data, ...interceptors() });
     },
     resetPassword(data) {
         return useFetch(`user/reset-password`, { method: 'PATCH', body: data, ...interceptors() })
