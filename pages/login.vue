@@ -31,10 +31,26 @@
           placeholder="Enter new password"
           v-model="newPassword"
           type="password"
-          rules="required|min:8"
+          :rules="{
+            required: true,
+            min: 8,
+            has_upper_lower_case: true,
+            has_special_char: true,
+            has_number: true,
+          }"
           v-if="newPasswordRequired"
         >
           <template #label> New Password </template>
+        </InputField>
+        <InputField
+          name="confirm-password"
+          placeholder="Confirm password"
+          v-model="confirmPassword"
+          type="password"
+          rules="confirm_password:@new-password"
+          v-if="newPasswordRequired"
+        >
+          <template #label> Confirm Passwords </template>
         </InputField>
       </div>
       <div class="login__footer">
@@ -79,12 +95,14 @@ export default {
     // Login
     const email = ref(null);
     const password = ref(null);
+    const confirmPassword = ref(null);
     const { login } = authStore;
     let user = null;
     async function doLogin() {
       isLoading.value = true;
       await login(email.value, password.value)
         .then((res) => {
+          hasError.value = false;
           if (res.challengeName) {
             user = res;
             isLoading.value = false;
@@ -123,6 +141,7 @@ export default {
       errorMessage,
       newPasswordRequired,
       newPassword,
+      confirmPassword,
       doConfirmLogin,
       submitHandler,
     };

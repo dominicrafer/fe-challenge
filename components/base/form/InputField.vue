@@ -201,7 +201,7 @@ export default {
     }
 
     .input-container__floating-label {
-      @apply z-50 absolute pointer-events-none text-gray-400 font-medium;
+      @apply z-10 absolute pointer-events-none text-gray-400 font-medium;
       @apply left-[10px] top-[5px] text-[0.875rem];
       transition: 0.2s ease all;
       &.float {

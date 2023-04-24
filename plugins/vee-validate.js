@@ -62,11 +62,18 @@ export default defineNuxtPlugin((nuxtApp) => {
     return true;
   });
 
+  
+  defineRule('confirm_password', (value, [otherValue]) => {
+    if (value !== otherValue) {
+      return 'Passwords do not match';
+    }
+    return true;
+  });
 
   // Customize global validation rules error message
   configure({
     generateMessage: (context) => {
-      console.log(context)
+
       switch (context.rule.name) {
         case "email":
           return "Invalid email address";

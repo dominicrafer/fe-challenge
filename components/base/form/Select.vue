@@ -164,14 +164,14 @@ export default {
 
 <style lang="postcss" scoped>
 .select {
-  @apply inline-flex flex-col gap-[4px] relative z-[52];
+  @apply inline-flex flex-col gap-[4px] relative;
 
   &__label-height-placeholder {
     @apply h-[20px] w-full;
   }
 
   &__label {
-    @apply text-[0.875rem] font-medium absolute top-[30px] left-[10px] z-[51] text-gray-400;
+    @apply text-[0.875rem] font-medium absolute top-[30px] left-[10px] z-10 text-gray-400;
     transition: 0.2s ease top;
 
     &.float {
