@@ -55,7 +55,7 @@
                 :id="policyActionDetails.slug"
                 :inputValue="policyActionDetails.slug"
                 :label="$_.startCase(policyActionDetails.action)"
-                @change="
+                @onChange="
                   ($event) =>
                     selectPolicy($event, policyDetails, policyActionDetails)
                 "
@@ -85,7 +85,7 @@
       </VForm>
       <ConfirmationModal
         :show="leaveWarningModalVisible"
-        :title="`${edit ? 'Cancel Updating Role' : 'Cancel Role Creation'}`"
+        title="Cancel User Creation"
         type="warning"
         confirmText="Proceed"
         @close="leaveWarningModalVisible = false"

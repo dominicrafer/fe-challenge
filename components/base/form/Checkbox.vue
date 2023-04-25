@@ -6,9 +6,9 @@
       :name="name"
       :id="id"
       :value="inputValue"
-      v-model="value"
+      @change="($event) => $emit('onChange', $event)"
+      :checked="isChecked"
     />
-    <!-- v-model="value" -->
     <label :for="id" class="checkbox__label">{{ label }}</label>
   </div>
 </template>
@@ -29,19 +29,34 @@ export default {
       type: [String, Number],
       required: true,
     },
+    checked: {
+      type: Boolean,
+      default: false,
+    },
     inputValue: {
       type: [String, Object, Boolean, Number],
     },
     modelValue: {
-      type: [String, Object, Boolean, Number],
+      type: [String, Object, Boolean, Number, Array],
     },
   },
   setup(props, { emit }) {
+    const { $_ } = useNuxtApp();
+    console.log(props.modelValue, "props.modelValue");
     const { value, meta } = useField(props.name, undefined, {
       type: "checkbox",
       initialValue: props.modelValue,
     });
+    const isChecked = computed(() => {
+      if (props.checked) {
+        return true;
+      }
+      if ($_.isArray(props.modelValue)) {
+        return $_.includes(props.modelValue, props.inputValue);
+      }
 
+      return props.modelValue === props.inputValue;
+    });
     watch(
       meta,
       (meta) => {
@@ -49,7 +64,7 @@ export default {
       },
       { deep: true }
     );
-    return { value };
+    return { value, isChecked };
   },
 };
 </script>
