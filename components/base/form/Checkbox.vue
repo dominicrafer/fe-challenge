@@ -1,15 +1,14 @@
 <template>
   <div class="checkbox">
-      <input
-        type="checkbox"
-        class="checkbox__input"
-        :name="name"
-        :id="id"
-        :value="inputValue"
-        v-model="value"
-        @change="$event => $emit('change', $event)"
-      />
-        <!-- v-model="value" -->
+    <input
+      type="checkbox"
+      class="checkbox__input"
+      :name="name"
+      :id="id"
+      :value="inputValue"
+      v-model="value"
+    />
+    <!-- v-model="value" -->
     <label :for="id" class="checkbox__label">{{ label }}</label>
   </div>
 </template>
@@ -38,13 +37,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { value, meta, handleChange } = useField(props.name, undefined, {
+    const { value, meta } = useField(props.name, undefined, {
       type: "checkbox",
       initialValue: props.modelValue,
     });
-    function updateValue(e) {
-      handleChange(e.target.value);
-    }
+
     watch(
       meta,
       (meta) => {
@@ -52,7 +49,7 @@ export default {
       },
       { deep: true }
     );
-    return { value, updateValue };
+    return { value };
   },
 };
 </script>
