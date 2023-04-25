@@ -131,7 +131,7 @@
       @apply="applyFilters"
     />
     <UsersSortDrawer
-      :sorts="sorts"
+      :sort="sort"
       :show="usersSortDrawerVisible"
       @close="usersSortDrawerVisible = false"
       @apply="applySorts"
@@ -151,14 +151,12 @@ export default {
     // PAGINATION
     let search = ref(null);
     let filters = reactive(["name", "email"]);
-    let sorts = reactive({
-      name: "created_at:desc",
-    });
+    let sort = ref("created_at:desc");
     let params = reactive({
       page: 1,
       page_size: 10,
       return_count: true,
-      sorts: $_.values(sorts),
+      sorts: [sort.value],
       //search_filters
       //sorts
     });
@@ -192,9 +190,9 @@ export default {
       filters = appliedFilters.filterBy;
       usersFilterDrawerVisible.value = false;
     }
-    function applySorts(appliedSorts) {
-      sorts = appliedSorts;
-      params.sorts = $_.values(sorts);
+    function applySorts(appliedSort) {
+      sort.value = appliedSort;
+      params.sorts = [sort.value];
       refresh();
       usersSortDrawerVisible.value = false;
     }
@@ -226,7 +224,7 @@ export default {
       usersSortDrawerVisible,
       updateUserStatus,
       filters,
-      sorts,
+      sort,
       params,
       paginate,
       searchUsers,
