@@ -45,7 +45,7 @@ export default {
 .container-component {
   @apply relative;
   @apply rounded-sm;
-  @apply bg-white;
+  @apply bg-white min-w-fit;
   &__loader-body {
     @apply bg-opacity-50 bg-white z-[53];
     @apply w-full h-full;
@@ -55,7 +55,7 @@ export default {
   .loader-body__loader {
     @apply w-full h-full;
     @apply flex flex-col items-center justify-center;
-    @apply text-sm font-bold text-green-500;
+    @apply text-sm font-bold text-primary;
     @apply sticky;
     @apply gap-[10px];
     top: 50%;

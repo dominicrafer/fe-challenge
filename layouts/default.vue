@@ -4,7 +4,7 @@
     <div class="default__content">
       <Header />
       <div class="flex-grow relative">
-        <NuxtPage />
+        <NuxtPage/>
         <div class="content__loader" v-if="isLoading">
           <div class="loader">
             <Spinner />
@@ -38,15 +38,15 @@ export default {
   @apply overflow-hidden;
 
   &__content {
-    @apply flex-grow w-full h-full flex flex-col bg-transparent;
+    @apply flex-grow w-full flex flex-col bg-transparent overflow-auto;
     .content__loader {
-      @apply w-full h-full flex-grow;
+      @apply w-full flex-grow;
       .loader {
         @apply w-full h-full;
         @apply flex flex-col items-center;
         @apply mt-[120px] gap-[10px];
         span {
-          @apply font-bold text-green-500;
+          @apply font-bold text-primary;
         }
       }
     }

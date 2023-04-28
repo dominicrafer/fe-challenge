@@ -18,6 +18,8 @@
       :format="format"
       :flow="flow"
       :range="range"
+      :min-date="min"
+      :max-date="max"
       :enable-time-picker="enableTimePicker"
       :time-picker="timePicker"
       :input-class-name="inputClassName"
@@ -82,6 +84,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    min: {
+      type: [Date, String, Object],
+      default: null
+    },
+    max: {
+      type: [Date, String, Object],
+      default: null
+    },
   },
   setup(props, { emit }) {
     // const date = ref(props.modelValue);
@@ -96,6 +106,7 @@ export default {
 
     async function onChange(event) {
       emit("update:modelValue", event);
+      emit('change', event)
     }
     return {
       errorMessage,

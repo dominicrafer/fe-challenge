@@ -4,7 +4,7 @@
       <div class="header__title">
         <Icon
           name="mdi:check-circle"
-          color="#5A8662"
+          color="#16A34A"
           width="24"
           height="24"
           v-if="type === 'success'"
@@ -62,14 +62,14 @@ export default {
     @apply flex flex-row justify-between items-center;
     .header__title {
       @apply flex flex-row items-center gap-[5px];
-      @apply font-medium text-[1rem];
+      @apply font-semibold text-[0.875rem];
     }
   }
   &__body {
-    @apply pl-[30px];
+    @apply pl-[30px] text-[0.875rem];
   }
   &.success {
-    @apply bg-cucumber border border-kale rounded-lg;
+    @apply bg-cucumber border border-green-500 rounded-lg;
     > .alert__header {
       > .header__title {
       }

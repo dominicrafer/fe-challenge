@@ -8,8 +8,8 @@
     <div v-if="$slots['icon-start']">
       <slot name="icon-start"></slot>
     </div>
-    <div class="flex flex-col items-center" v-if="showLoading && loading">
-      <Spinner size="w-8 h-8" reverse />
+    <div class="flex items-center" v-if="showLoading && loading">
+      <Spinner size="w-5 h-5" reverse />
     </div>
     <slot></slot>
     <div v-if="$slots['icon-end']">
@@ -91,7 +91,7 @@ export default {
   }
 
   &.danger {
-    @apply bg-paprika text-white;
+    @apply bg-red-500 text-white;
   }
 
   &.danger-outline {

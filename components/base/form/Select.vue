@@ -39,7 +39,7 @@
       @search-change="asyncSearch"
       @select="select"
       :open-direction="openDirection"
-      :loading="isLoading"
+      :loading="isLoading || isLoadingState"
       :disabled="disabled"
     >
       <!-- <slots name="drop-down"></slots> -->
@@ -120,6 +120,7 @@ export default {
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
+    console.log('props.modelValue', props.modelValue)
     const {
       errorMessage,
       meta,
@@ -128,17 +129,29 @@ export default {
       initialValue: props.modelValue,
     });
     const showOptions = ref(false);
-
+    const isLoadingState = ref(props.isLoading);
     function addTag(value) {
       emit("addTag", { label: value, value: $_.toLower(value) });
     }
+    let debounce = null;
     function asyncSearch(value) {
-      emit("asyncSearch", value);
+      isLoadingState.value = true;
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        emit("asyncSearch", value);
+        isLoadingState.value = false;
+      }, 1000);
     }
 
-    function select(value) {
-      emit("update:modelValue", value);
+    function select() {
+      emit("update:modelValue", selected.value);
     }
+    watch(
+      () => props.isLoading,
+      (loading) => {
+        isLoadingState.value = loading;
+      }
+    );
     watch(
       meta,
       (meta) => {
@@ -154,6 +167,7 @@ export default {
       asyncSearch,
       select,
       showOptions,
+      isLoadingState,
     };
   },
   components: {

@@ -13,7 +13,7 @@
             @click="$emit('close')"
           />
         </div>
-        <div :class="`modal__body ${type}`"  ref="modal" v-click-outside="clickOutside">
+        <div :class="`modal__body ${type}`"  ref="modal">
           <slot name="message"></slot>
         </div>
         <div class="modal__footer">

@@ -11,7 +11,7 @@
         :class="{
           'has-icon': type === 'password' || $slots.icon,
           'has-error': !meta.valid && meta.dirty,
-          'show-placeholder': !$slots.label || !floatingLabel,
+          'show-placeholder': !$slots.label,
           [padding]: true,
           [fontSize]: true,
           [inputWidth]: true,
@@ -20,6 +20,7 @@
         }"
         :disabled="disabled"
         :placeholder="placeholder"
+        :step="step"
         @blur="(meta.touched = true), (focused = false)"
         @focus="focused = true"
         @input="updateValue"
@@ -28,7 +29,7 @@
       <label
         :name="name"
         class="input-container__floating-label"
-        :class="modelValue || focused || !floatingLabel ? 'float' : null"
+        :class="(modelValue || modelValue === 0) || focused ? 'float' : null"
         v-if="$slots.label"
       >
         <slot name="label"></slot>
@@ -82,6 +83,10 @@ export default {
       type: String,
       default: null,
     },
+    step: {
+      type: String,
+      default: "1",
+    },
     rules: {
       type: [String, Object],
     },
@@ -112,10 +117,6 @@ export default {
       type: String,
       default: null,
     },
-    floatingLabel: {
-      type: Boolean,
-      default: true,
-    }
   },
   setup(props, { emit }) {
     const { errorMessage, meta, setErrors, value, handleBlur } = useField(
@@ -130,12 +131,7 @@ export default {
     const focused = ref(false);
 
     const updateValue = (event) => {
-      emit(
-        "update:modelValue",
-        props.type === "number"
-          ? parseInt(event.target.value)
-          : event.target.value
-      );
+      emit("update:modelValue", event.target.value);
     };
     watch(
       meta,
@@ -158,7 +154,7 @@ export default {
 
 <style lang="postcss" scoped>
 .input {
-  @apply flex flex-col gap-[4px] relative justify-start min-h-[40px];
+  @apply flex flex-col gap-[4px] relative justify-start;
   &__label-height-placeholder {
     @apply h-[20px] w-full;
   }
@@ -210,7 +206,7 @@ export default {
     }
 
     .input-container__floating-label {
-      @apply z-50 absolute pointer-events-none text-gray-400 font-medium;
+      @apply z-10 absolute pointer-events-none text-gray-400 font-medium;
       @apply left-[10px] top-[5px] text-[0.875rem];
       transition: 0.2s ease all;
       &.float {

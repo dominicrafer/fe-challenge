@@ -32,7 +32,7 @@ export default {
 .spinner-container {
   @apply z-[52];
   &__spinner {
-    @apply border-2 border-t-green-600 border-l-green-600 border-r-green-600 border-b-white;
+    @apply border-2 border-t-primary border-l-primary border-r-primary border-b-white;
     @apply ease-linear rounded-full;
     -webkit-animation: spinner-container__spinner 1.5s linear infinite;
     animation: spinner-container__spinner 1.5s linear infinite;

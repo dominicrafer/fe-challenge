@@ -83,6 +83,7 @@
                     <div
                       class="flex items-center justify-center gap-1 border-b border-paprika"
                       @click="deactivateUser(userDetails.cognito_id)"
+                      v-has:users.action-permission="`users:edit`"
                       v-if="userDetails.status === 'active'"
                     >
                       <span class="text-paprika">Deactivate</span>
@@ -96,6 +97,7 @@
                     <div
                       class="flex items-center justify-center gap-1 border-b border-green-600"
                       @click="updateUserStatus(userDetails.cognito_id)"
+                      v-has:users.action-permission="`users:edit`"
                       v-else
                     >
                       <span class="text-green-600">Activate</span>
@@ -125,7 +127,7 @@
       <template #message>Are you sure you want to continue?</template>
     </ConfirmationModal>
     <UsersFilterDrawer
-      :filters="filters"
+      :appliedFilters="filters"
       :show="usersFilterDrawerVisible"
       @close="usersFilterDrawerVisible = false"
       @apply="applyFilters"
@@ -150,15 +152,17 @@ export default {
     const usersSortDrawerVisible = ref(false);
     // PAGINATION
     let search = ref(null);
-    let filters = reactive(["name", "email"]);
+    let filters = {
+      filterBy: [],
+      statuses: [],
+      roles: [],
+    };
     let sort = ref("created_at:desc");
     let params = reactive({
       page: 1,
       page_size: 10,
       return_count: true,
       sorts: [sort.value],
-      //search_filters
-      //sorts
     });
 
     const { data, pending, refresh } = $api.users.getUsers(params);
@@ -187,7 +191,29 @@ export default {
     // SEARCH USER
 
     function applyFilters(appliedFilters) {
-      filters = appliedFilters.filterBy;
+      filters = appliedFilters;
+      if (appliedFilters.statuses.length || appliedFilters.roles.length) {
+        params.in_filters = [];
+      }
+      if (appliedFilters.statuses.length) {
+        params.in_filters = [
+          ...params?.in_filters,
+          {
+            key: "status",
+            value: appliedFilters.statuses,
+          },
+        ];
+      }
+      if (appliedFilters.roles.length) {
+        params.in_filters = [
+          ...params?.in_filters,
+          {
+            key: "role",
+            value: $_.map(appliedFilters.roles, (role) => role.value),
+          },
+        ];
+      }
+
       usersFilterDrawerVisible.value = false;
     }
     function applySorts(appliedSort) {
@@ -213,7 +239,6 @@ export default {
       refresh();
     }
     // DELETE POLICY
-
     return {
       data,
       pending,

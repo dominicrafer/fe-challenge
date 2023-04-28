@@ -1,6 +1,6 @@
 <template>
   <Drawer title="Filter By" :show="show" @close="$emit('close')">
-    <VForm :initialValues="{ filterBy: filters }">
+    <VForm :initialValues="filters">
       <div class="form">
         <span class="form__filter-label">Search Filters</span>
         <div class="form__filters">
@@ -40,6 +40,37 @@
             v-model="formData.filterBy"
           />
         </div>
+        <span class="form__filter-label mt-3">Status</span>
+        <div class="form__filters">
+          <Checkbox
+            id="active"
+            label="Active"
+            inputValue="active"
+            name="statuses"
+            v-model="formData.statuses"
+          />
+          <Checkbox
+            id="inactive"
+            label="Inactive"
+            inputValue="inactive"
+            name="statuses"
+            v-model="formData.statuses"
+          />
+        </div>
+        <span class="form__filter-label mt-3">Roles</span>
+        <div class="form__filters">
+          <Select
+            v-model:modelValue="formData.roles"
+            name="roles"
+            multiple
+            searchable
+            :options="roleOptions"
+            trackBy="value"
+            label="label"
+            :isLoading="isFetchingRoles"
+            :closeOnSelect="false"
+          />
+        </div>
       </div>
     </VForm>
     <template #footer>
@@ -56,19 +87,45 @@ export default {
       type: Boolean,
       default: false,
     },
-    filters: {
+    appliedFilters: {
       type: Object,
       default() {
         return {
           filterBy: [],
+          statuses: [],
+          roles: [],
         };
       },
     },
   },
   setup(props, { emit }) {
-    const formData = reactive(props.filters);
+    const { $api, $_ } = useNuxtApp();
+    let roleOptions = reactive([]);
+    const formData = ref(props.appliedFilters);
+    let isFetchingRoles = ref(false);
+    const test = ref([]);
+    watch(
+      () => props.show,
+      async (show) => {
+        if (show) {
+          isFetchingRoles.value = true;
+          const { data } = await $api.roles.getRoles();
+          $_.forEach(data.value.resource.roles, (roleDetails) => {
+            roleOptions.push({
+              label: roleDetails.role,
+              value: roleDetails.role,
+            });
+          });
+          isFetchingRoles.value = false;
+        }
+      }
+    );
+
     return {
       formData,
+      roleOptions,
+      isFetchingRoles,
+      test
     };
   },
 };
