@@ -29,9 +29,34 @@
                   v-model="searchValue"
                   name="search"
                   placeholder="Search by name here..."
+                  customIconClass="search__custom-icon"
                 >
                   <template #icon>
-                    <Icon name="mdi:magnify" />
+                    <!-- <Icon name="mdi:magnify" /> -->
+                    <div class="search__search-container">
+                      <Button
+                        type="submit"
+                        class="search-container__search-button"
+                        variant="warning"
+                        >Search
+                      </Button>
+                      <Popper
+                        v-if="$slots['search-filters']"
+                        class="search-container__popper"
+                        placement="bottom-end"
+                      >
+                        <Icon
+                          name="mdi:chevron-down"
+                          class="search-container__custom-icon"
+                          color="white"
+                          width="20"
+                          height="20"
+                        />
+                        <template #content>
+                          <slot name="search-filters"></slot>
+                        </template>
+                      </Popper>
+                    </div>
                   </template>
                 </InputField>
               </form>
@@ -175,7 +200,7 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style lang="postcss">
 .table {
   @apply w-full h-full min-h-[580px];
   &__tabs {
@@ -203,6 +228,29 @@ export default {
 
         .left-panel__search {
           @apply w-[350px];
+          .search__search-container {
+            @apply flex h-full items-center;
+            .search-container__search-button {
+              @apply py-0 px-2 h-full text-sm rounded-none;
+            }
+
+            .search-container__popper {
+              @apply h-full block border-none m-0 h-full !important;
+              > div:first-child {
+                @apply h-full;
+              }
+              .popper {
+                @apply cursor-default w-max;
+              }
+              .search-container__custom-icon {
+                border-radius: 0px 5px 5px 0px;
+                @apply h-full bg-yellow-500 border-l border-white;
+                &:hover {
+                  filter: brightness(110%);
+                }
+              }
+            }
+          }
         }
       }
 
@@ -232,5 +280,8 @@ export default {
       }
     }
   }
+}
+.search__custom-icon {
+  @apply top-0 right-0 h-full !important;
 }
 </style>

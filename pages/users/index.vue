@@ -27,6 +27,32 @@
         @search="searchUsers"
         :exportable="false"
       >
+        <template #search-filters>
+          <span class="filter-label">Search Filters</span>
+          <div class="filters">
+            <Checkbox
+              id="Name"
+              label="Name"
+              inputValue="name"
+              name="filterBy"
+              v-model="searchFilters"
+            />
+            <Checkbox
+              id="Email"
+              label="Email"
+              inputValue="email"
+              name="filterBy"
+              v-model="searchFilters"
+            />
+            <Checkbox
+              id="Phone Number"
+              label="Phone Number"
+              inputValue="phone_number"
+              name="filterBy"
+              v-model="searchFilters"
+            />
+          </div>
+        </template>
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -35,7 +61,7 @@
                 <th align="left">Email</th>
                 <th align="left">Mobile Number</th>
                 <th align="left">Role</th>
-                <th align="left">Status</th>
+                <th align="center">Status</th>
                 <th align="left">Created At</th>
                 <th align="center">Actions</th>
               </tr>
@@ -49,7 +75,7 @@
                 <td align="left">{{ userDetails.email }}</td>
                 <td align="left">{{ userDetails.phone_number }}</td>
                 <td align="left">{{ userDetails.role }}</td>
-                <td align="left">
+                <td align="center">
                   <Badge
                     :variant="
                       userDetails.status === 'active' ? 'success' : 'secondary'
@@ -65,7 +91,10 @@
                         name: 'users-id',
                         params: { id: userDetails.cognito_id },
                       }"
-                      v-has:users.action-permission="`users:read`"
+                      v-has:users.action-permission="[
+                        `users:read`,
+                        'users:edit',
+                      ]"
                     >
                       <div
                         class="flex items-center justify-center gap-1 border-b border-primary"
@@ -82,7 +111,8 @@
 
                     <div
                       class="flex items-center justify-center gap-1 border-b border-paprika"
-                      @click="deactivateUser(userDetails.cognito_id)"
+                      @click="deactivateUser(userDetails)"
+                      v-has:users.action-permission="`users:edit`"
                       v-if="userDetails.status === 'active'"
                     >
                       <span class="text-paprika">Deactivate</span>
@@ -95,7 +125,8 @@
                     </div>
                     <div
                       class="flex items-center justify-center gap-1 border-b border-green-600"
-                      @click="updateUserStatus(userDetails.cognito_id)"
+                      @click="updateUserStatus(userDetails)"
+                      v-has:users.action-permission="`users:edit`"
                       v-else
                     >
                       <span class="text-green-600">Activate</span>
@@ -125,7 +156,7 @@
       <template #message>Are you sure you want to continue?</template>
     </ConfirmationModal>
     <UsersFilterDrawer
-      :filters="filters"
+      :appliedFilters="filters"
       :show="usersFilterDrawerVisible"
       @close="usersFilterDrawerVisible = false"
       @apply="applyFilters"
@@ -145,20 +176,22 @@ definePageMeta({
 });
 export default {
   setup() {
-    const { $api, $_ } = useNuxtApp();
+    const { $api, $_, $toast } = useNuxtApp();
     const usersFilterDrawerVisible = ref(false);
     const usersSortDrawerVisible = ref(false);
     // PAGINATION
     let search = ref(null);
-    let filters = reactive(["name", "email"]);
+    let filters = {
+      statuses: [],
+      roles: [],
+    };
+    const searchFilters = ref([]);
     let sort = ref("created_at:desc");
     let params = reactive({
       page: 1,
       page_size: 10,
       return_count: true,
       sorts: [sort.value],
-      //search_filters
-      //sorts
     });
 
     const { data, pending, refresh } = $api.users.getUsers(params);
@@ -176,7 +209,7 @@ export default {
       } else {
         params.search_filters = [
           {
-            search_keys: filters,
+            search_keys: searchFilters.value.length ? searchFilters.value : ["name"],
             value: searchValue,
           },
         ];
@@ -185,10 +218,32 @@ export default {
       refresh();
     }
     // SEARCH USER
-
     function applyFilters(appliedFilters) {
-      filters = appliedFilters.filterBy;
+      delete params.in_filters;
+      filters = appliedFilters;
+      if (appliedFilters.statuses.length || appliedFilters.roles.length) {
+        params.in_filters = [];
+      }
+      if (appliedFilters.statuses.length) {
+        params.in_filters = [
+          ...params?.in_filters,
+          {
+            key: "status",
+            value: appliedFilters.statuses,
+          },
+        ];
+      }
+      if (appliedFilters.roles.length) {
+        params.in_filters = [
+          ...params?.in_filters,
+          {
+            key: "role",
+            value: $_.map(appliedFilters.roles, (role) => role.value),
+          },
+        ];
+      }
       usersFilterDrawerVisible.value = false;
+      refresh();
     }
     function applySorts(appliedSort) {
       sort.value = appliedSort;
@@ -200,20 +255,26 @@ export default {
     // DELETE POLICY
     const deleteConfirmationModalVisible = ref(false);
     const selectedUser = ref(null);
-    function deactivateUser(id) {
-      selectedUser.value = id;
+    function deactivateUser(userDetails) {
+      selectedUser.value = userDetails;
       deleteConfirmationModalVisible.value = true;
     }
 
-    async function updateUserStatus(id) {
+    async function updateUserStatus(userDetails = selectedUser.value) {
       pending.value = true;
+      console.log(selectedUser, "selectedUser");
       await $api.users.updateUserStatus({
-        cognito_id: id ? id : selectedUser.value,
+        cognito_id: userDetails.cognito_id,
       });
+      $toast.success(
+        `User successfully ${
+          userDetails.status === "active" ? "deactivated" : "activated"
+        }`
+      );
+
       refresh();
     }
     // DELETE POLICY
-
     return {
       data,
       pending,
@@ -231,6 +292,7 @@ export default {
       search,
       applyFilters,
       applySorts,
+      searchFilters,
     };
   },
 };
@@ -239,5 +301,11 @@ export default {
 <style lang="postcss" scoped>
 .page__body {
   @apply w-full;
+}
+.filter-label {
+  @apply font-bold text-[1rem] mb-3 block;
+}
+.filters {
+  @apply flex flex-col gap-4;
 }
 </style>

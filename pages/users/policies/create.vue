@@ -13,13 +13,6 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
   setup(props) {
     const form = ref(null);
     let errors = ref(null);

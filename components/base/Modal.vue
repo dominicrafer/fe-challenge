@@ -1,6 +1,6 @@
 <template>
   <Transition appear name="fade">
-    <div class="modal" v-if="show">
+    <div class="modal" v-if="show" ref="modal" >
       <div class="modal__content" :style="{ width: `${width}px` }">
         <div class="modal__header">
           {{ title }}
@@ -13,7 +13,7 @@
             @click="$emit('close')"
           />
         </div>
-        <div :class="`modal__body`" ref="modal" v-click-outside="clickOutside">
+        <div :class="`modal__body`" >
           <slot></slot>
         </div>
         <div class="modal__footer" v-if="$slots.footer">

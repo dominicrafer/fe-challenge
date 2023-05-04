@@ -39,8 +39,11 @@ export default {
         router.push("/users/roles");
         $toast.success("Role successfully updated.");
       } else {
+        console.log(error.value);
         errors.value = error.value.data.errors;
-        formRef.value.allowRouteLeave = false;
+        if (error.value.data.errorCode !== "SERVER_ERROR") {
+          form.value.allowRouteLeave = false;
+        }
         const errorList = document.getElementById("error-list");
         setTimeout(() => {
           errorList.scrollIntoView();

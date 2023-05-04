@@ -102,7 +102,7 @@ export default {
     }
   }
   &__error {
-    @apply text-paprika text-[0.75rem];
+    @apply text-paprika text-[0.75rem] ml-[10px];
   }
 }
 </style>

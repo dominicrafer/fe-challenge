@@ -6,7 +6,9 @@
       class="select__label"
       ref="label"
       :class="
-        selected?.length || $refs.name?.search || selected || showOptions
+        ($_.isArray(selected) ? selected?.length : selected) ||
+        $refs.name?.search ||
+        showOptions
           ? 'float'
           : null
       "
@@ -34,16 +36,25 @@
       :show-labels="false"
       @tag="addTag"
       :taggable="taggable"
-      :placeholder="null"
+      :placeholder="
+        ($_.isArray(selected) ? selected?.length : selected) ||
+        $refs.name?.search ||
+        showOptions
+          ? placeholder
+          : null
+      "
       :tag-placeholder="tagPlaceholder"
       @search-change="asyncSearch"
       @select="select"
       :open-direction="openDirection"
-      :loading="isLoading"
+      :loading="isLoading || isLoadingState"
       :disabled="disabled"
     >
       <!-- <slots name="drop-down"></slots> -->
     </VueMultiselect>
+    <div class="select__instructions" v-if="$slots.instructions">
+      <slot name="instructions" />
+    </div>
     <div class="select__error" v-if="errorMessage">
       {{ errorMessage }}
     </div>
@@ -120,6 +131,7 @@ export default {
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
+    console.log("props.modelValue", props.modelValue);
     const {
       errorMessage,
       meta,
@@ -128,17 +140,29 @@ export default {
       initialValue: props.modelValue,
     });
     const showOptions = ref(false);
-
+    const isLoadingState = ref(props.isLoading);
     function addTag(value) {
       emit("addTag", { label: value, value: $_.toLower(value) });
     }
+    let debounce = null;
     function asyncSearch(value) {
-      emit("asyncSearch", value);
+      isLoadingState.value = true;
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        emit("asyncSearch", value);
+        isLoadingState.value = false;
+      }, 1000);
     }
 
-    function select(value) {
-      emit("update:modelValue", value);
+    function select() {
+      emit("update:modelValue", selected.value);
     }
+    watch(
+      () => props.isLoading,
+      (loading) => {
+        isLoadingState.value = loading;
+      }
+    );
     watch(
       meta,
       (meta) => {
@@ -154,6 +178,7 @@ export default {
       asyncSearch,
       select,
       showOptions,
+      isLoadingState,
     };
   },
   components: {
@@ -181,7 +206,11 @@ export default {
   }
 
   &__error {
-    @apply text-paprika text-[0.75rem];
+    @apply text-paprika text-[0.75rem] ml-[10px];
+  }
+  &__instructions {
+    @apply text-gray-400 ml-[10px] text-xs;
+    line-height: 4px;
   }
 }
 </style>

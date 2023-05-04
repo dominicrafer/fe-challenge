@@ -19,12 +19,6 @@ definePageMeta({
   layout: "default",
 });
 export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
   async setup(props) {
     const { $api, $_ } = useNuxtApp();
     const route = useRoute();
@@ -53,7 +47,9 @@ export default {
         $toast.success("Policy successfully updated.");
       } else {
         errors.value = error.value.data.errors;
-        form.value.allowRouteLeave = false;
+        if (error.value.data.errorCode !== "SERVER_ERROR") {
+          form.value.allowRouteLeave = false;
+        }
         const errorList = document.getElementById("error-list");
         setTimeout(() => {
           errorList.scrollIntoView();

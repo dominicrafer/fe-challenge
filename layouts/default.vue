@@ -3,14 +3,17 @@
     <Sidebar />
     <div class="default__content">
       <Header />
-      <div class="flex-grow relative">
-        <NuxtPage />
-        <div class="content__loader" v-if="isLoading">
-          <div class="loader">
-            <Spinner />
-            <span> Loading, please wait... </span>
+      <div class="flex-grow relative overflow-hidden">
+        <slot name="error" v-if="$slots.error" />
+        <template v-else>
+          <NuxtPage />
+          <div class="content__loader" v-if="isLoading">
+            <div class="loader">
+              <Spinner />
+              <span> Loading, please wait... </span>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -26,7 +29,7 @@ export default {
     nuxtApp.hook("page:finish", () => {
       isLoading.value = false;
     });
-   
+
     return { isLoading };
   },
 };
@@ -38,15 +41,15 @@ export default {
   @apply overflow-hidden;
 
   &__content {
-    @apply flex-grow w-full h-full flex flex-col bg-transparent;
+    @apply flex-grow w-full flex flex-col bg-transparent overflow-auto;
     .content__loader {
-      @apply w-full h-full flex-grow;
+      @apply w-full flex-grow;
       .loader {
         @apply w-full h-full;
         @apply flex flex-col items-center;
         @apply mt-[120px] gap-[10px];
         span {
-          @apply font-bold text-green-500;
+          @apply font-bold text-primary;
         }
       }
     }

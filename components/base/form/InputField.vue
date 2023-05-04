@@ -11,7 +11,7 @@
         :class="{
           'has-icon': type === 'password' || $slots.icon,
           'has-error': !meta.valid && meta.dirty,
-          'show-placeholder': !$slots.label || !floatingLabel,
+          'show-placeholder': !$slots.label,
           [padding]: true,
           [fontSize]: true,
           [inputWidth]: true,
@@ -20,6 +20,7 @@
         }"
         :disabled="disabled"
         :placeholder="placeholder"
+        :step="step"
         @blur="(meta.touched = true), (focused = false)"
         @focus="focused = true"
         @input="updateValue"
@@ -28,13 +29,13 @@
       <label
         :name="name"
         class="input-container__floating-label"
-        :class="modelValue || focused || !floatingLabel ? 'float' : null"
+        :class="modelValue || modelValue === 0 || focused ? 'float' : null"
         v-if="$slots.label"
       >
         <slot name="label"></slot>
       </label>
 
-      <div class="input-container__icon">
+      <div class="input-container__icon" :class="`${customIconClass}`">
         <slot name="icon"></slot>
         <Icon
           name="mdi:eye-outline"
@@ -50,6 +51,9 @@
     </div>
     <div class="input__error" v-if="errorMessage">
       {{ errorMessage }}
+    </div>
+    <div class="input__instructions" v-if="$slots.instructions">
+      <slot name="instructions" />
     </div>
   </div>
 </template>
@@ -82,6 +86,10 @@ export default {
       type: String,
       default: null,
     },
+    step: {
+      type: String,
+      default: "1",
+    },
     rules: {
       type: [String, Object],
     },
@@ -112,16 +120,21 @@ export default {
       type: String,
       default: null,
     },
-    floatingLabel: {
-      type: Boolean,
-      default: true,
-    }
+    instructions: {
+      type: String,
+      default: null,
+    },
+    customIconClass: {
+      type: String,
+      default: null,
+    },
   },
   setup(props, { emit }) {
-    const { errorMessage, meta, setErrors, value, handleBlur } = useField(
+    const { errorMessage, meta, errors, value, handleBlur } = useField(
       props.name,
       props.rules,
       {
+        bails: false,
         initialValue: props.modelValue,
       }
     );
@@ -130,12 +143,7 @@ export default {
     const focused = ref(false);
 
     const updateValue = (event) => {
-      emit(
-        "update:modelValue",
-        props.type === "number"
-          ? parseInt(event.target.value)
-          : event.target.value
-      );
+      emit("update:modelValue", event.target.value);
     };
     watch(
       meta,
@@ -151,6 +159,7 @@ export default {
       meta,
       showPassword,
       updateValue,
+      errors,
     };
   },
 };
@@ -158,7 +167,7 @@ export default {
 
 <style lang="postcss" scoped>
 .input {
-  @apply flex flex-col gap-[4px] relative justify-start min-h-[40px];
+  @apply flex flex-col gap-[4px] relative justify-start;
   &__label-height-placeholder {
     @apply h-[20px] w-full;
   }
@@ -210,7 +219,7 @@ export default {
     }
 
     .input-container__floating-label {
-      @apply z-50 absolute pointer-events-none text-gray-400 font-medium;
+      @apply z-10 absolute pointer-events-none text-gray-400 font-medium;
       @apply left-[10px] top-[5px] text-[0.875rem];
       transition: 0.2s ease all;
       &.float {
@@ -222,7 +231,11 @@ export default {
 
   &__error {
     @apply text-paprika;
-    @apply text-[0.75rem];
+    @apply text-[0.75rem] ml-[10px];
+  }
+
+  &__instructions {
+    @apply text-gray-400 text-xs ml-[10px];
   }
 }
 </style>

@@ -14,10 +14,11 @@
       <div class="sidebar__content">
         <div
           class="content__menu"
-          v-for="(menuDetails, index) in menus"
+          v-for="(menuDetails, index) in sidebarStore.menus"
           :key="index"
           :class="
-            isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus')
+            sidebarStore.isMenuActive(menuDetails) &&
+            !$_.has(menuDetails, 'submenus')
               ? 'active-menu'
               : 'inactive-menu'
           "
@@ -26,8 +27,9 @@
           "
         >
           <router-link
-            :to="$_.has(menuDetails, 'path') ? menuDetails.path : ''"
-            @click="selectMenu(menuDetails)"
+            v-if="$_.has(menuDetails, 'path')"
+            :to="menuDetails.path"
+            @click="sidebarStore.selectMenu(menuDetails)"
             v-has:[menuDetails.permission]:module-permission="
               menuDetails.permission
             "
@@ -39,7 +41,7 @@
                   width="20"
                   height="20"
                   :color="
-                    isMenuActive(menuDetails) &&
+                    sidebarStore.isMenuActive(menuDetails) &&
                     !$_.has(menuDetails, 'submenus')
                       ? '#FFFFFF'
                       : '#FFFFFF'
@@ -56,8 +58,38 @@
             </div>
           </router-link>
           <div
+            v-else
+            @click="sidebarStore.selectMenu(menuDetails)"
+            v-has:[menuDetails.permission]:module-permission="
+              menuDetails.permission
+            "
+          >
+            <div class="menu__details">
+              <div class="details__content">
+                <Icon
+                  :name="menuDetails.icon"
+                  width="20"
+                  height="20"
+                  :color="
+                    sidebarStore.isMenuActive(menuDetails) &&
+                    !$_.has(menuDetails, 'submenus')
+                      ? '#FFFFFF'
+                      : '#FFFFFF'
+                  "
+                />
+                {{ menuDetails.label }}
+              </div>
+              <Icon
+                name="mdi:chevron-down"
+                width="20"
+                height="20"
+                v-if="menuDetails?.submenus"
+              />
+            </div>
+          </div>
+          <div
             v-for="(submenuDetails, submenuIndex) in menuDetails.submenus"
-            :key="submenuIndex"
+            :key="`${submenuDetails.name}-${submenuIndex}`"
             class="menu__submenus"
             :class="!menuDetails.collapsed ? 'uncollapsed' : 'collapsed'"
             v-has:[submenuDetails.permission].module-permission="
@@ -68,11 +100,11 @@
               <div
                 class="submenus__details"
                 :class="
-                  activeMenu === submenuDetails.name
+                  sidebarStore.activeMenu === submenuDetails.name
                     ? 'active-menu'
                     : 'inactive-menu'
                 "
-                @click="activeMenu = submenuDetails.name"
+                @click="sidebarStore.selectMenu(submenuDetails)"
               >
                 <Icon
                   name="mdi:chevron-down"
@@ -110,6 +142,7 @@ import { useAuthStore } from "@/store/auth";
 import { useSidebarStore } from "@/store/sidebar";
 import { onClickOutside, useWindowSize } from "@vueuse/core";
 export default {
+  name: "sidebar",
   props: {
     collapsed: {
       type: Boolean,
@@ -117,65 +150,8 @@ export default {
     },
   },
   async setup(props) {
-    const { $_ } = useNuxtApp();
     const config = useRuntimeConfig();
-    const route = useRoute();
-    const activeMenu = ref(null);
-
-    const menus = reactive([
-      {
-        label: "Users",
-        name: "users",
-        icon: "mdi:account-multiple-outline",
-        permission: ["Users", "Roles", "Policies"],
-        collapsed: true,
-        submenus: [
-          {
-            name: "user-list",
-            label: "List",
-            path: "/users",
-            icon: "mdi:account-multiple-outline",
-            permission: "Users",
-          },
-          {
-            name: "user-roles",
-            label: "Roles",
-            path: "/users/roles",
-            icon: "mdi:badge-account-horizontal-outline",
-            permission: "Roles",
-          },
-          {
-            name: "user-policies",
-            label: "Policies",
-            path: "/users/policies",
-            icon: "mdi:shield-account-variant-outline",
-            permission: "Policies",
-          },
-        ],
-      },
-    ]);
-
-    // Get active menu on page load
-    $_.forEach(menus, (menuDetails) => {
-      if (
-        $_.has(menuDetails, "submenus") &&
-        $_.find(menuDetails.submenus, {
-          path: route.path,
-        })
-      ) {
-        activeMenu.value = $_.find(menuDetails.submenus, {
-          path: route.path,
-        }).label;
-        return false;
-      } else if (
-        !$_.has(menuDetails, "submenus") &&
-        menuDetails.path === route.path
-      ) {
-        activeMenu.value =
-          menuDetails.path === route.path ? menuDetails.label : null;
-        return false;
-      }
-    });
+    const sidebarStore = useSidebarStore();
 
     // Logout
     const { logout } = useAuthStore();
@@ -185,57 +161,34 @@ export default {
       router.push("/login");
     }
 
-    // Active menu checker
-    function isMenuActive(menuDetails) {
-      if ($_.has(menuDetails, "submenus")) {
-        return (
-          $_.some(menuDetails.submenus, { name: activeMenu.value }) ||
-          menuDetails.name === activeMenu.value
-        );
-      }
-      return menuDetails.name === activeMenu.value;
-    }
-
-    // Select menu
-    function selectMenu(menuDetails) {
-      if ($_.has(menuDetails, "submenus")) {
-        const index = $_.findIndex(menus, { name: menuDetails.name });
-        return (menus[index].collapsed = !menus[index].collapsed);
-      }
-      return (activeMenu.value = menuDetails.name);
-    }
-
     // Sidebar click outside handler
-    const { width } = useWindowSize();
-    const sidebarStore = useSidebarStore();
-    const drawer = ref("sidebar");
-    onClickOutside(drawer, () => {
-      if (!sidebarStore.isCollapsed && width.value <= 1024) {
+    const sidebar = ref(null);
+    onClickOutside(sidebar, () => {
+      if (!sidebarStore.isCollapsed) {
         sidebarStore.toggleSidebar();
       }
     });
 
     // Track window size for sidebar behaviour
+    const { width } = useWindowSize();
     watch(
       () => width.value,
       (val) => {
-        if (width.value >= 1024) {
-          if (sidebarStore.isCollapsed) {
-            sidebarStore.toggleSidebar();
-          }
+        if (sidebarStore.isCollapsed) {
+          sidebarStore.toggleSidebar();
         }
       }
     );
 
     return {
-      menus,
-      activeMenu,
       config,
       doLogout,
-      isMenuActive,
-      selectMenu,
+      sidebar,
       sidebarStore,
     };
+  },
+  beforeUnmount() {
+    this.activeMenu = null;
   },
 };
 </script>
@@ -244,14 +197,17 @@ export default {
 .sidebar {
   @apply min-w-[300px] bg-primary;
   @apply flex flex-col relative;
-  @apply px-3 py-8  z-[100] overflow-y-auto;
+  @apply px-3 pt-[20px] pb-8  z-[100] overflow-y-auto;
   box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
     0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
   transition: all 0.3s ease;
 
   &__header {
     @apply text-white  font-bold text-lg text-center pb-3;
-    @apply border-b border-b-slate-500 flex-grow-0;
+    @apply flex-grow-0;
+    img {
+      @apply m-auto;
+    }
   }
 
   &__content {

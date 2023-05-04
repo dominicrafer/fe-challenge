@@ -23,7 +23,7 @@ export default {
     @apply text-white bg-primary;
   }
   &.success {
-    @apply text-white bg-green-600;
+    @apply text-white bg-green-500;
   }
   &.secondary {
     @apply text-white bg-secondary;
