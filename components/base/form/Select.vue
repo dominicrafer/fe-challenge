@@ -131,7 +131,6 @@ export default {
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
-    console.log("props.modelValue", props.modelValue);
     const {
       errorMessage,
       meta,
