@@ -14,9 +14,18 @@
       "
       v-if="$slots.label"
     >
+      <span
+        class="text-paprika"
+        v-if="
+          showRequiredIcon &&
+          ($_.includes(rules, 'select_required') || $_.has(rules, 'select_required'))
+        "
+        >*</span
+      >
       <slot name="label"></slot>
     </label>
     <VueMultiselect
+      :class="{ 'has-error': errors.length }"
       :ref="name"
       :options="options"
       v-model="selected"
@@ -128,10 +137,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    showRequiredIcon: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
+    console.log("props.modelValue", props.modelValue);
     const {
+      errors,
       errorMessage,
       meta,
       value: selected,
@@ -170,6 +185,7 @@ export default {
       { deep: true }
     );
     return {
+      errors,
       errorMessage,
       meta,
       selected,
@@ -189,7 +205,6 @@ export default {
 <style lang="postcss" scoped>
 .select {
   @apply inline-flex flex-col gap-[4px] relative;
-
   &__label-height-placeholder {
     @apply h-[20px] w-full;
   }

@@ -1,6 +1,14 @@
 <template>
   <div class="date-picker">
     <label :name="name" class="date-picker__label" v-if="$slots.label">
+      <span
+        class="text-paprika"
+        v-if="
+          showRequiredIcon &&
+          ($_.includes(rules, 'required') || $_.has(rules, 'required'))
+        "
+        >*
+      </span>
       <slot name="label"></slot>
     </label>
     <!-- 
@@ -22,7 +30,9 @@
       :max-date="max"
       :enable-time-picker="enableTimePicker"
       :time-picker="timePicker"
-      :input-class-name="inputClassName"
+      :input-class-name="`custom-input-datepicker-class ${
+        errorMessage ? 'has-error' : null
+      }`"
       :disabled="disabled"
       @update:model-value="onChange"
     />
@@ -86,11 +96,15 @@ export default {
     },
     min: {
       type: [Date, String, Object],
-      default: null
+      default: null,
     },
     max: {
       type: [Date, String, Object],
-      default: null
+      default: null,
+    },
+    showRequiredIcon: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, { emit }) {
@@ -106,8 +120,15 @@ export default {
 
     async function onChange(event) {
       emit("update:modelValue", event);
-      emit('change', event)
+      emit("change", event);
     }
+    watch(
+      meta,
+      (meta) => {
+        emit("update:isDirty", meta.dirty);
+      },
+      { deep: true }
+    );
     return {
       errorMessage,
       date,
@@ -120,15 +141,21 @@ export default {
 };
 </script>
 
-<style lang="postcss" scoped>
+<style lang="postcss">
 .date-picker {
   @apply flex flex-col gap-[4px];
   &__label {
-    @apply text-[1rem] font-medium;
+    @apply text-[0.875rem] text-primary font-medium;
     @apply ml-[10px];
   }
   &__error {
-    @apply text-paprika;
+    @apply text-paprika text-xs;
+  }
+}
+.custom-input-datepicker-class {
+  @apply border-l-0 border-r-0 border-t-0 rounded-none;
+  &.has-error {
+    @apply border-b-paprika border-b !important;
   }
 }
 </style>

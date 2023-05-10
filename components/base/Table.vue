@@ -41,7 +41,6 @@
                         >Search
                       </Button>
                       <Popper
-                        v-if="$slots['search-filters']"
                         class="search-container__popper"
                         placement="bottom-end"
                       >

@@ -1,8 +1,16 @@
 <template>
   <div class="textarea">
-    <label class="textarea__label" :for="name" resize v-if="label">{{
-      label
-    }}</label>
+    <label class="textarea__label" :for="name" resize v-if="label">
+      <span
+        class="text-paprika"
+        v-if="
+          showRequiredIcon &&
+          ($_.includes(rules, 'required') || $_.has(rules, 'required'))
+        "
+        >*</span
+      >
+      {{ label }}</label
+    >
     <textarea
       :name="name"
       :value="modelValue"
@@ -11,9 +19,7 @@
       :rows="rows"
       class="textarea__input"
       :placeholder="placeholder"
-      :class="`${
-        !meta.valid && meta.dirty ? 'has-error' : null
-      } ${padding} ${fontSize}`"
+      :class="`${errors.length ? 'has-error' : null} ${padding} ${fontSize}`"
       :id="name"
       :disabled="disabled"
     ></textarea>
@@ -66,9 +72,13 @@ export default {
       type: [String, Number],
       default: "3",
     },
+    showRequiredIcon: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { emit }) {
-    const { errorMessage, meta } = useField(props.name, props.rules, {
+    const { errorMessage, errors, meta } = useField(props.name, props.rules, {
       initialValue: props.modelValue,
     });
     const updateValue = (event) => {
@@ -82,7 +92,7 @@ export default {
       },
       { deep: true }
     );
-    return { updateValue, errorMessage, meta };
+    return { updateValue, errorMessage, errors, meta };
   },
 };
 </script>

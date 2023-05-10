@@ -54,11 +54,22 @@ export default {
       type: String,
       default: "450",
     },
+    maskClosable: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { attrs, slots, emit, expose }) {
     const drawer = ref(null);
-    onClickOutside(drawer, () => emit("close"));
-
+    onClickOutside(drawer, () => {
+      if (
+        props.maskClosable &&
+        // Prevent drawer from closing if datepicker menu is open
+        !document.getElementsByClassName("dp__menu").length
+      ) {
+        emit("close");
+      }
+    });
     return { drawer };
   },
 };

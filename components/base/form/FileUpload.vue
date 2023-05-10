@@ -1,10 +1,19 @@
 <template>
   <div class="file-upload">
     <label class="file-upload__label">
+      <span
+        class="text-paprika"
+        v-if="
+          showRequiredIcon &&
+          ($_.includes(rules, 'required') || $_.has(rules, 'required'))
+        "
+        >*
+      </span>
       <slot />
     </label>
     <input
       type="file"
+      :name="name"
       hidden
       :accept="accept"
       ref="file"
@@ -17,40 +26,69 @@
         width="20"
         height="20"
         color="white"
-        class="image-container__close "
+        class="image-container__close"
       />
       <img :src="imageDisplay" alt="" class="image-container__image" />
     </div>
-    <div class="file-upload__input-label" @click="selectFile" v-else>
+    <div
+      class="file-upload__input-label"
+      @click="selectFile"
+      :class="{ 'has-error': errors.length }"
+      v-else
+    >
       <Icon name="material-symbols:attach-file" width="24" height="24" />
       <span class="file-upload__input"> Select File </span>
+    </div>
+    <div class="file-upload__error" v-if="errorMessage">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
 
 <script>
+import { useField } from "vee-validate";
 export default {
   props: {
     accept: {
       type: String,
       default: null,
     },
+    name: {
+      type: [String, Number],
+      required: true,
+    },
+    rules: {
+      type: [String, Object],
+    },
+    showRequiredIcon: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { emit }) {
     const file = ref(null);
-    
+    const { errors, errorMessage, handleChange } = useField(
+      props.name,
+      props.rules,
+      {
+        bails: false,
+        initialValue: props.modelValue,
+      }
+    );
     function selectFile() {
       file.value.click();
     }
 
     let imageDisplay = ref(null);
     function confirmFileSelection(e) {
+      handleChange(e.target.files[0]);
       emit("select", e);
-      imageDisplay.value = URL.createObjectURL(e.target.files[0])
+      imageDisplay.value = URL.createObjectURL(e.target.files[0]);
     }
 
     function removeImage() {
       imageDisplay.value = null;
+      handleChange(null);
       emit("unselect");
     }
     return {
@@ -58,7 +96,10 @@ export default {
       selectFile,
       confirmFileSelection,
       removeImage,
-      imageDisplay
+      imageDisplay,
+      handleChange,
+      errors,
+      errorMessage,
     };
   },
 };
@@ -74,6 +115,9 @@ export default {
     @apply flex items-center gap-1;
     @apply border border-blue-400 rounded-md p-2;
     @apply text-sm underline font-semibold text-blue-400 cursor-pointer;
+    &.has-error {
+      @apply border-paprika;
+    }
   }
   &__image-container {
     @apply relative bg-gray-300 min-h-[100px] flex flex-col items-center;
@@ -81,8 +125,12 @@ export default {
       @apply cursor-pointer absolute bg-gray-500 rounded-full right-[8px] top-[8px];
     }
     .image-container__image {
-      @apply m-auto
+      @apply m-auto;
     }
+  }
+  &__error {
+    @apply text-paprika;
+    @apply text-[0.75rem] ml-[10px];
   }
 }
 </style>

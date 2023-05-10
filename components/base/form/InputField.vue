@@ -10,7 +10,7 @@
         :type="showPassword ? 'text' : type"
         :class="{
           'has-icon': type === 'password' || $slots.icon,
-          'has-error': !meta.valid && meta.dirty,
+          'has-error': errors.length,
           'show-placeholder': !$slots.label,
           [padding]: true,
           [fontSize]: true,
@@ -32,6 +32,14 @@
         :class="modelValue || modelValue === 0 || focused ? 'float' : null"
         v-if="$slots.label"
       >
+        <span
+          class="text-paprika"
+          v-if="
+            showRequiredIcon &&
+            ($_.includes(rules, 'required') || $_.has(rules, 'required'))
+          "
+          >*</span
+        >
         <slot name="label"></slot>
       </label>
 
@@ -41,11 +49,17 @@
           name="mdi:eye-outline"
           v-if="type === 'password' && !showPassword"
           @click="showPassword = !showPassword"
+          color="#29345B"
+          width="20"
+          height="20"
         />
         <Icon
           name="mdi:eye-off-outline"
           v-if="type === 'password' && showPassword"
           @click="showPassword = !showPassword"
+          color="#29345B"
+          width="20"
+          height="20"
         />
       </div>
     </div>
@@ -127,6 +141,10 @@ export default {
     customIconClass: {
       type: String,
       default: null,
+    },
+    showRequiredIcon: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, { emit }) {
