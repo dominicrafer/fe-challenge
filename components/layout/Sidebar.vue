@@ -10,19 +10,21 @@
       "
       ref="sidebar"
     >
-      <div class="sidebar__header">Title / Logo</div>
+      <div class="sidebar__header">
+        <!-- <img src="@/assets/images/pal-logo.svg" /> -->
+        TITLE / LOGO
+      </div>
       <div class="sidebar__content">
         <div
           class="content__menu"
           v-for="(menuDetails, index) in sidebarStore.menus"
           :key="index"
           :class="
-            sidebarStore.isMenuActive(menuDetails) &&
-            !$_.has(menuDetails, 'submenus')
+            sidebarStore.isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus')
               ? 'active-menu'
               : 'inactive-menu'
           "
-          v-has:[menuDetails.permission].module-permission="
+          v-has:[menuDetails.permission].read-permission="
             menuDetails.permission
           "
         >
@@ -30,7 +32,7 @@
             v-if="$_.has(menuDetails, 'path')"
             :to="menuDetails.path"
             @click="sidebarStore.selectMenu(menuDetails)"
-            v-has:[menuDetails.permission]:module-permission="
+            v-has:[menuDetails.permission]:read-permission="
               menuDetails.permission
             "
           >
@@ -60,7 +62,7 @@
           <div
             v-else
             @click="sidebarStore.selectMenu(menuDetails)"
-            v-has:[menuDetails.permission]:module-permission="
+            v-has:[menuDetails.permission]:read-permission="
               menuDetails.permission
             "
           >
@@ -92,7 +94,7 @@
             :key="`${submenuDetails.name}-${submenuIndex}`"
             class="menu__submenus"
             :class="!menuDetails.collapsed ? 'uncollapsed' : 'collapsed'"
-            v-has:[submenuDetails.permission].module-permission="
+            v-has:[submenuDetails.permission].read-permission="
               submenuDetails.permission
             "
           >
@@ -160,6 +162,7 @@ export default {
       await logout();
       router.push("/login");
     }
+
 
     // Sidebar click outside handler
     const sidebar = ref(null);

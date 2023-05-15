@@ -23,7 +23,13 @@
             @click="$emit('close')"
           />
         </div>
-        <div class="content__body">
+        <div class="content__body" :class="bodyCustomClass">
+          <div class="body__loader-body" v-if="loading">
+            <div class="loader-body__loader">
+              <Spinner :spinnerSize="spinnerSize" />
+              Loading, please wait...
+            </div>
+          </div>
           <slot></slot>
         </div>
         <div class="content__footer" v-if="$slots.footer">
@@ -57,6 +63,14 @@ export default {
     maskClosable: {
       type: Boolean,
       default: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    bodyCustomClass: {
+      type: String,
+      default: "body-custom-class",
     },
   },
   setup(props, { attrs, slots, emit, expose }) {
@@ -92,7 +106,20 @@ export default {
       }
     }
     .content__body {
-      @apply flex-grow p-4;
+      @apply flex-grow p-4 overflow-auto;
+      .body__loader-body {
+        @apply bg-opacity-50 bg-white z-[53];
+        @apply w-full h-full;
+        @apply absolute;
+        .loader-body__loader {
+          @apply w-full h-full;
+          @apply flex flex-col items-center justify-center;
+          @apply text-sm font-bold text-primary;
+          @apply sticky mb-[53px];
+          @apply gap-[10px];
+          top: 50%;
+        }
+      }
     }
     .content__footer {
       @apply flex-grow-0;
