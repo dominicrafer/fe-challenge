@@ -4,10 +4,11 @@
     <div class="input__input-container">
       <!-- inputClass -->
       <input
+        :key="name"
         :id="name"
         :name="name"
-        :value="value"
-        :type="showPassword ? 'text' : type"
+        :value="currency ? currencyFormattedValue : value"
+        :type="showPassword || currency ? 'text' : type"
         :class="{
           'has-icon': type === 'password' || $slots.icon,
           'has-error': errors.length,
@@ -25,6 +26,7 @@
         @focus="focused = true"
         @input="updateValue"
         class="input-container__input"
+        ref="inputRef"
       />
       <label
         :name="name"
@@ -74,6 +76,7 @@
 
 <script>
 import { useField } from "vee-validate";
+import { useCurrencyInput } from "vue-currency-input";
 export default {
   props: {
     label: {
@@ -146,9 +149,42 @@ export default {
       type: Boolean,
       default: true,
     },
+    currency: {
+      type: Boolean,
+      default: false,
+    },
+    currencyOptions: {
+      type: Object,
+      default: {
+        currency: "PHP",
+        currencyDisplay: "hidden",
+        hideCurrencySymbolOnFocus: false,
+        hideGroupingSeparatorOnFocus: false,
+        hideNegligibleDecimalDigitsOnFocus: false,
+        autoDecimalDigits: false,
+        useGrouping: true,
+      },
+    },
+    currencyMin: {
+      type: Number,
+      default: 0,
+    },
+    currencyMax: {
+      type: Number,
+      default: 0,
+    },
+    currencyPrecision: {
+      type: Number,
+      default: 0,
+    },
   },
   setup(props, { emit }) {
-    const { errorMessage, meta, errors, value, handleBlur } = useField(
+    let inputRef = ref(`inputRef`);
+    let currencyFormattedValue = ref(null);
+    let currencySetValue = ref(null);
+    let currencyNumberValue = ref(null);
+
+    const { errorMessage, meta, errors, value, handleChange } = useField(
       props.name,
       props.rules,
       {
@@ -156,12 +192,58 @@ export default {
         initialValue: props.modelValue,
       }
     );
+    if (props.currency) {
+      let options = props.currencyOptions;
+      let valueRange = {};
+      if (props.min) {
+        valueRange = {
+          ...valueRange,
+          min: props.min,
+        };
+      }
+      if (props.max) {
+        valueRange = {
+          ...valueRange,
+          max: props.max,
+        };
+      }
+      const {
+        inputRef: currencyField,
+        formattedValue: currencyFormat,
+        setValue,
+        numberValue,
+      } = useCurrencyInput({
+        ...options,
+        precision: props.currencyPrecision,
+        valueRange,
+      });
+      currencySetValue = setValue;
+      inputRef = currencyField;
+      currencyFormattedValue = currencyFormat;
+      currencyNumberValue = numberValue;
+      onMounted(() => {
+        // Currently there is a bug where you have to wait until after mount for useCurrencyInput to properly set the value
+        setTimeout(() => {
+          // sets the initial value if provided
+          if (value.value) {
+            currencySetValue(value.value);
+          }
+        }, 300);
+      });
 
+      watch(currencyNumberValue, (newValue) => {
+        // sync it with vee-validate, this will trigger validation
+        handleChange(newValue);
+        // handleChange(newValue, false); // doesn't trigger validation
+      });
+    }
     const showPassword = ref(false);
     const focused = ref(false);
 
     const updateValue = (event) => {
-      emit("update:modelValue", event.target.value);
+      if (!props.currency) {
+        emit("update:modelValue", event.target.value);
+      }
     };
     watch(
       meta,
@@ -178,6 +260,8 @@ export default {
       showPassword,
       updateValue,
       errors,
+      inputRef,
+      currencyFormattedValue,
     };
   },
 };

@@ -10,8 +10,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     // Hides elements / display
-    if (binding?.modifiers["read-permission"]) {
+    if (binding?.modifiers["read-module-permission"]) {
       if (!hasModulePermission()) {
+        // for flex elements
+        vnode.el.className = "hidden";
+        vnode.el.hidden = true;
+        return false;
+      }
+    }
+    if (binding?.modifiers["read-data-permission"]) {
+      if (!hasActionPermission()) {
         // for flex elements
         vnode.el.className = "hidden";
         vnode.el.hidden = true;
@@ -22,13 +30,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     // Disables inputs
     if (binding?.modifiers["edit-permission"]) {
       if (!hasActionPermission()) {
-        console.log('NO WRITE PERMISSION')
         vnode.ctx.props.disabled = true;
       }
     }
 
     // Prevents click
     if (binding?.modifiers["action-permission"]) {
+      // console.log(binding, vnode, myPolicies);
       el.addEventListener(
         "click",
         (event) => {
@@ -54,7 +62,13 @@ export default defineNuxtPlugin((nuxtApp) => {
       ) {
         return true;
       }
-      return $_.includes(myPolicies, binding.value);
+      let hasPermission = $_.includes(myPolicies, binding.value);
+      if ($_.isArray(binding.value)) {
+        hasPermission =
+          $_.difference(binding.value, myPolicies).length !==
+          binding.value.length;
+      }
+      return hasPermission;
     }
     function hasModulePermission() {
       if ($_.includes(myModules, "All")) {

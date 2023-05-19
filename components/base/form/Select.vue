@@ -18,7 +18,8 @@
         class="text-paprika"
         v-if="
           showRequiredIcon &&
-          ($_.includes(rules, 'select_required') || $_.has(rules, 'select_required'))
+          ($_.includes(rules, 'select_required') ||
+            $_.has(rules, 'select_required'))
         "
         >*</span
       >
@@ -150,6 +151,7 @@ export default {
       errorMessage,
       meta,
       value: selected,
+      handleChange,
     } = useField(props.name, props.rules, {
       initialValue: props.modelValue,
     });
@@ -168,9 +170,10 @@ export default {
       }, 1000);
     }
 
-    function select() {
-      emit("update:modelValue", selected.value);
+    function select(value) {
+      emit("update:modelValue", value);
     }
+    
     watch(
       () => props.isLoading,
       (loading) => {
