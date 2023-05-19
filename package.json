@@ -14,6 +14,7 @@
     "@pinia-plugin-persistedstate/nuxt": "^1.0.0",
     "nuxt": "3.0.0",
     "nuxt-icon": "^0.1.8",
+    "nuxt-quasar-ui": "^1.7.3",
     "postcss": "^8.4.20"
   },
   "dependencies": {
@@ -21,12 +22,15 @@
     "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@pinia/nuxt": "^0.4.7",
+    "@quasar/extras": "^1.16.3",
     "@vee-validate/rules": "^4.7.3",
+    "@vue/compat": "3.2",
     "@vuepic/vue-datepicker": "^3.6.4",
     "@vueuse/core": "^9.9.0",
     "aws-amplify": "^5.0.16",
     "lodash": "^4.17.21",
     "pinia": "^2.0.32",
+    "quasar": "^2.12.0",
     "v-click-outside": "^3.2.0",
     "vee-validate": "^4.7.3",
     "vue-multiselect": "^3.0.0-alpha.2",

@@ -1,15 +1,22 @@
 <template>
   <div class="checkbox">
-    <input
+    <!-- <input
       type="checkbox"
       class="checkbox__input"
       :name="name"
       :id="id"
       :value="inputValue"
       v-model="value"
+    /> -->
+    <q-checkbox
+      v-model="value"
+      :val="inputValue"
+      @update:model-value="(e) => $emit('change', e)"
+      :label="label"
+      size="md"
     />
     <!-- v-model="value" -->
-    <label :for="id" class="checkbox__label">{{ label }}</label>
+    <!-- <label :for="id" class="checkbox__label">{{ label }}</label> -->
   </div>
 </template>
 

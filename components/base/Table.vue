@@ -25,38 +25,13 @@
                 @submit.prevent="$emit('search', searchValue)"
               >
                 <InputField
+                  label="Search"
                   class="left-panel__search"
                   v-model="searchValue"
                   name="search"
                   placeholder="Search by name here..."
                   customIconClass="search__custom-icon"
                 >
-                  <template #icon>
-                    <!-- <Icon name="mdi:magnify" /> -->
-                    <div class="search__search-container">
-                      <Button
-                        type="submit"
-                        class="search-container__search-button"
-                        variant="warning"
-                        >Search
-                      </Button>
-                      <Popper
-                        class="search-container__popper"
-                        placement="bottom-end"
-                      >
-                        <Icon
-                          name="mdi:chevron-down"
-                          class="search-container__custom-icon"
-                          color="white"
-                          width="20"
-                          height="20"
-                        />
-                        <template #content>
-                          <slot name="search-filters"></slot>
-                        </template>
-                      </Popper>
-                    </div>
-                  </template>
                 </InputField>
               </form>
             </div>
@@ -223,7 +198,6 @@ export default {
         @apply flex flex-row items-center;
         @apply float-right;
         @apply ml-2;
-        @apply gap-2;
 
         .left-panel__search {
           @apply w-[350px];

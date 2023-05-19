@@ -1,72 +1,16 @@
 <template>
   <div class="select">
-    <div class="select__label-height-placeholder" v-if="$slots.label"></div>
-    <label
-      :name="name"
-      class="select__label"
-      ref="label"
-      :class="
-        ($_.isArray(selected) ? selected?.length : selected) ||
-        $refs.name?.search ||
-        showOptions
-          ? 'float'
-          : null
-      "
-      v-if="$slots.label"
-    >
-      <span
-        class="text-paprika"
-        v-if="
-          showRequiredIcon &&
-          ($_.includes(rules, 'select_required') || $_.has(rules, 'select_required'))
-        "
-        >*</span
-      >
-      <slot name="label"></slot>
-    </label>
-    <VueMultiselect
-      :class="{ 'has-error': errors.length }"
-      :ref="name"
-      :options="options"
+    <q-select
       v-model="selected"
-      @open="showOptions = true"
-      @close="
-        () => {
-          showOptions = false;
-          meta.touched = true;
-        }
-      "
+      :options="options"
+      :error="errors.length ? true : undefined"
+      :error-message="errorMessage"
       :label="label"
-      :track-by="trackBy"
-      :close-on-select="closeOnSelect"
-      :hide-selected="hideSelected"
-      :searchable="searchable"
-      :multiple="multiple"
-      :show-labels="false"
-      @tag="addTag"
-      :taggable="taggable"
-      :placeholder="
-        ($_.isArray(selected) ? selected?.length : selected) ||
-        $refs.name?.search ||
-        showOptions
-          ? placeholder
-          : null
-      "
-      :tag-placeholder="tagPlaceholder"
-      @search-change="asyncSearch"
-      @select="select"
-      :open-direction="openDirection"
-      :loading="isLoading || isLoadingState"
-      :disabled="disabled"
     >
-      <!-- <slots name="drop-down"></slots> -->
-    </VueMultiselect>
-    <div class="select__instructions" v-if="$slots.instructions">
-      <slot name="instructions" />
-    </div>
-    <div class="select__error" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
+      <template #label v-if="$slots.label">
+        <slot name="label"></slot>
+      </template>
+    </q-select>
   </div>
 </template>
 

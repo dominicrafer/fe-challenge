@@ -25,7 +25,8 @@ export const useAuthStore = defineStore({
       const response = await $auth.signIn(email, password);
       if (response && !response.challengeName) {
         this.auth.token = response.signInUserSession.idToken.jwtToken;
-        this.auth.tokenExpiration = response.signInUserSession.idToken.payload.exp;
+        this.auth.tokenExpiration =
+          response.signInUserSession.idToken.payload.exp;
         await $api.roles.getCurrentUserRole().then((auth) => {
           this.isAuthenticated = true;
           this.auth = {
@@ -37,10 +38,8 @@ export const useAuthStore = defineStore({
               modules: auth.data.value.resource.modules,
               policies: auth.data.value.resource.policies,
             },
-
           };
-        })
-
+        });
       }
       return response;
     },
@@ -56,7 +55,8 @@ export const useAuthStore = defineStore({
         const { $auth, $api } = useNuxtApp();
         await $auth.currentAuthenticatedUser().then(async (auth) => {
           this.auth.token = auth.signInUserSession.idToken.jwtToken;
-          this.auth.tokenExpiration = auth.signInUserSession.idToken.payload.exp;
+          this.auth.tokenExpiration =
+            auth.signInUserSession.idToken.payload.exp;
           await $api.roles.getCurrentUserRole().then((role) => {
             this.isAuthenticated = true;
             this.auth = {
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore({
                 policies: role.data.value.resource.policies,
               },
             };
-          })
+          });
         });
       } catch (error) {
         this.auth = {
@@ -98,32 +98,24 @@ export const useAuthStore = defineStore({
     async refresh() {
       const { $auth, $api } = useNuxtApp();
       try {
-        const cognitoUser = await $auth.currentAuthenticatedUser();
-        const currentSession = await $auth.currentSession();
-        await $api.roles.getCurrentUserRole().then((role) => {
-          this.auth = {
-            ...this.auth,
-            userDetails: {
-              ...this.auth.userDetails,
-              modules: role.data.value.resource.modules,
-              policies: role.data.value.resource.policies,
-            },
-          };
-        })
-        cognitoUser.refreshSession(
-          currentSession.refreshToken,
-          (err, session) => {
-            console.log(session, 'refresh')
-            this.auth = {
-              ...this.auth,
-              token: session.idToken.jwtToken,
-              tokenExpiration: session.idToken.payload.exp,
-            };
-          }
-        );
+        await new Promise(async (resolve, reject) => {
+          const cognitoUser = await $auth.currentAuthenticatedUser();
+          const currentSession = await $auth.currentSession();
+          await cognitoUser.refreshSession(
+            currentSession.refreshToken,
+            (err, session) => {
+              console.log(session, "refresh");
+              this.auth = {
+                ...this.auth,
+                token: session.idToken.jwtToken,
+                tokenExpiration: session.idToken.payload.exp,
+              };
+              resolve();
+            }
+          );
+        });
       } catch (error) {
         this.isAuthenticated = false;
-        console.log(error)
       }
     },
   },
