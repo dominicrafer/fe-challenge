@@ -11,7 +11,6 @@
       ref="sidebar"
     >
       <div class="sidebar__header">
-        <!-- <img src="@/assets/images/pal-logo.svg" /> -->
         TITLE / LOGO
       </div>
       <div class="sidebar__content">
@@ -24,7 +23,7 @@
               ? 'active-menu'
               : 'inactive-menu'
           "
-          v-has:[menuDetails.permission].read-permission="
+          v-has:[menuDetails.permission].read-module-permission="
             menuDetails.permission
           "
         >
@@ -32,7 +31,7 @@
             v-if="$_.has(menuDetails, 'path')"
             :to="menuDetails.path"
             @click="sidebarStore.selectMenu(menuDetails)"
-            v-has:[menuDetails.permission]:read-permission="
+            v-has:[menuDetails.permission]:read-module-permission="
               menuDetails.permission
             "
           >
@@ -62,7 +61,7 @@
           <div
             v-else
             @click="sidebarStore.selectMenu(menuDetails)"
-            v-has:[menuDetails.permission]:read-permission="
+            v-has:[menuDetails.permission]:read-module-permission="
               menuDetails.permission
             "
           >
@@ -94,7 +93,7 @@
             :key="`${submenuDetails.name}-${submenuIndex}`"
             class="menu__submenus"
             :class="!menuDetails.collapsed ? 'uncollapsed' : 'collapsed'"
-            v-has:[submenuDetails.permission].read-permission="
+            v-has:[submenuDetails.permission].read-module-permission="
               submenuDetails.permission
             "
           >
