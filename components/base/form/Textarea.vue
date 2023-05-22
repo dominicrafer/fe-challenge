@@ -23,7 +23,7 @@
       :id="name"
       :disabled="disabled"
     ></textarea>
-    <div class="textarea__error" v-if="errorMessage">
+    <div class="textarea__error error" v-if="errorMessage">
       {{ errorMessage }}
     </div>
   </div>

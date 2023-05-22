@@ -36,7 +36,7 @@
       :disabled="disabled"
       @update:model-value="onChange"
     />
-    <div class="date-picker__error" v-if="errorMessage">
+    <div class="date-picker__error error" v-if="errorMessage">
       {{ errorMessage }}
     </div>
   </div>

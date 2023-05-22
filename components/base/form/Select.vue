@@ -44,6 +44,7 @@
       :searchable="searchable"
       :multiple="multiple"
       :show-labels="false"
+      @select="select"
       @tag="addTag"
       :taggable="taggable"
       :placeholder="
@@ -55,7 +56,6 @@
       "
       :tag-placeholder="tagPlaceholder"
       @search-change="asyncSearch"
-      @select="select"
       :open-direction="openDirection"
       :loading="isLoading || isLoadingState"
       :disabled="disabled"
@@ -65,7 +65,7 @@
     <div class="select__instructions" v-if="$slots.instructions">
       <slot name="instructions" />
     </div>
-    <div class="select__error" v-if="errorMessage">
+    <div class="select__error error" v-if="errorMessage">
       {{ errorMessage }}
     </div>
   </div>
@@ -171,9 +171,9 @@ export default {
     }
 
     function select(value) {
-      emit("update:modelValue", value);
+      emit("select", value);
     }
-    
+
     watch(
       () => props.isLoading,
       (loading) => {

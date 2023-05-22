@@ -65,7 +65,7 @@
         />
       </div>
     </div>
-    <div class="input__error" v-if="errorMessage">
+    <div class="input__error error" v-if="errorMessage">
       {{ errorMessage }}
     </div>
     <div class="input__instructions" v-if="$slots.instructions">
@@ -252,6 +252,7 @@ export default {
       },
       { deep: true }
     );
+
     return {
       value,
       focused,
