@@ -190,6 +190,7 @@ export default {
       {
         bails: false,
         initialValue: props.modelValue,
+        label: props.label ? props.label : props.name,
       }
     );
     if (props.currency) {
@@ -278,7 +279,7 @@ export default {
     @apply relative;
 
     .input-container__input {
-      @apply border-b border-gray-200;
+      @apply border-b border-gray-200 h-[40px];
       /* @apply py-[6px] px-[12px]; */
 
       @apply outline-none;

@@ -1,14 +1,17 @@
 <template>
   <div class="select">
     <div class="select__label-height-placeholder" v-if="$slots.label"></div>
+
     <label
-      :name="name"
       class="select__label"
       ref="label"
+      @click="$refs[name].activate()"
       :class="
-        ($_.isArray(selected) ? selected?.length : selected) ||
-        $refs.name?.search ||
-        showOptions
+        !floatingLabel
+          ? 'float'
+          : ($_.isArray(selected) ? selected?.length : selected) ||
+            $refs[name]?.search ||
+            showOptions
           ? 'float'
           : null
       "
@@ -25,7 +28,8 @@
       >
       <slot name="label"></slot>
     </label>
-    <VueMultiselect
+    <multiselect
+      :id="name"
       :class="{ 'has-error': errors.length }"
       :ref="name"
       :options="options"
@@ -35,6 +39,7 @@
         () => {
           showOptions = false;
           meta.touched = true;
+          $emit('close', selected);
         }
       "
       :label="label"
@@ -48,9 +53,11 @@
       @tag="addTag"
       :taggable="taggable"
       :placeholder="
-        ($_.isArray(selected) ? selected?.length : selected) ||
-        $refs.name?.search ||
-        showOptions
+        !floatingLabel
+          ? placeholder
+          : ($_.isArray(selected) ? selected?.length : selected) ||
+            $refs.name?.search ||
+            showOptions
           ? placeholder
           : null
       "
@@ -60,8 +67,10 @@
       :loading="isLoading || isLoadingState"
       :disabled="disabled"
     >
-      <!-- <slots name="drop-down"></slots> -->
-    </VueMultiselect>
+      <template v-slot:selection="{ values, search, isOpen }">
+        <slot :values="values" :search="search" :isOpen="isOpen"></slot>
+      </template>
+    </multiselect>
     <div class="select__instructions" v-if="$slots.instructions">
       <slot name="instructions" />
     </div>
@@ -72,7 +81,7 @@
 </template>
 
 <script>
-import VueMultiselect from "vue-multiselect";
+import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import { useField } from "vee-validate";
 export default {
@@ -106,7 +115,7 @@ export default {
     },
     taggable: {
       type: Boolean,
-      default: false,
+      default: undefined,
     },
     tagPlaceholder: {
       type: String,
@@ -142,10 +151,16 @@ export default {
       type: Boolean,
       default: true,
     },
+    floatingLabel: {
+      type: Boolean,
+      default: true,
+    },
+    vLabel: {
+      type: String,
+    },
   },
   setup(props, { emit }) {
     const { $_ } = useNuxtApp();
-    console.log("props.modelValue", props.modelValue);
     const {
       errors,
       errorMessage,
@@ -154,6 +169,7 @@ export default {
       handleChange,
     } = useField(props.name, props.rules, {
       initialValue: props.modelValue,
+      label: props.vLabel ? props.vLabel : props.name,
     });
     const showOptions = ref(false);
     const isLoadingState = ref(props.isLoading);
@@ -171,6 +187,7 @@ export default {
     }
 
     function select(value) {
+      emit('update:modelValue', value)
       emit("select", value);
     }
 
@@ -200,7 +217,7 @@ export default {
     };
   },
   components: {
-    VueMultiselect,
+    Multiselect,
   },
 };
 </script>

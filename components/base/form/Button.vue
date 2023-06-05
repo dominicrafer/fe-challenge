@@ -2,7 +2,7 @@
   <button
     class="button"
     :type="type"
-    :class="`${loading ? 'disabled' : variant} ${radius}`"
+    :class="`${loading ? 'disabled' : variant} ${radius} ${size}`"
     :disabled="loading"
   >
     <div v-if="$slots['icon-start']">
@@ -41,6 +41,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    size: {
+      type: String,
+      default: null
+    }
   },
   setup(props) {},
 };
@@ -52,7 +56,9 @@ export default {
   @apply py-[8px] px-[10px];
   @apply text-[0.875rem] border border-transparent whitespace-nowrap;
   transition: all ease-in 0.1s;
-
+  &.sm {
+    @apply text-[0.75rem] py-[6px] px-[8px];
+  }
   &:hover {
     /* @apply opacity-75; */
     filter: brightness(110%);

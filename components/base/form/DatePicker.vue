@@ -106,6 +106,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    label: {
+      type: String,
+      default: null,
+    },
   },
   setup(props, { emit }) {
     // const date = ref(props.modelValue);
@@ -116,6 +120,7 @@ export default {
       value: date,
     } = useField(props.name, props.rules, {
       initialValue: props.modelValue,
+      label: props.label ? props.label : props.name,
     });
 
     async function onChange(event) {
@@ -153,7 +158,7 @@ export default {
   }
 }
 .custom-input-datepicker-class {
-  @apply border-l-0 border-r-0 border-t-0 rounded-none;
+  @apply border-l-0 border-r-0 border-t-0 rounded-none h-[39px] text-[0.875rem];
   &.has-error {
     @apply border-b-paprika border-b !important;
   }

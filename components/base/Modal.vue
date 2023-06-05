@@ -1,7 +1,7 @@
 <template>
   <Transition appear name="fade">
-    <div class="modal" v-if="show" ref="modal" >
-      <div class="modal__content" :style="{ width: `${width}px` }">
+    <div class="modal" v-if="show">
+      <div class="modal__content" :style="{ width: `${width}px` }" ref="modal">
         <div class="modal__header">
           {{ title }}
           <Icon
@@ -13,8 +13,12 @@
             @click="$emit('close')"
           />
         </div>
-        <div :class="`modal__body`" >
-          <slot></slot>
+        <div :class="`modal__body`">
+          <div class="body__loader" v-if="loading">
+            <Spinner :spinnerSize="spinnerSize" />
+            Loading, please wait...
+          </div>
+          <slot v-else></slot>
         </div>
         <div class="modal__footer" v-if="$slots.footer">
           <slot name="footer"></slot>
@@ -40,10 +44,23 @@ export default {
       type: String,
       default: "450",
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    maskClosable: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, { attrs, slots, emit, expose }) {
     const modal = ref(null);
-    onClickOutside(modal, () => emit("close"));
+
+    onClickOutside(modal, () => {
+      if (props.maskClosable) {
+        emit("close");
+      }
+    });
 
     return { modal };
   },
@@ -54,7 +71,7 @@ export default {
 .modal {
   @apply fixed h-screen w-screen;
   @apply flex items-center justify-center;
-  @apply top-0 left-0 z-[60];
+  @apply top-0 left-0 z-[101];
   background: rgba(30, 28, 28, 0.88);
 
   &__content {
@@ -63,6 +80,10 @@ export default {
     @apply rounded-md;
     @apply min-w-[320px];
     @apply min-h-[320px];
+    @media (max-width: 768px) {
+      @apply w-full !important;
+      /* @apply min-w-fit; */
+    }
     .modal__header {
       @apply flex flex-row items-center justify-between;
       @apply border-b border-baking-soda bg-primary rounded-t-md;
@@ -79,7 +100,14 @@ export default {
       @apply max-h-[80vh] p-4;
       @apply w-full h-full;
       @apply overflow-y-auto;
-      @apply text-sm text-currant;
+      @apply text-sm text-currant relative;
+      .body__loader {
+        @apply flex flex-col items-center justify-center;
+        @apply text-sm font-bold text-primary;
+        @apply sticky;
+        @apply gap-[10px] mt-4;
+        /* top: 50%; */
+      }
     }
     .modal__footer {
       @apply flex-grow-0;

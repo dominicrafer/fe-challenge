@@ -38,6 +38,10 @@ export default {
       type: String,
       required: false,
     },
+    vLabel: {
+      type: String,
+      required: false,
+    },
     name: {
       type: String,
       required: true,
@@ -80,6 +84,7 @@ export default {
   setup(props, { emit }) {
     const { errorMessage, errors, meta } = useField(props.name, props.rules, {
       initialValue: props.modelValue,
+      label: props.vLabel ? props.vLabel : props.name,
     });
     const updateValue = (event) => {
       emit("update:modelValue", event.target.value);

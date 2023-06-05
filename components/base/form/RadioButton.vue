@@ -39,6 +39,7 @@ export default {
     const { value, meta } = useField(props.name, undefined, {
       type: "radio",
       initialValue: props.modelValue,
+      label: props.label ? props.label : props.name,
     });
 
     watch(

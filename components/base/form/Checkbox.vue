@@ -21,6 +21,9 @@ export default {
       type: String,
       required: true,
     },
+    vLabel: {
+      type: String,
+    },
     name: {
       type: String,
       required: true,
@@ -35,11 +38,15 @@ export default {
     modelValue: {
       type: [String, Object, Boolean, Number],
     },
+    rules: {
+      type: [String, Object],
+    },
   },
   setup(props, { emit }) {
-    const { value, meta } = useField(props.name, undefined, {
+    const { value, meta } = useField(props.name, props.rules, {
       type: "checkbox",
       initialValue: props.modelValue,
+      label: props.vLabel ? props.vLabel : props.name,
     });
 
     watch(

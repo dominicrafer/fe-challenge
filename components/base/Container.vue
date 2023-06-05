@@ -14,38 +14,42 @@
 export default {
   props: {
     padding: {
-      type: String
+      type: String,
     },
     width: {
       type: String,
-      default: 'w-full'
+      default: "w-full",
     },
     height: {
       type: String,
-      default: 'h-auto'
+      default: "h-auto",
     },
     loading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     loaderMessage: {
       type: String,
-      default: 'Loading, please wait...'
+      default: "Loading, please wait...",
     },
     spinnerSize: {
       type: String,
-      default: 'w-12 h-12 border-2'
-    }
+      default: "w-12 h-12 border-2",
+    },
   },
-  setup (props) {}
-}
+  setup(props) {},
+};
 </script>
 
 <style lang="postcss" scoped>
 .container-component {
   @apply relative;
   @apply rounded-sm;
-  @apply bg-white min-w-fit;
+  @apply bg-white;
+  @apply w-full min-w-fit;
+  /* @media (min-width: 1366px) {
+    @apply min-w-fit;
+  } */
   &__loader-body {
     @apply bg-opacity-50 bg-white z-[53];
     @apply w-full h-full;

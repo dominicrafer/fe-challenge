@@ -8,7 +8,7 @@
         <Icon name="mdi:account-circle" color="white" width="30" height="30" />
         <div class="profile__details">
           <span class="details__name">{{ authStore.userDetails.name }}</span>
-          <!-- <span class="details__role">{{ authStore.roles[0] }}</span> -->
+          <span class="details__role">{{ authStore.userDetails.role }}</span>
         </div>
       </div>
     </div>
@@ -40,9 +40,9 @@ export default {
   @apply px-5 py-[20px] bg-primary  text-sm text-primary border-b border-baking-soda;
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
   &__left-panel {
-    .left-panel__burder-menu {
+    /* .left-panel__burder-menu {
       @apply lg:hidden;
-    }
+    } */
   }
 
 

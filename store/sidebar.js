@@ -2,8 +2,12 @@ import { defineStore } from "pinia";
 import { useWindowSize } from "@vueuse/core";
 export const useSidebarStore = defineStore({
   id: "sidebar",
-  persist: true,
+  persist: false,
   state: () => {
+    const { $_ } = useNuxtApp();
+    const route = useRoute();
+    const currentRoute = route.path.split("/")[1];
+    console.log(currentRoute)
     return {
       collapsed: false,
       menus: [
@@ -12,7 +16,7 @@ export const useSidebarStore = defineStore({
           name: "users",
           icon: "mdi:account-multiple-outline",
           permission: ["Users", "Roles", "Policies"],
-          collapsed: true,
+          collapsed: currentRoute !== "users",
           submenus: [
             {
               name: "user-list",
@@ -38,15 +42,12 @@ export const useSidebarStore = defineStore({
           ],
         },
       ],
-      activeMenu: null,
+      activeMenu: route.name,
     };
   },
   actions: {
     toggleSidebar() {
-      const { width } = useWindowSize();
-      if (width.value <= 1024) {
-        this.collapsed = !this.collapsed;
-      }
+      this.collapsed = !this.collapsed;
     },
     selectMenu(menuDetails) {
       const { $_ } = useNuxtApp();
@@ -54,7 +55,10 @@ export const useSidebarStore = defineStore({
         const index = $_.findIndex(this.menus, { name: menuDetails.name });
         return (this.menus[index].collapsed = !this.menus[index].collapsed);
       }
-      this.toggleSidebar();
+      const { width } = useWindowSize();
+      if (width.value <= 1024) {
+        this.toggleSidebar();
+      }
       return (this.activeMenu = menuDetails.name);
     },
   },

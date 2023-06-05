@@ -19,7 +19,11 @@
       ref="file"
       @change="confirmFileSelection"
     />
-    <div class="file-upload__image-container" v-if="imageDisplay">
+    <div
+      class="file-upload__image-container"
+      v-if="imageDisplay"
+      :class="{ 'has-error': errors.length }"
+    >
       <Icon
         @click="removeImage"
         name="material-symbols:close"
@@ -49,6 +53,9 @@
 import { useField } from "vee-validate";
 export default {
   props: {
+    label: {
+      type: String,
+    },
     accept: {
       type: String,
       default: null,
@@ -73,6 +80,7 @@ export default {
       {
         bails: false,
         initialValue: props.modelValue,
+        label: props.label,
       }
     );
     function selectFile() {

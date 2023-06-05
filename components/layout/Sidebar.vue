@@ -11,7 +11,7 @@
       ref="sidebar"
     >
       <div class="sidebar__header">
-        TITLE / LOGO
+        <img src="@/assets/images/pal-logo.svg" />
       </div>
       <div class="sidebar__content">
         <div
@@ -19,7 +19,8 @@
           v-for="(menuDetails, index) in sidebarStore.menus"
           :key="index"
           :class="
-            sidebarStore.isMenuActive(menuDetails) && !$_.has(menuDetails, 'submenus')
+            sidebarStore.isMenuActive(menuDetails) &&
+            !$_.has(menuDetails, 'submenus')
               ? 'active-menu'
               : 'inactive-menu'
           "
@@ -162,25 +163,14 @@ export default {
       router.push("/login");
     }
 
-
     // Sidebar click outside handler
     const sidebar = ref(null);
     onClickOutside(sidebar, () => {
-      if (!sidebarStore.isCollapsed) {
+      const { width } = useWindowSize();
+      if (width.value <= 1024 && !sidebarStore.isCollapsed) {
         sidebarStore.toggleSidebar();
       }
     });
-
-    // Track window size for sidebar behaviour
-    const { width } = useWindowSize();
-    watch(
-      () => width.value,
-      (val) => {
-        if (sidebarStore.isCollapsed) {
-          sidebarStore.toggleSidebar();
-        }
-      }
-    );
 
     return {
       config,
@@ -287,7 +277,8 @@ export default {
       @apply hidden;
     }
 
-    @apply w-0  min-w-0 absolute  h-screen p-0;
+    /* @apply absolute; */
+    @apply w-0  min-w-0   h-screen p-0;
     transition: all 0.3s ease;
   }
 }

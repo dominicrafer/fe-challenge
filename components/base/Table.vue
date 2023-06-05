@@ -214,7 +214,7 @@ export default {
 
     .content__header {
       @apply w-full;
-      @apply px-2 py-5;
+      @apply px-2 py-3;
       @apply flex flex-row items-center justify-between;
       @apply border-b border-baking-soda;
       @apply flex-grow-0;
