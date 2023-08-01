@@ -1,33 +1,20 @@
 <template>
-  <Transition appear name="fade">
-    <div class="modal" v-if="show">
-      <div class="modal__content" :style="{ width: `${width}px` }">
-        <div class="modal__header" :class="type">
-          {{ title }}
-          <Icon
-            name="mdi:close-circle-outline"
-            width="24"
-            height="24"
-            color="white"
-            class="cursor-pointer"
-            @click="$emit('close')"
-          />
-        </div>
-        <div :class="`modal__body ${type}`"  ref="modal">
-          <slot name="message"></slot>
-        </div>
-        <div class="modal__footer">
-          <Button class="inline-block" variant="secondary" @click="$emit('close')">Cancel</Button>
-          <Button
-            class="inline-block"
-            @click="$emit('confirm')"
-            :variant="type === 'danger' ? 'danger' : 'success'"
-            >{{ confirmText }}</Button
-          >
-        </div>
-      </div>
-    </div>
-  </Transition>
+  <Dialog :title="title">
+    <slot name="message" />
+    <q-card-actions
+      align="right"
+      class="mt-8 pt-2 pb-0 px-0 border-t border-gray-200"
+    >
+      <q-btn
+        flat
+        label="Cancel"
+        color="secondary"
+        @click="$emit('close')"
+        v-close-popup
+      />
+      <q-btn label="Confirm" color="warning" @click="$emit('confirm')" />
+    </q-card-actions>
+  </Dialog>
 </template>
 
 <script>
@@ -59,7 +46,7 @@ export default {
     const modal = ref(null);
     onClickOutside(modal, () => emit("close"));
 
-    return { modal};
+    return { modal };
   },
 };
 </script>
@@ -100,8 +87,8 @@ export default {
       @apply max-h-[80vh] p-4 flex-grow;
       @apply w-full h-full;
       @apply overflow-y-auto;
-      @apply text-sm ;
-       &.default {
+      @apply text-sm;
+      &.default {
         @apply text-currant;
       }
       &.danger {

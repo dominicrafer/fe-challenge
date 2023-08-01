@@ -1,22 +1,20 @@
 <template>
-  <div class="default">
+  <q-layout view="lHh Lpr lFf">
+    <Header />
     <Sidebar />
-    <div class="default__content">
-      <Header />
-      <div class="flex-grow relative overflow-hidden">
-        <slot name="error" v-if="$slots.error" />
-        <template v-else>
-          <NuxtPage />
-          <div class="content__loader" v-if="isLoading">
-            <div class="loader">
-              <Spinner />
-              <span> Loading, please wait... </span>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-  </div>
+    <q-page-container>
+      <q-page padding class="page-content">
+        <q-inner-loading
+          :showing="isLoading"
+          color="primary"
+          label="Please wait..."
+        ></q-inner-loading>
+        <NuxtPage />
+        <!-- <router-view> </router-view> -->
+        <!-- <NuxtPage /></NuxtPage> -->
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 <script>
 export default {
@@ -24,9 +22,11 @@ export default {
     const nuxtApp = useNuxtApp();
     const isLoading = ref(false);
     nuxtApp.hook("page:start", () => {
+      console.log("START");
       isLoading.value = true;
     });
     nuxtApp.hook("page:finish", () => {
+      console.log("finish");
       isLoading.value = false;
     });
 

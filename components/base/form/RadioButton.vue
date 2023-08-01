@@ -1,15 +1,6 @@
 <template>
-  <div class="radio-button">
-    <input
-      type="radio"
-      class="radio-button__input"
-      :name="name"
-      :id="id"
-      :value="inputValue"
-      v-model="value"
-    />
-    <label :for="id" class="radio-button__label">{{ label }}</label>
-  </div>
+  <q-radio v-model="value" :val="inputValue" @update:model-value="(e) => $emit('change', e)" :label="label"
+    size="md" />
 </template>
 
 <script>
@@ -56,9 +47,11 @@ export default {
 <style lang="postcss" scoped>
 .radio-button {
   @apply flex flex-row items-center gap-[5px];
+
   &__input {
     @apply accent-primary text-lg w-[18px] h-[18px] rounded-lg;
   }
+
   &__label {
     @apply text-[1rem] text-primary font-medium;
   }

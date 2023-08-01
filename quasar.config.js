@@ -5,6 +5,7 @@ export default {
   extras: {
     fontIcons: ['material-icons']
   },
+  plugins: ["Notify"],
   config: {
     brand: {
       primary,

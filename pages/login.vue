@@ -7,62 +7,31 @@
       </div>
       <div class="login__body">
         <Alert type="danger" v-if="hasError" :title="errorMessage" />
-        <InputField
-          name="username"
-          placeholder="Enter email"
-          v-model="email"
-          rules="email"
-          v-if="!newPasswordRequired"
-        >
+        <InputField name="username" placeholder="Enter email" v-model="email" rules="email" v-if="!newPasswordRequired">
           <template #label> Email </template>
         </InputField>
-        <InputField
-          name="password"
-          placeholder="Enter password"
-          v-model="password"
-          type="password"
-          rules="required"
-          v-if="!newPasswordRequired"
-        >
+        <InputField name="password" placeholder="Enter password" v-model="password" type="password" rules="required"
+          v-if="!newPasswordRequired">
           <template #label> Password </template>
         </InputField>
-        <InputField
-          name="new-password"
-          placeholder="Enter new password"
-          v-model="newPassword"
-          type="password"
-          :rules="{
-            required: true,
-            min: 8,
-            has_upper_lower_case: true,
-            has_special_char: true,
-            has_number: true,
-          }"
-          v-if="newPasswordRequired"
-        >
+        <InputField name="new-password" placeholder="Enter new password" v-model="newPassword" type="password" :rules="{
+          required: true,
+          min: 8,
+          has_upper_lower_case: true,
+          has_special_char: true,
+          has_number: true,
+        }" v-if="newPasswordRequired">
           <template #label> New Password </template>
         </InputField>
-        <InputField
-          name="confirm-password"
-          placeholder="Confirm password"
-          v-model="confirmPassword"
-          type="password"
-          rules="confirm_password:@new-password"
-          v-if="newPasswordRequired"
-        >
+        <InputField name="confirm-password" placeholder="Confirm password" v-model="confirmPassword" type="password"
+          rules="confirm_password:@new-password" v-if="newPasswordRequired">
           <template #label> Confirm Passwords </template>
         </InputField>
       </div>
       <div class="login__footer">
-        <Button
-          radius="rounded-xl"
-          type="submit"
-          :loading="isLoading"
-          showLoading
-        >
-          <span v-if="!isLoading">{{
-            newPasswordRequired ? "Continue" : "Login"
-          }}</span>
+        <Button radius="rounded-xl" type="submit" color="primary" :loading="isLoading" showLoading
+          :label="newPasswordRequired ? 'Continue' : 'Login'">
+
         </Button>
       </div>
     </div>
@@ -180,6 +149,7 @@ export default {
 
     button {
       @apply w-[40%] text-center flex flex-col items-center;
+
       span {
         @apply w-full;
       }

@@ -8,7 +8,7 @@
             v-model:isDirty="dirtyFieldValidator.policy" :disabled="edit" rules="required|max:128">
             <template #label> Name </template>
           </InputField>
-          <Textarea v-model:modelValue="formData.description" v-model:isDirty="dirtyFieldValidator.description"
+          <InputField type="textarea" v-model:modelValue="formData.description" v-model:isDirty="dirtyFieldValidator.description"
             name="description" label="Description" placeholder="Enter description"
             :rules="edit ? null : 'required|max:255'" />
           <Select v-model:modelValue="formData.actions" v-model:isDirty="dirtyFieldValidator.actions" name="actions"

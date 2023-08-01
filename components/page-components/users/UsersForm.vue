@@ -1,25 +1,22 @@
 <template>
-  <VForm
-    @submit="onSubmit"
-    @keydown.enter.prevent
-    v-slot="{ isSubmitting }"
-    :initialValues="userDetails"
-  >
-    <div class="users">
-      <Container :loading="isLoading || pending" padding="p-0">
+  <Form :submitHandler="onSubmit" :initialValues="userDetails">
+    <template #default="{ isSubmitting }">
+      <q-card>
         <SectionTitle title="User Details" class="rounded-t-sm" />
         <div class="users__form">
-          <div class="form__col">
+          <div class="row gap-2">
             <InputField
+              class="col"
               name="first_name"
               placeholder="First Name"
               rules="max:128|required"
               v-model="formData.first_name"
               v-model:isDirty="dirtyFieldValidator.first_name"
             >
-              <template #label> Name </template>
+              <template #label> First Name </template>
             </InputField>
             <InputField
+              class="col"
               name="last_name"
               placeholder="Last Name"
               rules="max:128|required"
@@ -29,22 +26,21 @@
               <template #label> Last Name </template>
             </InputField>
           </div>
-
-          <div class="form__col">
+          <div class="row gap-2">
             <Select
               name="role"
+              class="col"
               placeholder="Select role"
               v-model="formData.role"
               v-model:isDirty="dirtyFieldValidator.role"
               :options="roleOptions"
               rules="select_required"
-              trackBy="value"
-              label="label"
             >
               <template #label> Role </template>
             </Select>
             <InputField
               name="phone_number"
+              class="col"
               placeholder="Enter Text"
               v-model="formData.phone_number"
               v-model:isDirty="dirtyFieldValidator.phone_number"
@@ -62,63 +58,47 @@
           >
             <template #label> Email </template>
           </InputField>
-          <!-- min:8|has_upper_lower_case|has_special_char|has_number|required -->
           <InputField
+            v-if="!edit"
             type="password"
             name="password"
             placeholder="Enter Text"
-            v-if="!edit"
-            :rules="{
-              required: true,
-              min: 8,
-              has_upper_lower_case: true,
-              has_special_char: true,
-              has_number: true,
-            }"
+            rules="required|max:128"
             v-model="formData.password"
             v-model:isDirty="dirtyFieldValidator.password"
           >
             <template #label> Password </template>
           </InputField>
           <div class="form__footer">
+            <!-- <Button
+              color="warning"
+              v-if="edit"
+              @click="auditTrailDrawerVisible = true"
+              :loading="isSubmitting"
+              >View Audit Trail</Button
+            > -->
             <Button
-              variant="warning"
+              color="warning"
               v-if="edit"
               @click="resetPassword"
               :loading="isSubmitting"
-              >Reset Password</Button
+              label="Reset Password"
+              disable
+              ></Button
             >
-            <Button variant="success" type="submit" :loading="isSubmitting"
-              >Save</Button
-            >
+            <Button
+              color="positive"
+              type="submit"
+              :loading="isSubmitting"
+              label="Save"
+            ></Button>
           </div>
         </div>
-      </Container>
-      <Modal
-        :show="newPasswordModalVisible"
-        title="New Password"
-        type="success"
-        confirmText="Confirm"
-        @close="newPasswordModalVisible = false"
-        @confirm="newPasswordModalVisible = false"
-      >
-        <div class="modal__message">
-          <p class="text-xl">
-            Password successfully generated for
-            <strong>
-              {{ userDetails.first_name }} {{ userDetails.last_name }}</strong
-            >.
-          </p>
-          <p class="text-[32px] mt-5 font-bold text-center">
-            {{ newPassword }}
-          </p>
-        </div>
-      </Modal>
-      <ConfirmationModal
-        :show="leaveWarningModalVisible"
+      </q-card>
+      
+      <ConfirmationDialog
         :title="`${edit ? 'Cancel Updating User' : 'Cancel User Creation'}`"
-        type="warning"
-        confirmText="Proceed"
+        v-model="leaveWarningModalVisible"
         @close="leaveWarningModalVisible = false"
         @confirm="confirmLeave"
       >
@@ -127,9 +107,9 @@
           {{ edit ? "updating" : "creating" }} this user? Changes will not be
           saved.</template
         >
-      </ConfirmationModal>
-    </div>
-  </VForm>
+      </ConfirmationDialog>
+    </template>
+  </Form>
 </template>
 
 <script>
@@ -148,11 +128,12 @@ export default {
         return {
           first_name: null,
           last_name: null,
-          password: null,
           email: null,
           phone_number: null,
+          department: null,
+          employee_number: null,
           role: null,
-          password: null,
+          partners: [],
         };
       },
     },
@@ -177,21 +158,24 @@ export default {
       }
     });
     expose({ allowRouteLeave });
-    const { $api, $_ } = useNuxtApp();
+    const { $api, $_, $toast } = useNuxtApp();
     const route = useRoute();
+    console.log("props.userDetails", props.userDetails);
     const formData = reactive(props.userDetails);
+
+    console.log(formData, "FORM DATA");
     const deleteConfirmationModalVisible = ref(false);
+    const auditTrailDrawerVisible = ref(false);
 
     const dirtyFieldValidator = reactive({
       first_name: false,
       last_name: false,
-      password: false,
       email: false,
       phone_number: false,
       role: false,
-      password: false,
+      partners: false,
+      employee_number: true,
     });
-
     let roleOptions = reactive([]);
     const { data: roles, pending } = await $api.roles.getRoles();
     roleOptions = $_.map(roles.value.resource.roles, (roleDetails) => {
@@ -200,7 +184,6 @@ export default {
         value: roleDetails.role,
       };
     });
-
     async function onSubmit(values) {
       allowRouteLeave.value = true;
       let payload = {
@@ -222,16 +205,20 @@ export default {
       }
     }
 
-    const newPasswordModalVisible = ref(false);
-    const newPassword = ref(null);
     async function resetPassword() {
       pending.value = true;
-      const { data } = await $api.users.resetPassword({
-        cognito_id: route.params.id,
+      const { data, error } = await $api.users.forgotPassword({
+        email: props.userDetails.email,
       });
-      newPasswordModalVisible.value = true;
+      if (error.value) {
+        $toast.error($_.values(error.value.data.errors)[0]);
+      } else {
+        $toast.success(
+          "Password reset request successful. Email will be sent shortly to reset password.",
+          { autoClose: false }
+        );
+      }
       pending.value = false;
-      newPassword.value = data.value.resource.generated_password;
     }
 
     function confirmLeave() {
@@ -240,6 +227,8 @@ export default {
       allowRouteLeave.value = true;
       router.push(leaveRoute.value);
     }
+    const isFetchingPartners = ref(false);
+    let partnerOptions = reactive([]);
 
     return {
       roleOptions,
@@ -249,11 +238,11 @@ export default {
       formData,
       onSubmit,
       resetPassword,
-      newPassword,
-      newPasswordModalVisible,
       deleteConfirmationModalVisible,
       leaveWarningModalVisible,
       confirmLeave,
+      isFetchingPartners,
+      auditTrailDrawerVisible,
     };
   },
 };
@@ -272,7 +261,7 @@ export default {
   }
 
   .form__col {
-    @apply grid grid-cols-2 gap-[12px];
+    @apply grid grid-cols-2 gap-[12px] items-start;
   }
 
   .col__button {

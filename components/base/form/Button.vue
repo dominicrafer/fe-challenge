@@ -1,121 +1,20 @@
 <template>
-  <button
-    class="button"
-    :type="type"
-    :class="`${loading ? 'disabled' : variant} ${radius}`"
-    :disabled="loading"
-  >
-    <div v-if="$slots['icon-start']">
-      <slot name="icon-start"></slot>
-    </div>
-    <div class="flex items-center" v-if="showLoading && loading">
-      <Spinner size="w-5 h-5" reverse />
-    </div>
-    <slot></slot>
-    <div v-if="$slots['icon-end']">
-      <slot name="icon-end"></slot>
-    </div>
-  </button>
+  <q-btn v-bind="$attrs" class="button" :color="color"></q-btn>
 </template>
 
 <script>
 export default {
   props: {
-    variant: {
+    color: {
       type: String,
-      default: "primary",
-    },
-    type: {
-      type: String,
-      default: "button",
-    },
-    radius: {
-      type: String,
-      default: "rounded-md",
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    showLoading: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props) {},
+      default: 'primary'
+    }
+  }
 };
 </script>
 
 <style lang="postcss" scoped>
 .button {
-  @apply flex flex-row gap-2 items-center font-normal text-center;
-  @apply py-[8px] px-[10px];
-  @apply text-[0.875rem] border border-transparent whitespace-nowrap;
-  transition: all ease-in 0.1s;
-
-  &:hover {
-    /* @apply opacity-75; */
-    filter: brightness(110%);
-    &.disabled {
-      @apply filter-none cursor-not-allowed;
-    }
-  }
-
-  &.primary {
-    @apply bg-primary text-white;
-  }
-  &.primary-outline {
-    @apply bg-white text-primary border border-primary;
-    &:hover {
-      @apply bg-primary text-white;
-    }
-  }
-
-  &.secondary {
-    @apply bg-secondary text-white;
-  }
-
-  &.secondary-outline {
-    @apply bg-white text-secondary border border-secondary;
-    &:hover {
-      @apply bg-white text-secondary;
-    }
-  }
-
-  &.success {
-    @apply bg-green-600 text-white;
-  }
-
-  &.success-outline {
-    @apply bg-white text-green-600 border border-green-600;
-  }
-
-  &.danger {
-    @apply bg-red-500 text-white;
-  }
-
-  &.danger-outline {
-    @apply bg-white text-paprika border border-paprika;
-  }
-
-  &.warning {
-    @apply bg-yellow-500 text-white;
-  }
-  &.warning-outline {
-    @apply bg-white text-yellow-500 border border-yellow-500;
-  }
-
-  &.disabled {
-    @apply bg-baking-soda text-mackerel;
-  }
-
-  &.link {
-    @apply bg-transparent text-blue-500;
-
-    &:hover {
-      filter: brightness(100%);
-      @apply underline;
-    }
-  }
+  @apply px-2 py-2 text-[12px];
 }
 </style>
