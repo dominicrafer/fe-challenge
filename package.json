@@ -22,7 +22,7 @@
     "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@pinia/nuxt": "^0.4.7",
-    "@quasar/extras": "^1.16.5",
+    "@quasar/extras": "^1.16.4",
     "@vee-validate/rules": "^4.7.3",
     "@vue/compat": "3.2",
     "@vuepic/vue-datepicker": "^3.6.4",

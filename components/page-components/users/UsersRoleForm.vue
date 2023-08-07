@@ -1,103 +1,50 @@
 <template>
   <div class="role">
     <Container padding="p-0">
-      <VForm
-        @submit="onSubmit"
-        v-slot="{ isSubmitting }"
-        :initialValues="roleDetails"
-      >
+      <VForm @submit="onSubmit" v-slot="{ isSubmitting }" :initialValues="roleDetails">
         <SectionTitle title="Role Details" class="rounded-t-sm" />
         <div class="role__form">
-          <InputField
-            class="w-1/2"
-            name="role"
-            placeholder="Enter role name"
-            rules="no_spaces|max:128"
-            v-model="formData.role"
-            v-model:isDirty="dirtyFieldValidator.role"
-            :disabled="edit"
-          >
+          <InputField class="w-1/2" name="role" placeholder="Enter role name" rules="no_spaces|max:128"
+            v-model="formData.role" v-model:isDirty="dirtyFieldValidator.role" :disabled="edit">
             <template #label> Role </template>
           </InputField>
-          <InputField
-            type="textarea"
-            name="description"
-            label="Description"
-            placeholder="Enter role description"
-            rules="max:255"
-            v-model="formData.description"
-            v-model:isDirty="dirtyFieldValidator.description"
-          />
+          <InputField type="textarea" name="description" label="Description" placeholder="Enter role description"
+            rules="max:255" v-model="formData.description" v-model:isDirty="dirtyFieldValidator.description" />
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
         <div class="role__form">
           <Spinner class="m-auto" v-if="pending" />
           <div class="form__col"></div>
-          <Checkbox
-            v-if="!pending"
-            inputValue="*:*"
-            label="Select All"
-            id="actions"
-            name="policies"
-            @change="selectAllPolicies"
-            v-model="formData.policies"
-          />
-          <div
-            v-show="!pending"
-            class="form__policy"
-            v-for="(policyDetails, index) in policies?.resource"
-            :key="index"
-          >
+          <Checkbox v-if="!pending" inputValue="*:*" label="Select All" id="actions" name="policies"
+            @change="selectAllPolicies" v-model="formData.policies" />
+          <div v-show="!pending" class="form__policy" v-for="(policyDetails, index) in policies?.resource" :key="index">
             <span class="policy__name">{{
               policyDetails.policy_group_name
             }}</span>
             <div class="policy__actions">
-              <Checkbox
-                :id="policyActionDetails.slug"
-                :inputValue="policyActionDetails.slug"
-                :label="$_.startCase(policyActionDetails.action)"
-                @onChange="
-                  ($event) =>
+              <Checkbox :id="policyActionDetails.slug" :inputValue="policyActionDetails.slug"
+                :label="$_.startCase(policyActionDetails.action)" @onChange="($event) =>
                     selectPolicy($event, policyDetails, policyActionDetails)
-                "
-                name="policies"
-                v-model="formData.policies"
-                v-model:isDirty="dirtyFieldValidator.policies"
-                v-for="(policyActionDetails, actionIndex) in [
-                  ...policyDetails.policies,
-                  {
-                    slug: `${$_.toLower(policyDetails.policy_group_name)}:*`,
-                    action: 'All',
-                  },
-                ]"
-                :key="actionIndex"
-              />
+                  " name="policies" v-model="formData.policies" v-model:isDirty="dirtyFieldValidator.policies" v-for="(policyActionDetails, actionIndex) in [
+    ...policyDetails.policies,
+    {
+      slug: `${$_.toLower(policyDetails.policy_group_name)}:*`,
+      action: 'All',
+    },
+  ]" :key="actionIndex" />
             </div>
           </div>
           <div class="role__footer">
-            <Button
-              variant="success"
-              type="submit"
-              :loading="isSubmitting || isLoading"
-              >Save</Button
-            >
+            <Button color="positive" type="submit" label="Save" :loading="isSubmitting || isLoading"></Button>
           </div>
         </div>
       </VForm>
-      <ConfirmationModal
-        :show="leaveWarningModalVisible"
-        title="Cancel User Creation"
-        type="warning"
-        confirmText="Proceed"
-        @close="leaveWarningModalVisible = false"
-        @confirm="confirmLeave"
-      >
-        <template #message
-          >Are you sure you want to cancel
+      <ConfirmationDialog :title="`${edit ? 'Cancel Updating Role' : 'Cancel Role Creation'}`"
+        v-model="leaveWarningModalVisible" @close="leaveWarningModalVisible = false" @confirm="confirmLeave">
+        <template #message>Are you sure you want to cancel
           {{ edit ? "updating" : "creating" }} this role? Changes will not be
-          saved.</template
-        >
-      </ConfirmationModal>
+          saved.</template>
+      </ConfirmationDialog>
     </Container>
   </div>
 </template>
@@ -341,13 +288,16 @@ export default {
 
   &__form {
     @apply flex flex-col gap-[24px] px-4 pt-4 pb-4;
+
     .form__policy {
       @apply flex flex-col gap-4 text-[1rem];
+
       .policy__name {
         @apply font-bold;
       }
+
       .policy__actions {
-        @apply flex gap-10  flex-wrap;
+        @apply flex gap-10 flex-wrap;
       }
     }
 
@@ -355,6 +305,7 @@ export default {
       @apply flex gap-[10px];
     }
   }
+
   &__footer {
     @apply flex flex-col items-end px-4 pb-4;
   }

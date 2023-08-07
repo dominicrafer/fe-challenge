@@ -46,9 +46,9 @@ export const useSidebarStore = defineStore({
   actions: {
     toggleSidebar() {
       const { width } = useWindowSize();
-      if (width.value <= 1024) {
+      // if (width.value <= 1024) {
         this.collapsed = !this.collapsed;
-      }
+      // }
     },
     selectMenu(menuDetails) {
       const { $_ } = useNuxtApp();

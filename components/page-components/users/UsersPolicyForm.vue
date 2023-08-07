@@ -18,16 +18,21 @@
           </Select>
         </div>
         <div class="policy__footer">
-          <Button variant="success" type="submit" :loading="isSubmitting">Save</Button>
+          <Button color="positive" type="submit" label="Save" :loading="isSubmitting"></Button>
         </div>
       </VForm>
-      <ConfirmationModal :show="leaveWarningModalVisible"
-        :title="`${edit ? 'Cancel Updating Policy' : 'Cancel Policy Creation'}`" type="warning" confirmText="Proceed"
-        @close="leaveWarningModalVisible = false" @confirm="confirmLeave">
-        <template #message>Are you sure you want to cancel
+      <ConfirmationDialog
+        :title="`${edit ? 'Cancel Updating Policy' : 'Cancel Policy Creation'}`"
+        v-model="leaveWarningModalVisible"
+        @close="leaveWarningModalVisible = false"
+        @confirm="confirmLeave"
+      >
+        <template #message
+          >Are you sure you want to cancel
           {{ edit ? "updating" : "creating" }} this policy? Changes will not be
-          saved.</template>
-      </ConfirmationModal>
+          saved.</template
+        >
+      </ConfirmationDialog>
     </Container>
   </div>
 </template>

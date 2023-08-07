@@ -2,27 +2,16 @@
   <div class="page">
     <PageHeader title="Policies">
       <template #right-panel>
-        <router-link
-          :to="{
-            path: '/users/policies/create',
-          }"
-          v-has:policies.action-permission="`policies:write`"
-        >
-          <Button variant="success">New Policy</Button>
+        <router-link :to="{
+          path: '/users/policies/create',
+        }" v-has:policies.action-permission="`policies:write`">
+          <Button color="positive" label="New Policy"></Button>
         </router-link>
       </template>
     </PageHeader>
     <div class="page__body">
-      <Table
-        :loading="pending"
-        paginationType="dynamodb"
-        @nextPage="nextPage"
-        @prevPage="prevPage"
-        :searchable="false"
-        :filterable="false"
-        :sortable="false"
-        :exportable="false"
-      >
+      <Table :loading="pending" paginationType="dynamodb" @nextPage="nextPage" @prevPage="prevPage" :searchable="false"
+        :filterable="false" :sortable="false" :exportable="false">
         <template #table-data>
           <table class="table__data">
             <thead>
@@ -33,49 +22,28 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(policyDetails, index) in data?.resource?.policies"
-                :key="index"
-              >
+              <tr v-for="(policyDetails, index) in data?.resource?.policies" :key="index">
                 <td align="left">{{ policyDetails.policy }}</td>
                 <td align="left">{{ policyDetails.description }}</td>
                 <td align="center">
                   <div class="table__data-actions">
-                    <router-link
-                      :to="{
-                        name: 'users-policies-id',
-                        params: { id: policyDetails.policy },
-                      }"
-                      v-has:policies.action-permission="[
-                        `policies:edit`,
-                        `policies:read`,
-                      ]"
-                    >
-                      <div
-                        class="flex items-center justify-center gap-1 border-b border-primary"
-                      >
+                    <router-link :to="{
+                      name: 'users-policies-id',
+                      params: { id: policyDetails.policy },
+                    }" v-has:policies.action-permission="[
+  `policies:edit`,
+  `policies:read`,
+]">
+                      <div class="flex items-center justify-center gap-1 border-b border-primary">
                         <span class="text-primary">Edit </span>
-                        <Icon
-                          width="20"
-                          height="20"
-                          color="#29335c"
-                          name="material-symbols:edit"
-                        />
+                        <Icon width="20" height="20" color="#29335c" name="material-symbols:edit" />
                       </div>
                     </router-link>
 
-                    <div
-                      class="flex items-center justify-center gap-1 border-b border-paprika"
-                      @click="deletePolicy(policyDetails.policy)"
-                      v-has:policies.action-permission="`policies:delete`"
-                    >
+                    <div class="flex items-center justify-center gap-1 border-b border-paprika"
+                      @click="deletePolicy(policyDetails.policy)" v-has:policies.action-permission="`policies:delete`">
                       <span class="text-paprika">Delete</span>
-                      <Icon
-                        width="20"
-                        height="20"
-                        color="#E45959"
-                        name="material-symbols:delete-outline"
-                      />
+                      <Icon width="20" height="20" color="#E45959" name="material-symbols:delete-outline" />
                     </div>
                   </div>
                 </td>
@@ -84,18 +52,15 @@
           </table>
         </template>
       </Table>
-      <ConfirmationModal
-        :show="deleteConfirmationModalVisible"
-        title="Delete Policy"
-        type="danger"
-        confirmText="Delete"
-        @close="deleteConfirmationModalVisible = false"
-        @confirm="confirmDelete"
-      >
-        <template #message
-          >Are you sure you want to continue? This cannot be undone.</template
-        >
-      </ConfirmationModal>
+      <!-- <ConfirmationModal :show="deleteConfirmationModalVisible" title="Delete Policy" type="danger" confirmText="Delete"
+        @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
+        <template #message>Are you sure you want to continue? This cannot be undone.</template>
+      </ConfirmationModal> -->
+
+      <ConfirmationDialog title="Delete Policy" v-model="deleteConfirmationModalVisible"
+      @close="deleteConfirmationModalVisible = false" @confirm="confirmDelete">
+      <template #message>Are you sure you want to continue? This cannot be undone.</template>
+    </ConfirmationDialog>
     </div>
   </div>
 </template>
@@ -106,7 +71,7 @@ definePageMeta({
 });
 export default {
   setup() {
-    const { $api, $_, $toast} = useNuxtApp();
+    const { $api, $_, $toast } = useNuxtApp();
     // PAGINATION
     let previousEvaluatedKey = ref([]);
     let nextEvaluatedKey = ref(null);
@@ -139,6 +104,7 @@ export default {
 
     async function confirmDelete() {
       pending.value = true;
+      deleteConfirmationModalVisible.value = false;
       await $api.policies.deletePolicy(selectedPolicy.value);
       $toast.success("Policy successfully deleted");
       refresh();
