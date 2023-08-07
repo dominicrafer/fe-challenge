@@ -20,27 +20,29 @@
         >
           <div class="content__header">
             <div class="header__left-panel">
-              <form
-                v-if="searchable"
-                @submit.prevent="$emit('search', searchValue)"
-              >
+              <q-form class="flex items-center q-gutter-md">
                 <InputField
                   class="left-panel__search"
                   v-model="searchValue"
                   name="search"
-                  placeholder="Search by name here..."
+                  label="Search by name here..."
                   customIconClass="search__custom-icon"
+                  :outlined="false"
                 >
-                  <template #icon>
+                  <template #append>
                     <!-- <Icon name="mdi:magnify" /> -->
                     <div class="search__search-container">
                       <Button
                         type="submit"
-                        class="search-container__search-button"
-                        variant="warning"
-                        >Search
+                        color="warning"
+                        :class="{ 'no-dropdown': !$slots['search-filters'] }"
+                        label="Search"
+                        @click="search"
+                      >
                       </Button>
+
                       <Popper
+                        v-if="$slots['search-filters']"
                         class="search-container__popper"
                         placement="bottom-end"
                       >
@@ -58,37 +60,44 @@
                     </div>
                   </template>
                 </InputField>
-              </form>
+                <div>
+                  <q-checkbox v-if="showCheckbox" v-model="right" label="Include Inactive Devices" @click="checkFilter"/>
+                </div>
+              </q-form>
             </div>
             <div class="header__right-panel">
+              <Button
+                v-if="showDownloadButton"
+                color="warning"
+                label="Request Download"
+                icon="file_download"
+                @click="downloadResponse"
+              />
               <Button
                 v-if="exportable"
                 v-has:action-permission="exportPermission"
                 @click="$emit('export')"
-                variant="warning"
-              >
-                <template #icon-start>
-                  <Icon name="mdi:export" width="20" height="20" /> </template
-                >Export
-              </Button>
-              <Button v-if="sortable" @click="$emit('sort')" variant="warning">
-                <template #icon-start>
-                  <Icon name="mdi:sort" width="20" height="20" /> </template
-                >Sort By
-              </Button>
+                color="warning"
+                label="Export"
+                icon="file_download"
+              />
+
+              <Button
+                v-if="sortable"
+                @click="$emit('sort')"
+                color="warning"
+                label="Sort By"
+                icon="sort"
+              />
+
               <Button
                 v-if="filterable"
                 @click="$emit('filter')"
-                variant="warning"
-              >
-                <template #icon-start>
-                  <Icon
-                    name="mdi:filter-cog-outline"
-                    width="20"
-                    height="20"
-                  /> </template
-                >Filter By
-              </Button>
+                color="warning"
+                label="Filter By"
+                icon="filter_alt"
+              />
+
               <slot name="header-right-panel"></slot>
             </div>
           </div>
@@ -133,6 +142,7 @@
 <script>
 import VPagination from "@hennge/vue3-pagination";
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
+import { ref } from 'vue'
 
 export default {
   props: {
@@ -181,16 +191,55 @@ export default {
       // default or dynamodb
       default: "default",
     },
+    checkBox: {
+      type: Boolean,
+      default: false,
+    }
   },
   setup(props, { emit }) {
     console.log(props.module);
     let page = ref(props.activatePage);
     let searchValue = ref("");
+    const right = ref(props.checkBox);
     const exportPermission = `${props.module}Export`;
+    const route = useRoute();
+
+    function checkFilter() {
+      if (right.value) {
+        emit("filter", true)
+      }
+      else {
+        emit("filter", false)
+      }
+    }
+
+    function search() {
+      console.log("SEARCH");
+      // if (searchValue.value) {
+      emit("search", searchValue.value);
+      // }
+    }
+    function downloadResponse() {
+      console.log("Download")
+      emit("downloadResponse");
+    }
+    const showDownloadButton = computed(() => {
+      return route.name === 'surveys';
+    });
+    const showCheckbox = computed(() => {
+      return route.name === 'devices'
+    })
+ 
     return {
+      search,
       page,
       searchValue,
       exportPermission,
+      right,
+      showDownloadButton,
+      showCheckbox,
+      downloadResponse,
+      checkFilter
     };
   },
   components: {
@@ -231,6 +280,9 @@ export default {
             @apply flex h-full items-center;
             .search-container__search-button {
               @apply py-0 px-2 h-full text-sm rounded-none;
+              &.no-dropdown {
+                border-radius: 0px 5px 5px 0px;
+              }
             }
 
             .search-container__popper {

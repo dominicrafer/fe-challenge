@@ -4,40 +4,38 @@ export const useSidebarStore = defineStore({
   id: "sidebar",
   persist: false,
   state: () => {
-    const { $_ } = useNuxtApp();
     const route = useRoute();
     const currentRoute = route.path.split("/")[1];
-    console.log(currentRoute)
     return {
       collapsed: false,
       menus: [
         {
           label: "Users",
           name: "users",
-          icon: "mdi:account-multiple-outline",
-          permission: ["Users", "Roles", "Policies"],
+          icon: "person",
+          permission: "Users",
           collapsed: currentRoute !== "users",
           submenus: [
             {
               name: "user-list",
               label: "List",
               path: "/users",
-              icon: "mdi:account-multiple-outline",
-              permission: "Users",
+              icon: "list",
+              permission: null,
             },
             {
               name: "user-roles",
               label: "Roles",
               path: "/users/roles",
-              icon: "mdi:badge-account-horizontal-outline",
-              permission: "Roles",
+              icon: "groups",
+              permission: null,
             },
             {
               name: "user-policies",
               label: "Policies",
               path: "/users/policies",
-              icon: "mdi:shield-account-variant-outline",
-              permission: "Policies",
+              icon: "vpn_key",
+              permission: null,
             },
           ],
         },

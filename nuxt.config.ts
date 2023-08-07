@@ -1,18 +1,23 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import packageJSON from './package.json';
-
+import packageJSON from "./package.json";
+import quasarConfig from "./quasar.config";
 export default defineNuxtConfig({
   ssr: false,
-  modules: ["@nuxtjs/tailwindcss", "nuxt-icon", ['@nuxtjs/google-fonts',
-    {
-      families: {
-        OpenSans: [400, 500, 600, 700],
-        Lato: [100, 300],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "nuxt-icon",
+    [
+      "@nuxtjs/google-fonts",
+      {
+        families: {
+          OpenSans: [400, 500, 600, 700],
+          Lato: [100, 300],
+        },
       },
-    }
-  ],
-    '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    ],
+    "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+    "nuxt-quasar-ui",
   ],
   css: [
     "@/assets/css/main.css",
@@ -21,23 +26,25 @@ export default defineNuxtConfig({
     "@/assets/css/select.css",
     "@/assets/css/pagination.css",
     "@/assets/css/vue3-toastify.css",
-    "@/assets/css/vue3-popper.css"
+    "@/assets/css/vue3-popper.css",
   ],
+  quasar: quasarConfig,
   alias: {
-    './runtimeConfig': './runtimeConfig.browser',
+    "./runtimeConfig": "./runtimeConfig.browser",
     // '@aws-amplify/core': '@aws-amplify/core/lib',
     // '@aws-amplify/auth': '@aws-amplify/auth/lib',
     // '@aws-amplify/storage': '@aws-amplify/storage/lib',
   },
+
   vite: {
     define: {
-      'window.global': {}
-    }
+      "window.global": {},
+    },
   },
   postcss: {
     plugins: {
-      'postcss-import': {},
-      'tailwindcss/nesting': {},
+      "postcss-import": {},
+      "tailwindcss/nesting": {},
       "postcss-nested": {},
       tailwindcss: {},
       autoprefixer: {},
@@ -46,8 +53,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       app_version: packageJSON.version,
-      api_base_url: process.env.API_URL
-    }
+      api_base_url: process.env.API_URL,
+    },
   },
   components: [
     {

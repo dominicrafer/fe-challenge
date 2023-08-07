@@ -1,6 +1,5 @@
 <template>
   <VForm
-    @keydown.enter.prevent
     :initialValues="initialValues"
     @submit="submitHandler"
     @invalid-submit="onInvalidSubmit"

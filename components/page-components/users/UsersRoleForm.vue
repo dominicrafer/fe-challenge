@@ -19,7 +19,8 @@
           >
             <template #label> Role </template>
           </InputField>
-          <Textarea
+          <InputField
+            type="textarea"
             name="description"
             label="Description"
             placeholder="Enter role description"
@@ -252,6 +253,7 @@ export default {
       }
     }
     function selectAllPolicies(e) {
+      console.log(e, 'E')
       if (e.target.checked) {
         let allPolicies = [];
         $_.forEach(policies.value.resource, (policyGroup) => {
