@@ -23,7 +23,7 @@
             :to="{ path: submenuDetails.path }"
             class="menus__menu"
             active-class="active"
-            hide-expand-icon
+            hide-expand-icon@
             :class="{ active: $route.path === submenuDetails.path }"
           />
         </q-expansion-item>
