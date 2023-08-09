@@ -1,6 +1,6 @@
 <template>
   <div class="checkbox">
-    <q-checkbox v-model="value" :val="inputValue" @update:model-value="(e) => $emit('change', e)" :label="label"
+    <q-checkbox v-bind="$attrs" v-model="value" :val="inputValue" @update:model-value="(e) => $emit('change', e)" :label="label"
       size="md" />
   </div>
 </template>
