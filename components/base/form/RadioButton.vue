@@ -1,5 +1,5 @@
 <template>
-  <q-radio v-model="value" :val="inputValue" @update:model-value="(e) => $emit('change', e)" :label="label"
+  <q-radio v-bind="$attrs" v-model="value" :val="inputValue" @update:model-value="(e) => $emit('change', e)" :label="label"
     size="md" />
 </template>
 
