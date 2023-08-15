@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     "@pinia-plugin-persistedstate/nuxt",
     "nuxt-quasar-ui",
   ],
+  quasar: quasarConfig,
   css: [
     "@/assets/css/main.css",
     "@/assets/css/date-picker.css",
@@ -28,7 +29,6 @@ export default defineNuxtConfig({
     "@/assets/css/vue3-toastify.css",
     "@/assets/css/vue3-popper.css",
   ],
-  quasar: quasarConfig,
   alias: {
     "./runtimeConfig": "./runtimeConfig.browser",
     // '@aws-amplify/core': '@aws-amplify/core/lib',
@@ -62,4 +62,7 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+  tailwindcss: {
+    exposeConfig: true,
+  },
 });

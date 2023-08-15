@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  name: "tailwind-config",
   mode: "jit",
   content: [
     "./components/**/*.{js,vue,ts}",
@@ -14,7 +15,7 @@ module.exports = {
         body: ['"Open Sans"'],
       },
       colors: {
-        primary: "#3f4252",
+        primary: "#29345B",
         secondary: "#838295",
         paprika: "#E45959",
         salmon: "#FFEAEA",
@@ -27,6 +28,7 @@ module.exports = {
         "baking-soda": "#E5E5E5",
         gainsboro: "#DBDEDA",
         mackerel: "#9B9B9B",
+        mint: "#41B883",
         "pastel-red": "#FF6A6A",
       },
     },
