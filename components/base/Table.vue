@@ -2,57 +2,27 @@
   <Container :loading="loading">
     <div class="table">
       <div class="table__content">
-        <div class="content__tabs" v-if="tabs">
-          <Tabs
-            :tabs="tabs"
-            :active="activeTab"
-            @changeTab="(tab) => $emit('changeTab', tab)"
-          />
-        </div>
-        <template
-          v-if="
-            exportable ||
-            sortable ||
-            searchable ||
-            filterable ||
-            $slots['header-right-panel']
-          "
-        >
+        <template v-if="exportable ||
+          sortable ||
+          searchable ||
+          filterable ||
+          $slots['header-right-panel']
+          ">
           <div class="content__header">
             <div class="header__left-panel">
               <q-form class="flex items-center q-gutter-md">
-                <InputField
-                  class="left-panel__search"
-                  v-model="searchValue"
-                  name="search"
-                  label="Search by name here..."
-                  customIconClass="search__custom-icon"
-                  :outlined="false"
-                >
+                <InputField class="left-panel__search" v-model="searchValue" name="search" label="Search by name here..."
+                  customIconClass="search__custom-icon" :outlined="false">
                   <template #append>
                     <!-- <Icon name="mdi:magnify" /> -->
                     <div class="search__search-container">
-                      <Button
-                        type="submit"
-                        color="warning"
-                        :class="{ 'no-dropdown': !$slots['search-filters'] }"
-                        label="Search"
-                        @click="search"
-                      >
+                      <Button type="submit" color="warning" :class="{ 'no-dropdown': !$slots['search-filters'] }"
+                        label="Search" @click="search">
                       </Button>
 
-                      <Popper
-                        v-if="$slots['search-filters']"
-                        class="search-container__popper"
-                        placement="bottom-end"
-                      >
-                        <Icon
-                          name="mdi:chevron-down"
-                          class="search-container__custom-icon"
-                          color="white"
-                          width="20"
-                          height="20"
-                        />
+                      <Popper v-if="$slots['search-filters']" class="search-container__popper" placement="bottom-end">
+                        <Icon name="mdi:chevron-down" class="search-container__custom-icon" color="white" width="20"
+                          height="20" />
                         <template #content>
                           <slot name="search-filters"></slot>
                         </template>
@@ -61,42 +31,19 @@
                   </template>
                 </InputField>
                 <div>
-                  <q-checkbox v-if="showCheckbox" v-model="right" label="Include Inactive Devices" @click="checkFilter"/>
+                  <q-checkbox v-if="showCheckbox" v-model="right" label="Include Inactive Devices" @click="checkFilter" />
                 </div>
               </q-form>
             </div>
             <div class="header__right-panel">
-              <Button
-                v-if="showDownloadButton"
-                color="warning"
-                label="Request Download"
-                icon="file_download"
-                @click="downloadResponse"
-              />
-              <Button
-                v-if="exportable"
-                v-has:action-permission="exportPermission"
-                @click="$emit('export')"
-                color="warning"
-                label="Export"
-                icon="file_download"
-              />
+              <Button v-if="showDownloadButton" color="warning" label="Request Download" icon="file_download"
+                @click="downloadResponse" />
+              <Button v-if="exportable" v-has:action-permission="exportPermission" @click="$emit('export')"
+                color="warning" label="Export" icon="file_download" />
 
-              <Button
-                v-if="sortable"
-                @click="$emit('sort')"
-                color="warning"
-                label="Sort By"
-                icon="sort"
-              />
+              <Button v-if="sortable" @click="$emit('sort')" color="warning" label="Sort By" icon="sort" />
 
-              <Button
-                v-if="filterable"
-                @click="$emit('filter')"
-                color="warning"
-                label="Filter By"
-                icon="filter_alt"
-              />
+              <Button v-if="filterable" @click="$emit('filter')" color="warning" label="Filter By" icon="filter_alt" />
 
               <slot name="header-right-panel"></slot>
             </div>
@@ -106,32 +53,14 @@
           <slot name="table-data"></slot>
         </div>
         <div class="content__footer">
-          <v-pagination
-            v-if="paginationType === 'default'"
-            v-model="page"
-            :pages="pages"
-            :range-size="1"
-            @update:modelValue="$emit('paginate', page)"
-          />
+          <v-pagination v-if="paginationType === 'default'" v-model="page" :pages="pages" :range-size="1"
+            @update:modelValue="$emit('paginate', page)" />
 
-          <div
-            class="footer__pagination-ddb"
-            v-if="paginationType === 'dynamodb'"
-          >
-            <Icon
-              name="material-symbols:chevron-left-rounded"
-              class="pagination-ddb__prev"
-              width="24"
-              height="24"
-              @click="$emit('prevPage')"
-            />
-            <Icon
-              name="material-symbols:chevron-right-rounded"
-              class="pagination-ddb__next"
-              width="24"
-              height="24"
-              @click="$emit('nextPage')"
-            />
+          <div class="footer__pagination-ddb" v-if="paginationType === 'dynamodb'">
+            <Icon name="material-symbols:chevron-left-rounded" class="pagination-ddb__prev" width="24" height="24"
+              @click="$emit('prevPage')" />
+            <Icon name="material-symbols:chevron-right-rounded" class="pagination-ddb__next" width="24" height="24"
+              @click="$emit('nextPage')" />
           </div>
         </div>
       </div>
@@ -156,14 +85,6 @@ export default {
     },
     activatePage: {
       type: Number,
-      default: 1,
-    },
-    tabs: {
-      type: Array,
-      default: [],
-    },
-    activeTab: {
-      type: [Number, String],
       default: 1,
     },
     pages: {
@@ -229,7 +150,7 @@ export default {
     const showCheckbox = computed(() => {
       return route.name === 'devices'
     })
- 
+
     return {
       search,
       page,
@@ -251,6 +172,7 @@ export default {
 <style lang="postcss">
 .table {
   @apply w-full h-full min-h-[580px];
+
   &__tabs {
     @apply inline-block;
     @apply w-full;
@@ -276,10 +198,13 @@ export default {
 
         .left-panel__search {
           @apply w-[350px];
+
           .search__search-container {
             @apply flex h-full items-center;
+
             .search-container__search-button {
               @apply py-0 px-2 h-full text-sm rounded-none;
+
               &.no-dropdown {
                 border-radius: 0px 5px 5px 0px;
               }
@@ -287,15 +212,19 @@ export default {
 
             .search-container__popper {
               @apply h-full block border-none m-0 h-full !important;
-              > div:first-child {
+
+              >div:first-child {
                 @apply h-full;
               }
+
               .popper {
                 @apply cursor-default w-max;
               }
+
               .search-container__custom-icon {
                 border-radius: 0px 5px 5px 0px;
                 @apply h-full bg-yellow-500 border-l border-white;
+
                 &:hover {
                   filter: brightness(110%);
                 }
@@ -319,9 +248,11 @@ export default {
       @apply flex-grow-0;
       @apply flex flex-row justify-center items-end;
       @apply p-4;
+
       .footer__pagination-ddb {
         @apply flex gap-[20px];
         @apply cursor-pointer;
+
         .pagination-ddb__prev,
         .pagination-ddb__next {
           &:hover {
@@ -332,6 +263,7 @@ export default {
     }
   }
 }
+
 .search__custom-icon {
   @apply top-0 right-0 h-full !important;
 }

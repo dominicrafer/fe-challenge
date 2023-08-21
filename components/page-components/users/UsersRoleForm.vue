@@ -13,7 +13,6 @@
         </div>
         <SectionTitle title="Policies" class="rounded-t-sm" />
         <div class="role__form">
-          <Spinner class="m-auto" v-if="pending" />
           <div class="form__col"></div>
           <Checkbox v-if="!pending" inputValue="*:*" label="Select All" id="actions" name="policies"
             @change="selectAllPolicies" v-model="formData.policies" />
@@ -24,7 +23,7 @@
             <div class="policy__actions">
               <Checkbox :id="policyActionDetails.slug" :inputValue="policyActionDetails.slug"
                 :label="$_.startCase(policyActionDetails.action)" @onChange="($event) =>
-                    selectPolicy($event, policyDetails, policyActionDetails)
+                  selectPolicy($event, policyDetails, policyActionDetails)
                   " name="policies" v-model="formData.policies" v-model:isDirty="dirtyFieldValidator.policies" v-for="(policyActionDetails, actionIndex) in [
     ...policyDetails.policies,
     {
@@ -50,6 +49,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     isLoading: {
@@ -82,7 +82,8 @@ export default {
     onBeforeRouteLeave((to, from, next) => {
       if (allowRouteLeave.value) {
         next();
-      } else {
+      }
+      else {
         leaveWarningModalVisible.value = true;
         leaveRoute.value = to;
       }
@@ -98,7 +99,6 @@ export default {
     const isPolicyFetching = ref(false);
     const { data: policies, pending } = await $api.policies.getAllPolicies();
     mapToFormData(props.roleDetails);
-
     // watch(
     //   policies,
     //   () => {
@@ -115,7 +115,8 @@ export default {
           });
         });
         formData.policies = allPolicies;
-      } else {
+      }
+      else {
         $_.forEach(roleDetails.policies, (slug) => {
           const action = $_.split(slug, ":");
           if (action[1] === "*") {
@@ -130,7 +131,6 @@ export default {
         });
       }
     }
-
     // Select policy behaviour
     function selectPolicy(e, policyGroup, policyActionDetails) {
       const action = $_.split(policyActionDetails.slug, ":");
@@ -153,54 +153,29 @@ export default {
             break;
         }
         // if all module's policy is selected, automatically tick 'All' checkbox
-        if (
-          !$_.difference(
-            $_.map(policyGroup.policies, "slug"),
-            $_.pull(
-              formData.policies,
-              `${$_.toLower(policyGroup.policy_group_name)}:*`
-            )
-          ).length
-        ) {
-          formData.policies.push(
-            `${$_.toLower(policyGroup.policy_group_name)}:*`
-          );
+        if (!$_.difference($_.map(policyGroup.policies, "slug"), $_.pull(formData.policies, `${$_.toLower(policyGroup.policy_group_name)}:*`)).length) {
+          formData.policies.push(`${$_.toLower(policyGroup.policy_group_name)}:*`);
         }
         formData.policies = $_.uniq(formData.policies);
-      } else {
+      }
+      else {
         // if All Module's Policy is unselected
         if (action[1] === "*") {
-          formData.policies = $_.difference(
-            formData.policies,
-            $_.map(policyGroup.policies, "slug")
-          );
+          formData.policies = $_.difference(formData.policies, $_.map(policyGroup.policies, "slug"));
         }
         switch (action[1]) {
           case "list":
-            formData.policies = $_.pull(
-              formData.policies,
-              `${action[0]}:read`,
-              `${action[0]}:write`,
-              `${action[0]}:export`,
-              `${action[0]}:delete`,
-              `${action[0]}:edit`
-            );
+            formData.policies = $_.pull(formData.policies, `${action[0]}:read`, `${action[0]}:write`, `${action[0]}:export`, `${action[0]}:delete`, `${action[0]}:edit`);
             break;
           case "*":
-            formData.policies = $_.difference(
-              formData.policies,
-              $_.map(policyGroup.policies, "slug")
-            );
+            formData.policies = $_.difference(formData.policies, $_.map(policyGroup.policies, "slug"));
             break;
         }
-        formData.policies = $_.pull(
-          formData.policies,
-          `${$_.toLower(policyGroup.policy_group_name)}:*`
-        );
+        formData.policies = $_.pull(formData.policies, `${$_.toLower(policyGroup.policy_group_name)}:*`);
       }
     }
     function selectAllPolicies(e) {
-      console.log(e, 'E')
+      console.log(e, 'E');
       if (e.target.checked) {
         let allPolicies = [];
         $_.forEach(policies.value.resource, (policyGroup) => {
@@ -211,7 +186,8 @@ export default {
         });
         allPolicies.push("*:*");
         formData.policies = allPolicies;
-      } else {
+      }
+      else {
         formData.policies = [];
       }
     }
@@ -219,7 +195,6 @@ export default {
       allowRouteLeave.value = true;
       if (props.edit) {
         let payload = {};
-
         $_.forEach(dirtyFieldValidator, (isDirty, key) => {
           if (isDirty) {
             payload[key] =
@@ -228,11 +203,11 @@ export default {
         });
         console.log(payload);
         await props.submitHandler(parsePayload(payload));
-      } else {
+      }
+      else {
         props.submitHandler(parsePayload(values));
       }
     }
-
     function filterPolicies(policies) {
       const modulesWithAllPolicySelected = $_.filter(policies, (policy) => {
         const action = $_.split(policy, ":");
@@ -241,11 +216,7 @@ export default {
       let filteredPolicies = policies;
       $_.forEach(modulesWithAllPolicySelected, (policy) => {
         const action = $_.split(policy, ":");
-
-        filteredPolicies = $_.filter(
-          filteredPolicies,
-          (slug) => !$_.includes(slug, `${action[0]}:`)
-        );
+        filteredPolicies = $_.filter(filteredPolicies, (slug) => !$_.includes(slug, `${action[0]}:`));
       });
       return [...filteredPolicies, ...modulesWithAllPolicySelected];
     }
@@ -259,7 +230,6 @@ export default {
       };
       return parsedPayload;
     }
-
     function confirmLeave() {
       const router = useRouter();
       leaveWarningModalVisible.value = false;

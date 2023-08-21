@@ -1,12 +1,7 @@
 <template>
   <div class="container-component" :class="`${padding} ${width} ${height}`">
-    <div class="container-component__loader-body" v-if="loading">
-      <div class="loader-body__loader">
-        <Spinner :spinnerSize="spinnerSize" />
-        {{ loaderMessage }}
-      </div>
-    </div>
-    <slot></slot>
+    <slot />
+    <InnerLoading :showing="loading"/>
   </div>
 </template>
 
@@ -37,7 +32,7 @@ export default {
       default: "w-12 h-12 border-2",
     },
   },
-  setup(props) {},
+  setup(props) { },
 };
 </script>
 
@@ -47,22 +42,5 @@ export default {
   @apply rounded-sm;
   @apply bg-white;
   @apply w-full min-w-fit;
-  /* @media (min-width: 1366px) {
-    @apply min-w-fit;
-  } */
-  &__loader-body {
-    @apply bg-opacity-50 bg-white z-[53];
-    @apply w-full h-full;
-    @apply absolute;
-  }
-
-  .loader-body__loader {
-    @apply w-full h-full;
-    @apply flex flex-col items-center justify-center;
-    @apply text-sm font-bold text-primary;
-    @apply sticky;
-    @apply gap-[10px];
-    top: 50%;
-  }
 }
 </style>

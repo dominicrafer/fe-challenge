@@ -9,6 +9,19 @@
     @paginate="paginate"
     @search="searchUsers"
     :exportable="false"
+    :tabs="[
+        {
+          name: 'mails',
+          icon: 'mail',
+          label: 'Mails'
+        },
+        {
+          name: 'alarms',
+          icon: 'alarm',
+          label: 'Alarms'
+        },
+      ]"
+      :activeTab="activeTab"
   >
     <template #table-data>
       <table class="table__data">
@@ -104,9 +117,6 @@
     @apply="applySorts"
   />
   <PageHeader title="Users">
-    <!-- <template #left-panel>
-        <Tabs :tabs="tabs" :active="activeTab" @changeTab="changeTabAction" />
-      </template> -->
     <template #right-panel>
       <Button
         color="positive"
@@ -131,6 +141,7 @@ export default {
     const { $api, $_, $toast, $dayjs } = useNuxtApp();
     const usersFilterDrawerVisible = ref(false);
     const usersSortDrawerVisible = ref(false);
+    const activeTab = ref(null);
     // PAGINATION
     let search = ref(null);
     let filters = {
@@ -271,6 +282,7 @@ export default {
       applyFilters,
       applySorts,
       searchFilters,
+      activeTab
     };
   },
 };
