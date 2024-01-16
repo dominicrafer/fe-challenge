@@ -1,58 +1,56 @@
-import { defineRule, configure, Form, Field, ErrorMessage } from "vee-validate";
-import AllRules from "@vee-validate/rules";
+import * as VeeValidate from "vee-validate";
+import * as AllRules from "@vee-validate/rules";
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component('VForm', Form)
-  nuxtApp.vueApp.component('VField', Field)
-  nuxtApp.vueApp.component('VErrorMessage', ErrorMessage)
+  nuxtApp.vueApp.component('VForm', VeeValidate.Form)
+  nuxtApp.vueApp.component('VField', VeeValidate.Field)
+  nuxtApp.vueApp.component('VErrorMessage', VeeValidate.ErrorMessage)
   const { $_ } = useNuxtApp()
-  Object.keys(AllRules)
-    .filter((k) => k !== "default")
-    .forEach((rule) => {
-      defineRule(rule, AllRules[rule]);
-    });
+  Object.keys(AllRules).forEach(rule => {
+    VeeValidate.defineRule(rule, AllRules[rule]);
+  });
 
 
-  defineRule('phone_number', value => {
+  VeeValidate.defineRule('phone_number', value => {
     if (!/^(09|\+639)\d{9}$/.test(value)) {
       return 'This field must be a valid phone_number';
     }
     return true;
   });
 
-  defineRule('has_number', value => {
+  VeeValidate.defineRule('has_number', value => {
     if (!/\d/.test(value)) {
       return 'Must contain at least one number';
     }
     return true;
   })
-  defineRule('has_special_char', value => {
+  VeeValidate.defineRule('has_special_char', value => {
     if (!/[!@#$%^&*]/.test(value)) {
       return 'Must contain at least one special character';
     }
     return true;
   })
-  defineRule('has_upper_lower_case', value => {
+  VeeValidate.defineRule('has_upper_lower_case', value => {
     if (!/^(?=.*[a-z])(?=.*[A-Z])/.test(value)) {
       return 'Must contain both uppercase and lowercase characters';
     }
     return true;
   })
-  defineRule('no_spaces', (value) => {
+  VeeValidate.defineRule('no_spaces', (value) => {
     if (/\s/g.test(value)) {
       return 'This field cannot contain any spaces.';
     }
     return true;
   });
 
-  defineRule('ph_phone_number', (value) => {
+  VeeValidate.defineRule('ph_phone_number', (value) => {
     if (!/^\+639\d{9}$/g.test(value)) {
       return 'Invalid mobile number format';
     }
     return true;
   });
 
-  defineRule('select_required', (value) => {
+  VeeValidate.defineRule('select_required', (value) => {
     if ($_.isArray(value)) {
       return !value.length ? false : true
     }
@@ -63,7 +61,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   
-  defineRule('confirm_password', (value, [otherValue]) => {
+  VeeValidate.defineRule('confirm_password', (value, [otherValue]) => {
     if (value !== otherValue) {
       return 'Passwords do not match';
     }
@@ -71,7 +69,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   // Customize global validation rules error message
-  configure({
+  VeeValidate.configure({
     generateMessage: (context) => {
 
       switch (context.rule.name) {

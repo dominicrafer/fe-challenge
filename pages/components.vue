@@ -18,34 +18,69 @@
         <span class="component__name">Alerts</span>
 
         <div class="component__samples">
-          <Alert type="success" title="Success">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="danger" title="Danger">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="info" title="Info">Lorem ipsum dolor sit amet, consectetur.</Alert>
-          <Alert type="warning" title="Warning">Lorem ipsum dolor sit amet, consectetur.</Alert>
+          <Alert type="success" title="Success"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="danger" title="Danger"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="info" title="Info"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
+          <Alert type="warning" title="Warning"
+            >Lorem ipsum dolor sit amet, consectetur.</Alert
+          >
         </div>
       </div>
       <div class="list__component">
         <span class="component__name">Toasts / Pop-up Alerts</span>
 
         <div class="component__samples">
-          <a href="https://sweetalert2.github.io/" class="text-blue-500" target="_blank">
-            https://sweetalert2.github.io/</a>
+          <a
+            href="https://sweetalert2.github.io/"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://sweetalert2.github.io/</a
+          >
         </div>
       </div>
       <Form v-slot="{ errors }">
         <div class="list__component">
           <span class="component__name">Input</span>
           <div class="component__samples">
-            <InputField name="default-input" placeholder="Enter Text" rules="alpha" v-model="test">
+            <InputField
+              name="default-input"
+              placeholder="Enter Text"
+              rules="alpha"
+              v-model="test"
+            >
               <template #label> Text Input </template>
             </InputField>
-            <InputField name="number" type="number" placeholder="Enter Number" v-model="test" rules="digits:3">
+            <InputField
+              name="number"
+              type="number"
+              placeholder="Enter Number"
+              v-model="test"
+              rules="digits:3"
+            >
               <template #label> Number Input </template>
             </InputField>
-            <InputField name="password" placeholder="Enter Password" v-model="test" type="password">
+            <InputField
+              name="password"
+              placeholder="Enter Password"
+              v-model="test"
+              type="password"
+            >
               <template #label> Input Icon </template>
             </InputField>
-            <InputField name="disabled" type="text" placeholder="Disabled" v-model="test" disabled>
+            <InputField
+              name="disabled"
+              type="text"
+              placeholder="Disabled"
+              v-model="test"
+              disabled
+            >
               <template #label> Disabled </template>
             </InputField>
           </div>
@@ -67,8 +102,13 @@
         <div class="list__component">
           <span class="component__name">Textarea</span>
           <div class="component__samples">
-            <InputField type="textarea" name="default-textarea" label="Textarea Input" v-model="textArea"
-              rules="digits:3" />
+            <InputField
+              type="textarea"
+              name="default-textarea"
+              label="Textarea Input"
+              v-model="textArea"
+              rules="digits:3"
+            />
           </div>
         </div>
       </Form>
@@ -86,32 +126,33 @@
         </div>
       </div>
       <div class="list__component">
-        <span class="component__name">Date / Time Picker</span>
-        <div class="component__samples">
-          <a href="https://vue3datepicker.com/props/modes/" class="text-blue-500" target="_blank">
-            https://vue3datepicker.com/props/modes/</a>
-        </div>
-      </div>
-      <div class="list__component">
-        <span class="component__name">Select / Multi Select</span>
-        <div class="component__samples">
-          <a href="https://vue-multiselect.js.org/#sub-props" class="text-blue-500" target="_blank">
-            https://vue-multiselect.js.org/#sub-props</a>
-        </div>
-      </div>
-      <div class="list__component">
         <span class="component__name">Icons</span>
         <div class="component__samples">
-          <a href="https://icon-sets.iconify.design/" class="text-blue-500" target="_blank">
-            https://icon-sets.iconify.design/</a>
+          <a
+            href="https://icon-sets.iconify.design/"
+            class="text-blue-500"
+            target="_blank"
+          >
+            https://icon-sets.iconify.design/</a
+          >
         </div>
       </div>
     </div>
     <Modal title="Modal" :show="modalVisible" @close="modalVisible = false" />
-    <Drawer title="Left Drawer Title" :show="leftDrawerVisible" position="left" @close="leftDrawerVisible = false">
+    <Drawer
+      title="Left Drawer Title"
+      :show="leftDrawerVisible"
+      position="left"
+      @close="leftDrawerVisible = false"
+    >
       <template #footer>Footer</template>
     </Drawer>
-    <Drawer title="Right Drawer Title" :show="rightDrawerVisible" position="right" @close="rightDrawerVisible = false">
+    <Drawer
+      title="Right Drawer Title"
+      :show="rightDrawerVisible"
+      position="right"
+      @close="rightDrawerVisible = false"
+    >
       <template #footer>Footer</template>
     </Drawer>
   </div>
@@ -119,9 +160,7 @@
 
 <script>
 import { Form, useForm } from "vee-validate";
-definePageMeta({
-  layout: "login",
-});
+
 export default {
   setup() {
     const leftDrawerVisible = ref(false);
@@ -129,13 +168,13 @@ export default {
     const modalVisible = ref(false);
 
     const test = ref(null);
-    const textArea = ref('textArea');
+    const textArea = ref("textArea");
     return {
       leftDrawerVisible,
       rightDrawerVisible,
       modalVisible,
       test,
-      textArea
+      textArea,
     };
   },
   components: {

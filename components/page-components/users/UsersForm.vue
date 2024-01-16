@@ -113,9 +113,6 @@
 </template>
 
 <script>
-definePageMeta({
-  layout: "default",
-});
 export default {
   props: {
     isLoading: {

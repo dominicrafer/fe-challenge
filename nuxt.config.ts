@@ -27,20 +27,7 @@ export default defineNuxtConfig({
     "@/assets/css/select.css",
     "@/assets/css/pagination.css",
     "@/assets/css/vue3-toastify.css",
-    "@/assets/css/vue3-popper.css",
   ],
-  alias: {
-    "./runtimeConfig": "./runtimeConfig.browser",
-    // '@aws-amplify/core': '@aws-amplify/core/lib',
-    // '@aws-amplify/auth': '@aws-amplify/auth/lib',
-    // '@aws-amplify/storage': '@aws-amplify/storage/lib',
-  },
-
-  vite: {
-    define: {
-      "window.global": {},
-    },
-  },
   postcss: {
     plugins: {
       "postcss-import": {},

@@ -1,6 +1,14 @@
 <template>
-  <q-input v-bind="$attrs" v-model="value" :type="showPassword ? 'text' : type" :label="label"
-    :error="errors.length ? true : undefined" :error-message="errorMessage" :placeholder="placeholder" no-error-icon>
+  <q-input
+    v-bind="$attrs"
+    v-model="value"
+    :type="showPassword ? 'text' : type"
+    :label="label"
+    :error="errors.length ? true : undefined"
+    :error-message="errorMessage"
+    :placeholder="placeholder"
+    no-error-icon
+  >
     <template #label v-if="$slots.label">
       <slot name="label"></slot>
     </template>

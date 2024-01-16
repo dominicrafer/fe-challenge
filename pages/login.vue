@@ -1,5 +1,5 @@
 <template>
-  <VeeForm @submit="submitHandler">
+  <VForm @submit="submitHandler">
     <div class="login">
       <div class="login__header">
         <Icon name="mdi:account-circle" color="white" width="80" height="80" />
@@ -7,7 +7,7 @@
       </div>
       <div class="login__body">
         <Alert type="danger" v-if="hasError" :title="errorMessage" />
-        <InputField name="username" placeholder="Enter email" v-model="email" rules="email" v-if="!newPasswordRequired">
+        <InputField name="username" placeholder="Enter email" v-model="email" :rules="{email: true}" v-if="!newPasswordRequired">
           <template #label> Email </template>
         </InputField>
         <InputField name="password" placeholder="Enter password" v-model="password" type="password" rules="required"
@@ -35,11 +35,10 @@
         </Button>
       </div>
     </div>
-  </VeeForm>
+  </VForm>
 </template>
 
 <script>
-import { Form as VeeForm } from "vee-validate";
 import { useAuthStore } from "@/store/auth";
 definePageMeta({
   layout: "login",
@@ -114,9 +113,6 @@ export default {
       doConfirmLogin,
       submitHandler,
     };
-  },
-  components: {
-    VeeForm,
   },
 };
 </script>

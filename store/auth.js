@@ -22,26 +22,31 @@ export const useAuthStore = defineStore({
   actions: {
     async login(email, password) {
       const { $auth, $api } = useNuxtApp();
-      const response = await $auth.signIn(email, password);
-      if (response && !response.challengeName) {
-        this.auth.token = response.signInUserSession.idToken.jwtToken;
+      console.log($auth, 'response')
+      const { isSignedIn, nextStep } = await $auth.signIn({ username: email, password });
+      if (isSignedIn && nextStep.signInStep !== 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+        const userDetails = await $auth.getCurrentUser()
+        const session = await $auth.fetchAuthSession()
+        console.log(userDetails, 'userDetailsuserDetails')
+        console.log(session, 'sessionsession')
+        this.auth.token = session.tokens.idToken.toString();
         this.auth.tokenExpiration =
-          response.signInUserSession.idToken.payload.exp;
+          session.tokens.idToken.payload.exp;
         await $api.roles.getCurrentUserRole().then((auth) => {
           this.isAuthenticated = true;
           this.auth = {
             ...this.auth,
             userDetails: {
-              email: response.attributes.email,
-              contact: response.attributes.phone_number,
-              name: response.attributes.name,
+              email: userDetails.signInDetails.loginId,
+              // contact: response.attributes.phone_number,
+              // name: response.attributes.name,
               modules: auth.data.value.resource.modules,
               policies: auth.data.value.resource.policies,
             },
           };
         });
       }
-      return response;
+      return isSignedIn;
     },
     async completeNewPassword(user, email, password) {
       const { $auth } = useNuxtApp();
