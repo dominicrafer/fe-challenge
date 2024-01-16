@@ -25,10 +25,8 @@ export const useAuthStore = defineStore({
       console.log($auth, 'response')
       const { isSignedIn, nextStep } = await $auth.signIn({ username: email, password });
       if (isSignedIn && nextStep.signInStep !== 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
-        const userDetails = await $auth.getCurrentUser()
         const session = await $auth.fetchAuthSession()
-        console.log(userDetails, 'userDetailsuserDetails')
-        console.log(session, 'sessionsession')
+        const { email, phone_number, name } = await $auth.fetchUserAttributes()
         this.auth.token = session.tokens.idToken.toString();
         this.auth.tokenExpiration =
           session.tokens.idToken.payload.exp;
@@ -37,9 +35,9 @@ export const useAuthStore = defineStore({
           this.auth = {
             ...this.auth,
             userDetails: {
-              email: userDetails.signInDetails.loginId,
-              // contact: response.attributes.phone_number,
-              // name: response.attributes.name,
+              email,
+              contact: phone_number,
+              name,
               modules: auth.data.value.resource.modules,
               policies: auth.data.value.resource.policies,
             },
@@ -56,20 +54,21 @@ export const useAuthStore = defineStore({
       }
     },
     async load() {
+      const { $auth, $api } = useNuxtApp();
       try {
-        const { $auth, $api } = useNuxtApp();
-        await $auth.currentAuthenticatedUser().then(async (auth) => {
-          this.auth.token = auth.signInUserSession.idToken.jwtToken;
+        await $auth.fetchUserAttributes().then(async (userDetails) => {
+          const session = await $auth.fetchAuthSession()
+          this.auth.token = session.tokens.idToken.toString();
           this.auth.tokenExpiration =
-            auth.signInUserSession.idToken.payload.exp;
+            session.tokens.idToken.payload.exp;
           await $api.roles.getCurrentUserRole().then((role) => {
             this.isAuthenticated = true;
             this.auth = {
               ...this.auth,
               userDetails: {
-                email: auth.attributes.email,
-                contact: auth.attributes.phone_number,
-                name: auth.attributes.name,
+                email: userDetails.email,
+                contact: userDetails.phone_number,
+                name: userDetails.name,
                 modules: role.data.value.resource.modules,
                 policies: role.data.value.resource.policies,
               },
@@ -77,6 +76,7 @@ export const useAuthStore = defineStore({
           });
         });
       } catch (error) {
+        console.log(error, 'AUTH LOAD ERROR')
         this.auth = {
           userDetails: {
             email: null,
@@ -101,26 +101,17 @@ export const useAuthStore = defineStore({
       };
     },
     async refresh() {
-      const { $auth, $api } = useNuxtApp();
-      try {
-        await new Promise(async (resolve, reject) => {
-          const cognitoUser = await $auth.currentAuthenticatedUser();
-          const currentSession = await $auth.currentSession();
-          await cognitoUser.refreshSession(
-            currentSession.refreshToken,
-            (err, session) => {
-              console.log(session, "refresh");
-              this.auth = {
-                ...this.auth,
-                token: session.idToken.jwtToken,
-                tokenExpiration: session.idToken.payload.exp,
-              };
-              resolve();
-            }
-          );
-        });
-      } catch (error) {
-        this.isAuthenticated = false;
+      const { $auth } = useNuxtApp();
+      if (this.isAuthenticated) {
+        try {
+          const session = await $auth.fetchAuthSession();
+          this.auth.token = session.tokens.idToken.toString();
+          this.auth.tokenExpiration =
+            session.tokens.idToken.payload.exp;
+        } catch (err) {
+          console.log(err, 'REFRESH ERROR');
+          this.isAuthenticated = false;
+        }
       }
     },
   },

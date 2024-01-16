@@ -153,7 +153,7 @@ export default {
     let sort = ref("created_at:desc");
     let params = reactive({
       page: 1,
-      page_size: 10,
+      page_size: '10',
       return_count: true,
       sorts: [sort.value],
     });
