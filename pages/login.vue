@@ -7,31 +7,61 @@
       </div>
       <div class="login__body">
         <Alert type="danger" v-if="hasError" :title="errorMessage" />
-        <InputField name="username" placeholder="Enter email" v-model="email" :rules="{email: true}" v-if="!newPasswordRequired">
+        <InputField
+          name="username"
+          placeholder="Enter email"
+          v-model="email"
+          :rules="{ email: true }"
+          v-if="!newPasswordRequired"
+        >
           <template #label> Email </template>
         </InputField>
-        <InputField name="password" placeholder="Enter password" v-model="password" type="password" rules="required"
-          v-if="!newPasswordRequired">
+        <InputField
+          name="password"
+          placeholder="Enter password"
+          v-model="password"
+          type="password"
+          rules="required"
+          v-if="!newPasswordRequired"
+        >
           <template #label> Password </template>
         </InputField>
-        <InputField name="new-password" placeholder="Enter new password" v-model="newPassword" type="password" :rules="{
-          required: true,
-          min: 8,
-          has_upper_lower_case: true,
-          has_special_char: true,
-          has_number: true,
-        }" v-if="newPasswordRequired">
+        <InputField
+          name="new-password"
+          placeholder="Enter new password"
+          v-model="newPassword"
+          type="password"
+          :rules="{
+            required: true,
+            min: 8,
+            has_upper_lower_case: true,
+            has_special_char: true,
+            has_number: true,
+          }"
+          v-if="newPasswordRequired"
+        >
           <template #label> New Password </template>
         </InputField>
-        <InputField name="confirm-password" placeholder="Confirm password" v-model="confirmPassword" type="password"
-          rules="confirm_password:@new-password" v-if="newPasswordRequired">
+        <InputField
+          name="confirm-password"
+          placeholder="Confirm password"
+          v-model="confirmPassword"
+          type="password"
+          rules="confirm_password:@new-password"
+          v-if="newPasswordRequired"
+        >
           <template #label> Confirm Passwords </template>
         </InputField>
       </div>
       <div class="login__footer">
-        <Button radius="rounded-xl" type="submit" color="primary" :loading="isLoading" showLoading
-          :label="newPasswordRequired ? 'Continue' : 'Login'">
-
+        <Button
+          radius="rounded-xl"
+          type="submit"
+          color="primary"
+          :loading="isLoading"
+          showLoading
+          :label="newPasswordRequired ? 'Continue' : 'Login'"
+        >
         </Button>
       </div>
     </div>
@@ -61,17 +91,21 @@ export default {
     }
 
     // Login
-    const email = ref(null);
-    const password = ref(null);
-    const confirmPassword = ref(null);
+    const email = ref("dominic.rafer@ecloudvalley.com");
+    const password = ref("#####Vmsi123");
+    const confirmPassword = ref("#####Vmsi123");
     const { login } = authStore;
     let user = null;
     async function doLogin() {
       isLoading.value = true;
       await login(email.value, password.value)
         .then((res) => {
+          console.log(res, "RESPONSE!!");
           hasError.value = false;
-          if (res.challengeName) {
+          if (
+            res.nextStep.signInStep ===
+            "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
+          ) {
             user = res;
             isLoading.value = false;
             return (newPasswordRequired.value = true);
@@ -90,7 +124,7 @@ export default {
 
     // Login with change password
     const { completeNewPassword } = authStore;
-    const newPassword = ref(null);
+    const newPassword = ref("#####Vmsi123");
     async function doConfirmLogin() {
       console.log("doconfirmlogin", user, email.value, newPassword.value);
       isLoading.value = true;

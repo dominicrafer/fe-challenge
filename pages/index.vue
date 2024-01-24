@@ -1,21 +1,14 @@
 <template>
   <div class="page">
     <PageHeader title="Test Page" />
-    <div class="page__body" v-testing></div>
+    <div class="page__body">
+    <!-- INSERT CONTENT HERE -->
+    </div>
   </div>
 </template>
 
-<script>
-definePageMeta({
-  layout: "default",
-});
-export default {
-  setup() {
-    const { $api, $dayjs, $toast } = useNuxtApp();
-    console.log($dayjs().format("HH:mm"));
-  },
-};
-</script>
+<script setup>
 
-<style lang="postcss" scoped>
-</style>
+</script>
+<style lang="postcss" scoped></style>
+ 

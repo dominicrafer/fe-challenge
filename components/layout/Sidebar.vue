@@ -1,7 +1,7 @@
 <template>
   <q-drawer :modelValue="!sidebarStore.isCollapsed" side="left" class="sidebar">
     <div class="sidebar__header">
-      <img src="@/assets/images/ecv.svg" />
+      <q-img src="/images/ecv.svg" fit="contain" width="115px"/>
     </div>
     <q-list class="sidebar__menus">
       <template v-for="(menuDetails, index) in sidebarStore.menus">
@@ -71,7 +71,7 @@ export default {
     @apply text-white  font-bold text-lg text-center pb-3;
     @apply flex-grow-0;
     img {
-      @apply m-auto w-[115px];
+      @apply m-auto;
     }
   }
   &__menus {

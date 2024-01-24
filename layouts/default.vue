@@ -10,8 +10,6 @@
           label="Please wait..."
         ></q-inner-loading>
         <NuxtPage />
-        <!-- <router-view> </router-view> -->
-        <!-- <NuxtPage /></NuxtPage> -->
       </q-page>
     </q-page-container>
   </q-layout>

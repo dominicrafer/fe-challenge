@@ -1,10 +1,16 @@
 export default {
-    Auth: {
-      region: '',
-      userPoolId: '',
-      userPoolWebClientId: '',
-      identityPoolId: ''
-    },
+  Auth: {
+    Cognito: {
+      userPoolId: "",
+      userPoolClientId: "",
+      // identityPoolId: "",  // Required for using amplify storage
+    }
+  },
+  // Required for using amplify storage
+  Storage: {
+    S3: {
+      bucket: '',
+      region: ''
+    }
   }
-
-  
+};

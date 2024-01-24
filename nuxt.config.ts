@@ -19,7 +19,6 @@ export default defineNuxtConfig({
     "@pinia-plugin-persistedstate/nuxt",
     "nuxt-quasar-ui",
   ],
-  quasar: quasarConfig,
   css: [
     "@/assets/css/main.css",
     "@/assets/css/date-picker.css",

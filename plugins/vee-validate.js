@@ -9,8 +9,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   Object.keys(AllRules).forEach(rule => {
     VeeValidate.defineRule(rule, AllRules[rule]);
   });
-
-
+  
   VeeValidate.defineRule('phone_number', value => {
     if (!/^(09|\+639)\d{9}$/.test(value)) {
       return 'This field must be a valid phone_number';

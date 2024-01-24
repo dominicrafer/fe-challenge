@@ -161,6 +161,7 @@ export default {
     const { data, pending, refresh } = $api.users.getUsers(params);
 
     function paginate(page) {
+      
       params.page = page;
     }
     // PAGINATION

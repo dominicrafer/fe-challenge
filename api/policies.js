@@ -1,8 +1,6 @@
 export default () => ({
   createPolicy(data) {
     return useFetch('/user/policy', { method: 'POST', body: data, ...interceptors() });
-
-    // return $fetch('/branches', { method: 'GET'}, config);
   },
   getPolicies(params, watch) {
     return useLazyFetch(() => '/user/policy', { method: 'GET', params, ...interceptors(), watch });
