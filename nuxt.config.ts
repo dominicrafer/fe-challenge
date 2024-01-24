@@ -21,10 +21,8 @@ export default defineNuxtConfig({
   ],
   css: [
     "@/assets/css/main.css",
-    "@/assets/css/date-picker.css",
     "@/assets/css/table.css",
     "@/assets/css/select.css",
-    "@/assets/css/pagination.css",
     "@/assets/css/vue3-toastify.css",
   ],
   postcss: {
