@@ -128,7 +128,7 @@ export default {
     async function doConfirmLogin() {
       console.log("doconfirmlogin", user, email.value, newPassword.value);
       isLoading.value = true;
-      await completeNewPassword(user, email.value, newPassword.value).then(
+      await completeNewPassword(newPassword.value).then(
         () => {
           router.push("/");
         }

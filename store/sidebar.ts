@@ -47,10 +47,10 @@ export const useSidebarStore = defineStore({
     toggleSidebar() {
       const { width } = useWindowSize();
       // if (width.value <= 1024) {
-        this.collapsed = !this.collapsed;
+      this.collapsed = !this.collapsed;
       // }
     },
-    selectMenu(menuDetails) {
+    selectMenu(menuDetails: any) {
       const { $_ } = useNuxtApp();
       if ($_.has(menuDetails, "submenus")) {
         const index = $_.findIndex(this.menus, { name: menuDetails.name });
@@ -66,7 +66,7 @@ export const useSidebarStore = defineStore({
   getters: {
     isCollapsed: (state) => state.collapsed,
     isMenuActive: (state) => {
-      return (menuDetails) => {
+      return (menuDetails: any) => {
         const { $_ } = useNuxtApp();
         if ($_.has(menuDetails, "submenus")) {
           return (

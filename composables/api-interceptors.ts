@@ -2,11 +2,11 @@ import { useAuthStore } from "@/store/auth";
 export const interceptors = () => {
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
-  const { $dayjs, $_ } = useNuxtApp();
+  const { $dayjs, $_ }: any = useNuxtApp();
   return {
     baseURL: config.public.api_base_url,
     server: false,
-    async onRequest({ request, options }) {
+    async onRequest({ options }: any) {
       // Set the request headers
       const expirationInMinutes = $dayjs
         .duration($dayjs.unix(authStore.tokenExpiration).diff($dayjs()))
@@ -18,15 +18,12 @@ export const interceptors = () => {
       options.headers = options.headers || {};
       options.headers.authorization = `Bearer ${authStore.token}`;
     },
-    onRequestError({ request, options, error }) {
-      // Handle the request errors
-      // return Promise.reject(error)
-    },
-    onResponse({ request, response, options }) {
+
+    onResponse({ response }: any) {
       // Process the response data
       return response._data;
     },
-    onResponseError({ request, response, options }) {
+    onResponseError({ response }: any) {
       const { $toast } = useNuxtApp();
       $toast.error(response._data.errorCode);
       if (

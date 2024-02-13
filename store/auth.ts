@@ -1,10 +1,26 @@
 import { defineStore } from "pinia";
 
+interface Auth {
+  userDetails: {
+    email: string | null;
+    contact: string | null;
+    name: string | null;
+    modules: Array<string>;
+    policies: Array<string>;
+  };
+  token: string | null | undefined;
+  tokenExpiration: string | null | undefined;
+}
+
+interface AuthState {
+  isAuthenticated: boolean;
+  auth: Auth;
+}
 export const useAuthStore = defineStore({
   id: "auth",
   persist: true,
   state: () => {
-    return {
+    const state: AuthState = {
       isAuthenticated: false,
       auth: {
         userDetails: {
@@ -18,20 +34,25 @@ export const useAuthStore = defineStore({
         tokenExpiration: null,
       },
     };
+    return state;
   },
   actions: {
-    async login(email, password) {
+    async login(email: string, password: string) {
       const { $auth, $api } = useNuxtApp();
       const response = await $auth.signIn({ username: email, password });
-      console.log(response, 'LOGIN RESPONSE')
-      if (response.isSignedIn && response.signInStep !== 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
-        const session = await $auth.fetchAuthSession()
-        const { email, phone_number, name } = await $auth.fetchUserAttributes()
-        console.log(session, 'session')
+      console.log(response, "LOGIN RESPONSE");
+      if (
+        response.isSignedIn &&
+        response.nextStep.signInStep !==
+          "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
+      ) {
+        const session: any = await $auth.fetchAuthSession();
+        const { email, phone_number, name }: any =
+          await $auth.fetchUserAttributes();
+        console.log(session, "session");
         this.auth.token = session.tokens.idToken.toString();
-        this.auth.tokenExpiration =
-          session.tokens.idToken.payload.exp;
-        await $api.roles.getCurrentUserRole().then((auth) => {
+        this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+        await $api.roles.getCurrentUserRole().then((auth: any) => {
           this.isAuthenticated = true;
           this.auth = {
             ...this.auth,
@@ -47,17 +68,19 @@ export const useAuthStore = defineStore({
       }
       return response;
     },
-    async completeNewPassword(username, email, password) {
+    async completeNewPassword(password: string) {
       const { $auth, $api } = useNuxtApp();
-      const response = await $auth.confirmSignIn({ challengeResponse: password });
-      console.log(response, 'confirm sign in')
+      const response = await $auth.confirmSignIn({
+        challengeResponse: password,
+      });
+      console.log(response, "confirm sign in");
       if (response.isSignedIn) {
-        const session = await $auth.fetchAuthSession()
-        const { email, phone_number, name } = await $auth.fetchUserAttributes()
+        const session: any = await $auth.fetchAuthSession();
+        const { email, phone_number, name }: any =
+          await $auth.fetchUserAttributes();
         this.auth.token = session.tokens.idToken.toString();
-        this.auth.tokenExpiration =
-          session.tokens.idToken.payload.exp;
-        await $api.roles.getCurrentUserRole().then((auth) => {
+        this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+        await $api.roles.getCurrentUserRole().then((auth: any) => {
           this.isAuthenticated = true;
           this.auth = {
             ...this.auth,
@@ -75,14 +98,13 @@ export const useAuthStore = defineStore({
     async load() {
       const { $auth, $api } = useNuxtApp();
       try {
-        await $auth.fetchUserAttributes().then(async (userDetails) => {
-          const session = await $auth.fetchAuthSession()
-          console.log(session, 'session!')
-          console.log(userDetails, 'fetchUserAttributes!')
+        await $auth.fetchUserAttributes().then(async (userDetails: any) => {
+          const session: any = await $auth.fetchAuthSession();
+          console.log(session, "session!");
+          console.log(userDetails, "fetchUserAttributes!");
           this.auth.token = session.tokens.idToken.toString();
-          this.auth.tokenExpiration =
-            session.tokens.idToken.payload.exp;
-          await $api.roles.getCurrentUserRole().then((role) => {
+          this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+          await $api.roles.getCurrentUserRole().then((role: any) => {
             this.isAuthenticated = true;
             this.auth = {
               ...this.auth,
@@ -97,43 +119,41 @@ export const useAuthStore = defineStore({
           });
         });
       } catch (error) {
-        console.log(error, 'AUTH LOAD ERROR')
-        this.auth = {
-          userDetails: {
-            email: null,
-            phone_number: null,
-            name: null,
-          },
-          token: null,
-        };
+        console.log(error, "AUTH LOAD ERROR");
+        this.clearSessionState();
       }
     },
     async logout() {
       const { $auth } = useNuxtApp();
       await $auth.signOut();
       this.isAuthenticated = false;
-      this.auth = {
-        userDetails: {
-          email: null,
-          phone_number: null,
-          name: null,
-        },
-        token: null,
-      };
+      this.clearSessionState();
     },
     async refresh() {
       const { $auth } = useNuxtApp();
       if (this.isAuthenticated) {
         try {
-          const session = await $auth.fetchAuthSession();
+          const session: any = await $auth.fetchAuthSession();
           this.auth.token = session.tokens.idToken.toString();
-          this.auth.tokenExpiration =
-            session.tokens.idToken.payload.exp;
+          this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
         } catch (err) {
-          console.log(err, 'REFRESH ERROR');
+          console.log(err, "REFRESH ERROR");
           this.isAuthenticated = false;
         }
       }
+    },
+    clearSessionState() {
+      this.auth = {
+        userDetails: {
+          email: null,
+          contact: null,
+          name: null,
+          modules: [],
+          policies: [],
+        },
+        token: null,
+        tokenExpiration: null,
+      };
     },
   },
   getters: {
