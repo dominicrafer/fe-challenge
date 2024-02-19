@@ -14,23 +14,17 @@
     </q-page-container>
   </q-layout>
 </template>
-<script>
-export default {
-  setup() {
-    const nuxtApp = useNuxtApp();
-    const isLoading = ref(false);
-    nuxtApp.hook("page:start", () => {
-      console.log("START");
-      isLoading.value = true;
-    });
-    nuxtApp.hook("page:finish", () => {
-      console.log("finish");
-      isLoading.value = false;
-    });
-
-    return { isLoading };
-  },
-};
+<script setup lang="ts">
+const nuxtApp = useNuxtApp();
+const isLoading = ref<null | boolean>(false);
+nuxtApp.hook("page:start", () => {
+  console.log("START");
+  isLoading.value = true;
+});
+nuxtApp.hook("page:finish", () => {
+  console.log("finish");
+  isLoading.value = false;
+});
 </script>
 <style lang="postcss" scoped>
 .default {

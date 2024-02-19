@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import packageJSON from "./package.json";
-import quasarConfig from "./quasar.config";
+import tailwindConfig from "./tailwind.config";
+const { primary, secondary }: any = tailwindConfig.theme?.extend?.colors;
+
 export default defineNuxtConfig({
   ssr: false,
   modules: [
@@ -19,6 +21,18 @@ export default defineNuxtConfig({
     "@pinia-plugin-persistedstate/nuxt",
     "nuxt-quasar-ui",
   ],
+  quasar: {
+    extras: {
+      fontIcons: ["material-icons"],
+    },
+    plugins: ["Notify"],
+    config: {
+      brand: {
+        primary,
+        secondary,
+      },
+    },
+  },
   css: [
     "@/assets/css/main.css",
     "@/assets/css/table.css",
