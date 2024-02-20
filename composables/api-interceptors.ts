@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "~/store/auth";
 export const interceptors = () => {
   const config = useRuntimeConfig();
   const authStore = useAuthStore();

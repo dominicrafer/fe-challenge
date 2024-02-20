@@ -16,7 +16,7 @@
 </template>
 <script setup lang="ts">
 const nuxtApp = useNuxtApp();
-const isLoading = ref<null | boolean>(false);
+const isLoading = ref<boolean | undefined>(false);
 nuxtApp.hook("page:start", () => {
   console.log("START");
   isLoading.value = true;

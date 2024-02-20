@@ -1,21 +1,7 @@
+import type { FetchUserAttributesOutput } from "aws-amplify/auth";
+import type { AuthState } from "./types";
 import { defineStore } from "pinia";
 
-interface Auth {
-  userDetails: {
-    email: string | null;
-    contact: string | null;
-    name: string | null;
-    modules: Array<string>;
-    policies: Array<string>;
-  };
-  token: string | null | undefined;
-  tokenExpiration: string | null | undefined;
-}
-
-interface AuthState {
-  isAuthenticated: boolean;
-  auth: Auth;
-}
 export const useAuthStore = defineStore({
   id: "auth",
   persist: true,
@@ -44,14 +30,14 @@ export const useAuthStore = defineStore({
       if (
         response.isSignedIn &&
         response.nextStep.signInStep !==
-          "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
+        "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
       ) {
-        const session: any = await $auth.fetchAuthSession();
+        const session = await $auth.fetchAuthSession();
         const { email, phone_number, name }: any =
           await $auth.fetchUserAttributes();
         console.log(session, "session");
-        this.auth.token = session.tokens.idToken.toString();
-        this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+        this.auth.token = session?.tokens?.idToken?.toString();
+        this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
         await $api.roles.getCurrentUserRole().then((auth: any) => {
           this.isAuthenticated = true;
           this.auth = {
@@ -60,8 +46,10 @@ export const useAuthStore = defineStore({
               email,
               contact: phone_number,
               name,
-              modules: auth.data.value.resource.modules,
-              policies: auth.data.value.resource.policies,
+              modules: [],
+              policies: []
+              // modules: auth.data.value.resource.modules,
+              // policies: auth.data.value.resource.policies,
             },
           };
         });
@@ -75,12 +63,12 @@ export const useAuthStore = defineStore({
       });
       console.log(response, "confirm sign in");
       if (response.isSignedIn) {
-        const session: any = await $auth.fetchAuthSession();
-        const { email, phone_number, name }: any =
+        const session = await $auth.fetchAuthSession();
+        const { email, phone_number, name } =
           await $auth.fetchUserAttributes();
-        this.auth.token = session.tokens.idToken.toString();
-        this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
-        await $api.roles.getCurrentUserRole().then((auth: any) => {
+        this.auth.token = session?.tokens?.idToken?.toString();
+        this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
+        await $api.roles.getCurrentUserRole().then((auth) => {
           this.isAuthenticated = true;
           this.auth = {
             ...this.auth,
@@ -88,8 +76,10 @@ export const useAuthStore = defineStore({
               email,
               contact: phone_number,
               name,
-              modules: auth.data.value.resource.modules,
-              policies: auth.data.value.resource.policies,
+              // modules: auth.data.value.resource.modules,
+              // policies: auth.data.value.resource.policies,
+              modules: [],
+              policies: []
             },
           };
         });
@@ -98,12 +88,12 @@ export const useAuthStore = defineStore({
     async load() {
       const { $auth, $api } = useNuxtApp();
       try {
-        await $auth.fetchUserAttributes().then(async (userDetails: any) => {
-          const session: any = await $auth.fetchAuthSession();
+        await $auth.fetchUserAttributes().then(async (userDetails: FetchUserAttributesOutput) => {
+          const session = await $auth.fetchAuthSession();
           console.log(session, "session!");
           console.log(userDetails, "fetchUserAttributes!");
-          this.auth.token = session.tokens.idToken.toString();
-          this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+          this.auth.token = session?.tokens?.idToken?.toString();
+          this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
           await $api.roles.getCurrentUserRole().then((role: any) => {
             this.isAuthenticated = true;
             this.auth = {
@@ -112,8 +102,10 @@ export const useAuthStore = defineStore({
                 email: userDetails.email,
                 contact: userDetails.phone_number,
                 name: userDetails.name,
-                modules: role.data.value.resource.modules,
-                policies: role.data.value.resource.policies,
+                modules: [],
+                policies: []
+                // modules: role.data.value.resource.modules,
+                // policies: role.data.value.resource.policies,
               },
             };
           });
@@ -133,9 +125,9 @@ export const useAuthStore = defineStore({
       const { $auth } = useNuxtApp();
       if (this.isAuthenticated) {
         try {
-          const session: any = await $auth.fetchAuthSession();
-          this.auth.token = session.tokens.idToken.toString();
-          this.auth.tokenExpiration = session.tokens.idToken.payload.exp;
+          const session = await $auth.fetchAuthSession();
+          this.auth.token = session?.tokens?.idToken?.toString();
+          this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
         } catch (err) {
           console.log(err, "REFRESH ERROR");
           this.isAuthenticated = false;

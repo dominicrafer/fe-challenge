@@ -5,6 +5,10 @@ const { primary, secondary }: any = tailwindConfig.theme?.extend?.colors;
 
 export default defineNuxtConfig({
   ssr: false,
+  typescript: {
+    strict: true,
+    typeCheck: true
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "nuxt-icon",

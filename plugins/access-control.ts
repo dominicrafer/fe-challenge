@@ -1,6 +1,6 @@
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "~/store/auth";
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.directive("has", (el, binding, vnode) => {
+  nuxtApp.vueApp.directive("has", (el, binding, vnode: any) => {
     const myModules = useAuthStore().auth.userDetails.modules;
     const myPolicies = useAuthStore().auth.userDetails.policies;
     const { $_, $toast } = useNuxtApp();
@@ -39,7 +39,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       // console.log(binding, vnode, myPolicies);
       el.addEventListener(
         "click",
-        (event) => {
+        (event: Event) => {
           if (!hasActionPermission()) {
             $toast.error("User is not auhorized to perform this action.", {
               autoClose: 3000,
