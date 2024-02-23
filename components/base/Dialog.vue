@@ -21,44 +21,36 @@
   </q-dialog>
 </template>
 
-<script>
-export default {
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    title: {
-      type: String,
-      default: null,
-    },
-    width: {
-      type: String,
-      default: "600px",
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
+<script setup lang="ts">
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
   },
-  emits: ["ok", "hide", "show"],
-  setup(props, { emit }) {
-    const showDialog = ref(props.show);
-    watch(
-      () => props.show,
-      (show) => {
-        showDialog.value = show;
-      }
-    );
-    function show() {
-      emit("show");
-    }
-    return {
-      showDialog,
-      show,
-    };
+  title: {
+    type: String,
+    default: null,
   },
-};
+  width: {
+    type: String,
+    default: "600px",
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emit = defineEmits(["ok", "hide", "show"]);
+const showDialog = ref(props.show);
+watch(
+  () => props.show,
+  (show) => {
+    showDialog.value = show;
+  }
+);
+function show() {
+  emit("show");
+}
 </script>
 
 <style lang="postcss" scoped>

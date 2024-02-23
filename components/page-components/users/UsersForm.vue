@@ -1,5 +1,5 @@
 <template>
-  <Form :submitHandler="onSubmit" :initialValues="userDetails">
+  <VForm @submit="onSubmit" :initialValues="userDetails">
     <template #default="{ isSubmitting }">
       <q-card>
         <SectionTitle title="User Details" class="rounded-t-sm" />
@@ -109,7 +109,7 @@
         >
       </ConfirmationDialog>
     </template>
-  </Form>
+  </VForm>
 </template>
 
 <script>
@@ -126,7 +126,7 @@ export default {
           first_name: null,
           last_name: null,
           email: null,
-          phone_number: null,
+          phone_number: '+639458288837',
           department: null,
           employee_number: null,
           role: null,

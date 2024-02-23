@@ -10,17 +10,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    errors: {
-      type: Object,
-      default() {
-        return {};
-      },
+<script setup lang="ts">
+defineProps({
+  errors: {
+    type: [Object, Array],
+    default() {
+      return {};
     },
   },
-};
+});
 </script>
 
 <style lang="postcss" scoped>

@@ -17,43 +17,42 @@
   </Dialog>
 </template>
 
-<script>
+<script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-export default {
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    width: {
-      type: String,
-      default: "450",
-    },
-    type: {
-      type: String,
-      default: "default",
-    },
-    confirmText: {
-      type: String,
-      default: "Confirm",
-    },
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
   },
-  setup(props, { attrs, slots, emit, expose }) {
-    const modal = ref(null);
-
-    onClickOutside(modal, () => {
-      if (props.maskClosable) {
-        emit("close");
-      }
-    });
-
-    return { modal };
+  maskClosable: {
+    type: Boolean,
+    default: false,
   },
-};
+  title: {
+    type: String,
+    required: true,
+  },
+  width: {
+    type: String,
+    default: "450",
+  },
+  type: {
+    type: String,
+    default: "default",
+  },
+  confirmText: {
+    type: String,
+    default: "Confirm",
+  },
+});
+const emit = defineEmits(["confirm", "close"]);
+const modal = ref(null);
+
+onClickOutside(modal, () => {
+  if (props.maskClosable) {
+    emit("close");
+  }
+});
 </script>
 
 <style lang="postcss" scoped>

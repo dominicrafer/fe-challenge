@@ -10,18 +10,18 @@
     @search="searchUsers"
     :exportable="false"
     :tabs="[
-        {
-          name: 'mails',
-          icon: 'mail',
-          label: 'Mails'
-        },
-        {
-          name: 'alarms',
-          icon: 'alarm',
-          label: 'Alarms'
-        },
-      ]"
-      :activeTab="activeTab"
+      {
+        name: 'mails',
+        icon: 'mail',
+        label: 'Mails',
+      },
+      {
+        name: 'alarms',
+        icon: 'alarm',
+        label: 'Alarms',
+      },
+    ]"
+    :activeTab="activeTab"
   >
     <template #table-data>
       <table class="table__data">
@@ -31,11 +31,7 @@
             <th align="left">Email</th>
             <th align="left">Mobile Number</th>
             <th align="left">Role</th>
-            <th align="center">Status
-
-
-
-            </th>
+            <th align="center">Status</th>
             <th align="left" class="date">Created At</th>
             <th align="center">Actions</th>
           </tr>
@@ -63,7 +59,7 @@
               </p>
             </td>
             <td align="center">
-              <div class="table__data-actions">
+              <div class="table__data-actions flex gap-2">
                 <Button
                   :to="{
                     name: 'users-id',
@@ -131,162 +127,144 @@
   </PageHeader>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { Params, Filters, RoleObject } from "./types";
 definePageMeta({
   layout: "default",
   name: "user-list",
 });
-export default {
-  setup() {
-    const { $api, $_, $toast, $dayjs } = useNuxtApp();
-    const usersFilterDrawerVisible = ref(false);
-    const usersSortDrawerVisible = ref(false);
-    const activeTab = ref(null);
-    // PAGINATION
-    let search = ref(null);
-    let filters = {
-      statuses: [],
-      roles: [],
-      created_at: [],
-    };
-    const searchFilters = ref([]);
-    let sort = ref("created_at:desc");
-    let params = reactive({
-      page: 1,
-      page_size: 10,
-      return_count: true,
-      sorts: [sort.value],
-    });
-
-    const { data, pending, refresh } = $api.users.getUsers(params);
-
-    function paginate(page) {
-      
-      params.page = page;
-    }
-    // PAGINATION
-
-    // SEARCH USER
-    async function searchUsers(searchValue) {
-      search.value = searchValue;
-      if (!searchValue) {
-        delete params.search_filters;
-      } else {
-        params.search_filters = [
-          {
-            search_keys: searchFilters.value.length
-              ? searchFilters.value
-              : ["name", "email", "phone_number"],
-            value: searchValue,
-          },
-        ];
-      }
-
-      refresh();
-    }
-    // SEARCH USER
-    function applyFilters(appliedFilters) {
-      delete params.in_filters;
-      delete params.between_filters;
-      filters = appliedFilters;
-      console.log(appliedFilters, "appliedFilters");
-      if (appliedFilters.statuses.length || appliedFilters.roles.length) {
-        params.in_filters = [];
-      }
-      if (appliedFilters.created_at?.length) {
-        params.between_filters = [];
-      }
-      if (appliedFilters.statuses.length) {
-        params.in_filters = [
-          ...params?.in_filters,
-          {
-            key: "status",
-            value: appliedFilters.statuses,
-          },
-        ];
-      }
-      if (appliedFilters.created_at?.length) {
-        params.between_filters = [
-          ...params?.between_filters,
-          {
-            key: "created_at",
-            value: [
-              $dayjs(appliedFilters.created_at[0]).format(
-                "YYYY-MM-DD 00:00:00"
-              ),
-              $dayjs(appliedFilters.created_at[1]).format(
-                "YYYY-MM-DD 23:59:59"
-              ),
-            ],
-          },
-        ];
-      }
-      if (appliedFilters.roles.length) {
-        params.in_filters = [
-          ...params?.in_filters,
-          {
-            key: "role",
-            value: $_.map(appliedFilters.roles, (role) => role.value),
-          },
-        ];
-      }
-      usersFilterDrawerVisible.value = false;
-      refresh();
-    }
-    function applySorts(appliedSort) {
-      sort.value = appliedSort;
-      params.sorts = [sort.value];
-      refresh();
-      usersSortDrawerVisible.value = false;
-    }
-
-    // DELETE POLICY
-    const deleteConfirmationDialogVisible = ref(false);
-    const selectedUser = ref(null);
-    function deactivateUser(userDetails) {
-      selectedUser.value = userDetails;
-      deleteConfirmationDialogVisible.value = true;
-    }
-
-    async function updateUserStatus(userDetails = selectedUser.value) {
-      pending.value = true;
-      deleteConfirmationDialogVisible.value = false;
-      const { error } = await $api.users.updateUserStatus({
-        cognito_id: userDetails.cognito_id,
-      });
-      if (!error.value) {
-        $toast.success(
-          `User successfully ${
-            userDetails.status === "active" ? "deactivated" : "activated"
-          }`
-        );
-      }
-
-      refresh();
-    }
-    // DELETE POLICY
-    return {
-      data,
-      pending,
-      selectedUser,
-      deactivateUser,
-      deleteConfirmationDialogVisible,
-      usersFilterDrawerVisible,
-      usersSortDrawerVisible,
-      updateUserStatus,
-      filters,
-      sort,
-      params,
-      paginate,
-      searchUsers,
-      search,
-      applyFilters,
-      applySorts,
-      searchFilters,
-      activeTab
-    };
-  },
+const { $api, $_, $toast, $dayjs } = useNuxtApp();
+const usersFilterDrawerVisible = ref(false);
+const usersSortDrawerVisible = ref(false);
+const activeTab = ref<string | null>(null);
+// PAGINATION
+let search = ref<string | null>(null);
+let filters: Filters = {
+  filterBy: [],
+  statuses: [],
+  roles: [],
+  created_at: [
+    $dayjs().format("YYYY-MM-DD 00:00:00"),
+    $dayjs().format("YYYY-MM-DD 23:59:59"),
+  ],
 };
+const searchFilters = ref([]);
+let sort = ref("created_at:desc");
+
+let params = reactive<Params>({
+  page: 1,
+  page_size: 10,
+  return_count: true,
+  sorts: [sort.value],
+  search_filters: undefined,
+  in_filters: undefined,
+  between_filters: undefined,
+});
+
+const { data, pending, refresh }: any = $api.users.getUsers(params);
+
+function paginate(page: number) {
+  params.page = page;
+}
+// PAGINATION
+
+// SEARCH USER
+async function searchUsers(searchValue: string) {
+  search.value = searchValue;
+  if (!searchValue) {
+    // delete params.search_filters;
+    params.search_filters = undefined;
+  } else {
+    params.search_filters = [
+      {
+        search_keys: searchFilters.value.length
+          ? searchFilters.value
+          : ["name", "email", "phone_number"],
+        value: searchValue,
+      },
+    ];
+  }
+
+  refresh();
+}
+// SEARCH USER
+function applyFilters(appliedFilters: Filters) {
+  delete params.in_filters;
+  delete params.between_filters;
+  // params.in_filters = [];
+  // params.between_filters = [];
+  filters = appliedFilters;
+  console.log(appliedFilters, "appliedFilters");
+  if (appliedFilters.statuses.length || appliedFilters.roles.length) {
+    params.in_filters = [];
+  }
+  // if (appliedFilters.created_at?.length) {
+  //   params.between_filters = [];
+  // }
+  if (appliedFilters.statuses.length) {
+    params.in_filters = [
+      ...(<[]><unknown>params?.in_filters),
+      {
+        key: "status",
+        value: appliedFilters.statuses,
+      },
+    ];
+  }
+  // if (appliedFilters.created_at?.length) {
+  //   params.between_filters = [
+  //     ...(<[]><unknown>params?.between_filters),
+  //     {
+  //       key: "created_at",
+  //       value: [
+  //         $dayjs(appliedFilters.created_at[0]).format("YYYY-MM-DD 00:00:00"),
+  //         $dayjs(appliedFilters.created_at[1]).format("YYYY-MM-DD 23:59:59"),
+  //       ],
+  //     },
+  //   ];
+  // }
+  if (appliedFilters.roles.length) {
+    params.in_filters = [
+      ...(<[]>params?.in_filters),
+      {
+        key: "role",
+        value: $_.map(appliedFilters.roles, (role: RoleObject) => role.value),
+      },
+    ];
+  }
+  usersFilterDrawerVisible.value = false;
+  refresh();
+}
+function applySorts(appliedSort: string) {
+  sort.value = appliedSort;
+  params.sorts = [sort.value];
+  refresh();
+  usersSortDrawerVisible.value = false;
+}
+
+// DELETE POLICY
+const deleteConfirmationDialogVisible = ref(false);
+const selectedUser = ref(null);
+function deactivateUser(userDetails: any) {
+  selectedUser.value = userDetails;
+  deleteConfirmationDialogVisible.value = true;
+}
+
+async function updateUserStatus(userDetails: any = selectedUser.value) {
+  pending.value = true;
+  deleteConfirmationDialogVisible.value = false;
+  const { error } = await $api.users.updateUserStatus({
+    cognito_id: userDetails.cognito_id,
+  });
+  if (!error.value) {
+    $toast.success(
+      `User successfully ${
+        userDetails.status === "active" ? "deactivated" : "activated"
+      }`
+    );
+  }
+
+  refresh();
+}
 </script>
 
 <style lang="postcss" scoped>

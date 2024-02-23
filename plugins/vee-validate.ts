@@ -59,12 +59,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     return true;
   });
 
-  VeeValidate.defineRule("confirm_password", (value: string, [otherValue]: Array<string>) => {
-    if (value !== otherValue) {
-      return "Passwords do not match";
+  VeeValidate.defineRule(
+    "confirm_password",
+    (value: string, [otherValue]: Array<string>) => {
+      if (value !== otherValue) {
+        return "Passwords do not match";
+      }
+      return true;
     }
-    return true;
-  });
+  );
 
   interface FieldValidationMetaInfo {
     field: string;
@@ -80,15 +83,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Customize global validation rules error message
   VeeValidate.configure({
     generateMessage: ({ field, rule }: FieldValidationMetaInfo) => {
-      const param = rule?.params ? (rule?.params[0]) : "";
+      const param = rule?.params ? rule?.params[0] : "";
       switch (rule?.name) {
         case "email":
           return "Invalid email address";
         case "min":
           return `Must contain at least ${param} characters`;
         case "max":
-          return `${$_.startCase(field)} must only contain ${param
-            } characters`;
+          return `${$_.startCase(field)} must only contain ${param} characters`;
         case "required":
           return `Enter ${$_.startCase(field)}`;
         case "digits":
@@ -98,7 +100,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         case "select_required":
           return `Select ${$_.startCase(field)}`;
         default:
-          return `${field ? $_.startCase(field) : 'This field'} is invalid`;
+          return `${field ? $_.startCase(field) : "This field"} is invalid`;
       }
     },
   });

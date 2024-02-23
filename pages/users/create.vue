@@ -12,41 +12,33 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { UserCreatePayload } from "./types";
+
 definePageMeta({
   layout: "default",
 });
-export default {
-  setup(props) {
-    const form = ref(null);
-    let errors = ref(null);
-    let isLoading = ref(false);
-    async function submitHandler(data) {
-      const { $api, $toast } = useNuxtApp();
-      isLoading.value = true;
-      const { error } = await $api.users.createUser(data);
-      isLoading.value = false;
-      if (!error.value) {
-        const router = useRouter();
-        router.push("/users");
-        $toast.success("User successfully created.");
-      } else {
-        errors.value = error.value.data.errors;
-        form.value.allowRouteLeave = false;
-        const errorList = document.getElementById("error-list");
-        setTimeout(() => {
-          errorList.scrollIntoView();
-        }, 200);
-      }
-    }
-    return {
-      submitHandler,
-      isLoading,
-      errors,
-      form,
-    };
-  },
-};
+const form = ref<Ref | null>(null);
+let errors = ref([]);
+let isLoading = ref(false);
+async function submitHandler(data: UserCreatePayload) {
+  const { $api, $toast } = useNuxtApp();
+  isLoading.value = true;
+  const { error } = await $api.users.createUser(data);
+  isLoading.value = false;
+  if (!error.value) {
+    const router = useRouter();
+    router.push("/users");
+    $toast.success("User successfully created.");
+  } else {
+    errors.value = error.value.data.errors;
+    form.value.allowRouteLeave = false;
+    const errorList: Element | null = document.getElementById("error-list");
+    setTimeout(() => {
+      errorList?.scrollIntoView();
+    }, 200);
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

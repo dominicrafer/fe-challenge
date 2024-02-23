@@ -1,32 +1,14 @@
 <template>
-  <div class="badge" :class="variant">
+  <q-badge :color="color" v-bind="$attrs" class="p-2 uppercase">
     <slot />
-  </div>
+  </q-badge>
 </template>
 
-<script>
-export default {
-  props: {
-    variant: {
-      type: String,
-      default: "primary",
-    },
+<script setup lang="ts">
+defineProps({
+  color: {
+    type: String,
+    default: "primary",
   },
-};
+});
 </script>
-
-<style lang="postcss" scoped>
-.badge {
-  @apply rounded-2xl p-1;
-  @apply text-center;
-  &.primary {
-    @apply text-white bg-primary;
-  }
-  &.success {
-    @apply text-white bg-green-500;
-  }
-  &.secondary {
-    @apply text-white bg-secondary;
-  }
-}
-</style>

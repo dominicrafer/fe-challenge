@@ -6,17 +6,26 @@
       </div>
     </Transition>
     <Transition appear :name="`slide-${position}`">
-      <div class="drawer__content" ref="drawer" :class="position === 'right' ? 'right-0' : 'left-0'"
-        :style="{ width: `${width}px` }" v-if="show">
+      <div
+        class="drawer__content"
+        ref="drawer"
+        :class="position === 'right' ? 'right-0' : 'left-0'"
+        :style="{ width: `${width}px` }"
+        v-if="show"
+      >
         <div class="content__header">
           <span class="header__title">{{ title }}</span>
-          <Icon name="mdi:close-circle-outline" width="24" color="white" height="24" @click="$emit('close')" />
+          <Icon
+            name="mdi:close-circle-outline"
+            width="24"
+            color="white"
+            height="24"
+            @click="$emit('close')"
+          />
         </div>
         <div class="content__body" :class="bodyCustomClass">
-
           <slot></slot>
           <InnerLoading :showing="loading" />
-
         </div>
         <div class="content__footer" v-if="$slots.footer">
           <slot name="footer"></slot>
@@ -26,53 +35,49 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-export default {
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    position: {
-      type: String,
-      default: "right",
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    width: {
-      type: String,
-      default: "450",
-    },
-    maskClosable: {
-      type: Boolean,
-      default: true,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    bodyCustomClass: {
-      type: String,
-      default: "body-custom-class",
-    },
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
   },
-  setup(props, { attrs, slots, emit, expose }) {
-    const drawer = ref(null);
-    onClickOutside(drawer, () => {
-      if (
-        props.maskClosable &&
-        // Prevent drawer from closing if datepicker menu is open
-        !document.getElementsByClassName("dp__menu").length
-      ) {
-        emit("close");
-      }
-    });
-    return { drawer };
+  position: {
+    type: String,
+    default: "right",
   },
-};
+  title: {
+    type: String,
+    required: true,
+  },
+  width: {
+    type: String,
+    default: "450",
+  },
+  maskClosable: {
+    type: Boolean,
+    default: true,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  bodyCustomClass: {
+    type: String,
+    default: "body-custom-class",
+  },
+});
+const emit = defineEmits();
+const drawer = ref(null);
+onClickOutside(drawer, () => {
+  if (
+    props.maskClosable &&
+    // Prevent drawer from closing if datepicker menu is open
+    !document.getElementsByClassName("dp__menu").length
+  ) {
+    emit("close");
+  }
+});
 </script>
 
 <style lang="postcss" scoped>

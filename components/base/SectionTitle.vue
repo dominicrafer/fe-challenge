@@ -6,28 +6,25 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    fontSize: {
-      type: String,
-      default: "text-xl",
-    },
-    fontWeight: {
-      type: String,
-      default: "font-bold",
-    },
-    fontColor: {
-      type: String,
-      default: "text-white",
-    },
+<script setup lang="ts">
+defineProps({
+  title: {
+    type: String,
+    required: true,
   },
-  setup(props) {},
-};
+  fontSize: {
+    type: String,
+    default: "text-xl",
+  },
+  fontWeight: {
+    type: String,
+    default: "font-bold",
+  },
+  fontColor: {
+    type: String,
+    default: "text-white",
+  },
+});
 </script>
 
 <style lang="postcss" scoped>

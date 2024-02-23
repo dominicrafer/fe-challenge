@@ -25,6 +25,7 @@ export const useAuthStore = defineStore({
   actions: {
     async login(email: string, password: string) {
       const { $auth, $api } = useNuxtApp();
+      console.log(email, password)
       const response = await $auth.signIn({ username: email, password });
       console.log(response, "LOGIN RESPONSE");
       if (

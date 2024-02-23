@@ -14,19 +14,17 @@
   </q-page-sticky>
 </template>
 
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    backRoute: {
-      type: [String, Object],
-      default: null,
-    },
+<script setup lang="ts">
+defineProps({
+  title: {
+    type: String,
+    required: true,
   },
-};
+  backRoute: {
+    type: [String, Object],
+    default: null,
+  },
+});
 </script>
 
 <style lang="postcss" scoped>

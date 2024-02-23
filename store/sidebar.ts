@@ -15,6 +15,7 @@ export const useSidebarStore = defineStore({
           icon: "person",
           permission: "Users",
           collapsed: currentRoute !== "users",
+          path: null,
           submenus: [
             {
               name: "user-list",

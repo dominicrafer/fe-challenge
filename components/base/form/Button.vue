@@ -1,16 +1,16 @@
 <template>
-  <q-btn v-bind="$attrs" class="button" :color="color"></q-btn>
+  <q-btn v-bind="$attrs" class="button" :color="color">
+  <slot></slot>
+  </q-btn>
 </template>
 
-<script>
-export default {
-  props: {
-    color: {
-      type: String,
-      default: 'primary'
-    }
-  }
-};
+<script setup lang="ts">
+defineProps({
+  color: {
+    type: String,
+    default: "primary",
+  },
+});
 </script>
 
 <style lang="postcss" scoped>

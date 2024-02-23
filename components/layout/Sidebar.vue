@@ -1,7 +1,7 @@
 <template>
   <q-drawer :modelValue="!sidebarStore.isCollapsed" side="left" class="sidebar">
     <div class="sidebar__header">
-      <q-img src="/images/ecv.svg" fit="contain" width="115px"/>
+      <q-img src="/images/ecv.svg" fit="contain" width="115px" />
     </div>
     <q-list class="sidebar__menus">
       <template v-for="(menuDetails, index) in sidebarStore.menus">
@@ -24,7 +24,7 @@
             class="menus__menu"
             active-class="active"
             hide-expand-icon
-            :class="{ active: $route.path === submenuDetails.path }"
+            :class="{ active: $route.path === submenuDetails?.path }"
           />
         </q-expansion-item>
         <q-expansion-item
@@ -33,12 +33,12 @@
           :key="`child-${index}`"
           :icon="menuDetails.icon"
           :label="menuDetails.label"
-          :to="{ path: menuDetails.path }"
+          :to="{ path: menuDetails?.path }"
           hide-expand-icon
           class="menus__menu"
           header-class="active"
           active-class="active"
-          :class="{ active: $route.path === menuDetails.path }"
+          :class="{ active: $route.path === menuDetails?.path }"
         >
         </q-expansion-item>
       </template>
@@ -46,21 +46,12 @@
   </q-drawer>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useSidebarStore } from "@/store/sidebar";
-export default {
+const sidebarStore = useSidebarStore();
+definePageMeta({
   name: "sidebar",
-  async setup() {
-    const sidebarStore = useSidebarStore();
-
-    return {
-      sidebarStore,
-    };
-  },
-  beforeUnmount() {
-    this.activeMenu = null;
-  },
-};
+});
 </script>
 
 <style lang="postcss">

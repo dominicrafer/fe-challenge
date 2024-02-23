@@ -40,19 +40,17 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      default: null,
-    },
+<script setup lang="ts">
+defineProps({
+  type: {
+    type: String,
+    required: true,
   },
-};
+  title: {
+    type: String,
+    default: null,
+  },
+});
 </script>
 
 <style lang="postcss" scoped>
@@ -99,6 +97,5 @@ export default {
       }
     }
   }
-  
 }
 </style>

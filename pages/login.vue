@@ -10,6 +10,7 @@
         <InputField
           name="username"
           placeholder="Enter email"
+          autocomplete="username"
           v-model="email"
           :rules="{ email: true }"
           v-if="!newPasswordRequired"
@@ -22,6 +23,7 @@
           v-model="password"
           type="password"
           rules="required"
+          autocomplete="current-password"
           v-if="!newPasswordRequired"
         >
           <template #label> Password </template>
@@ -38,6 +40,7 @@
             has_special_char: true,
             has_number: true,
           }"
+          autocomplete="new-password"
           v-if="newPasswordRequired"
         >
           <template #label> New Password </template>
@@ -57,7 +60,6 @@
         <Button
           radius="rounded-xl"
           type="submit"
-          color="primary"
           :loading="isLoading"
           showLoading
           :label="newPasswordRequired ? 'Continue' : 'Login'"
@@ -68,87 +70,72 @@
   </VForm>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useAuthStore } from "@/store/auth";
 definePageMeta({
   layout: "login",
 });
-export default {
-  setup() {
-    const router = useRouter();
-    const isLoading = ref(false);
-    const hasError = ref(false);
-    const authStore = useAuthStore();
-    const errorMessage = ref(null);
-    // Submit handler for conditional login type
-    const newPasswordRequired = ref(false);
-    function submitHandler() {
-      if (newPasswordRequired.value) {
-        doConfirmLogin();
-      } else {
-        doLogin();
+const router = useRouter();
+const isLoading = ref(false);
+const hasError = ref(false);
+const authStore = useAuthStore();
+const errorMessage = ref<any>(null);
+// Submit handler for conditional login type
+const newPasswordRequired = ref(false);
+function submitHandler() {
+  if (newPasswordRequired.value) {
+    doConfirmLogin();
+  } else {
+    doLogin();
+  }
+}
+
+// Login
+const email = ref<any>(null);
+const password = ref<any>(null);
+const confirmPassword = ref(null);
+const { login } = authStore;
+let user: any = null;
+async function doLogin() {
+  isLoading.value = true;
+  console.log("dologin", email.value, password.value);
+  await login(email.value, password.value)
+    .then((res) => {
+      console.log(res, "RESPONSE!!");
+      hasError.value = false;
+      if (
+        res.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
+      ) {
+        user = res;
+        isLoading.value = false;
+        return (newPasswordRequired.value = true);
       }
-    }
+      if (authStore.isUserAuthenticated) {
+        router.push("/");
+      }
+      isLoading.value = false;
+    })
+    .catch((error) => {
+      errorMessage.value = error.message;
+      hasError.value = true;
+      isLoading.value = false;
+    });
+}
 
-    // Login
-    const email = ref("dominic.rafer@ecloudvalley.com");
-    const password = ref("#####Vmsi123");
-    const confirmPassword = ref("#####Vmsi123");
-    const { login } = authStore;
-    let user = null;
-    async function doLogin() {
-      isLoading.value = true;
-      await login(email.value, password.value)
-        .then((res) => {
-          console.log(res, "RESPONSE!!");
-          hasError.value = false;
-          if (
-            res.nextStep.signInStep ===
-            "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
-          ) {
-            user = res;
-            isLoading.value = false;
-            return (newPasswordRequired.value = true);
-          }
-          if (authStore.isUserAuthenticated) {
-            router.push("/");
-          }
-          isLoading.value = false;
-        })
-        .catch((error) => {
-          errorMessage.value = error.message;
-          hasError.value = true;
-          isLoading.value = false;
-        });
-    }
+// Login with change password
+const { completeNewPassword } = authStore;
+const newPassword = ref("#####Vmsi123");
+async function doConfirmLogin() {
+  console.log("doconfirmlogin", user, email.value, newPassword.value);
+  isLoading.value = true;
+  await completeNewPassword(newPassword.value).then(() => {
+    router.push("/");
+  });
+}
 
-    // Login with change password
-    const { completeNewPassword } = authStore;
-    const newPassword = ref("#####Vmsi123");
-    async function doConfirmLogin() {
-      console.log("doconfirmlogin", user, email.value, newPassword.value);
-      isLoading.value = true;
-      await completeNewPassword(newPassword.value).then(
-        () => {
-          router.push("/");
-        }
-      );
-    }
-    return {
-      email,
-      password,
-      doLogin,
-      isLoading,
-      hasError,
-      errorMessage,
-      newPasswordRequired,
-      newPassword,
-      confirmPassword,
-      doConfirmLogin,
-      submitHandler,
-    };
-  },
-};
+watch(email, (val) => {
+  console.log(email);
+});
 </script>
 
 <style lang="postcss" scoped>

@@ -49,68 +49,62 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useField } from "vee-validate";
-export default {
-  props: {
-    label: {
-      type: String,
-    },
-    accept: {
-      type: String,
-      default: null,
-    },
-    name: {
-      type: [String, Number],
-      required: true,
-    },
-    rules: {
-      type: [String, Object],
-    },
-    showRequiredIcon: {
-      type: Boolean,
-      default: true,
-    },
+const props = defineProps({
+  modelValue: {
+    type: File,
   },
-  setup(props, { emit }) {
-    const file = ref(null);
-    const { errors, errorMessage, handleChange } = useField(
-      props.name,
-      props.rules,
-      {
-        bails: false,
-        initialValue: props.modelValue,
-        label: props.label,
-      }
-    );
-    function selectFile() {
-      file.value.click();
-    }
-
-    let imageDisplay = ref(null);
-    function confirmFileSelection(e) {
-      handleChange(e.target.files[0]);
-      emit("select", e);
-      imageDisplay.value = URL.createObjectURL(e.target.files[0]);
-    }
-
-    function removeImage() {
-      imageDisplay.value = null;
-      handleChange(null);
-      emit("unselect");
-    }
-    return {
-      file,
-      selectFile,
-      confirmFileSelection,
-      removeImage,
-      imageDisplay,
-      handleChange,
-      errors,
-      errorMessage,
-    };
+  label: {
+    type: String,
   },
-};
+  accept: {
+    type: String,
+    default: null,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  rules: {
+    type: [String, Object],
+  },
+  showRequiredIcon: {
+    type: Boolean,
+    default: true,
+  },
+});
+const emit = defineEmits(["select", "unselect"]);
+const file = ref<Ref | null>(null);
+const { errors, errorMessage, handleChange } = useField(
+  props.name,
+  props.rules,
+  {
+    bails: false,
+    initialValue: props.modelValue,
+    label: props.label,
+  }
+);
+function selectFile() {
+  if (file.value) {
+    file.value.click();
+  }
+}
+
+let imageDisplay = ref<string | null>(null);
+function confirmFileSelection(e: Event | any) {
+  if (e) {
+    handleChange(e?.target?.files[0]);
+    emit("select", e);
+    imageDisplay.value = URL.createObjectURL(e.target.files[0]);
+  }
+}
+
+function removeImage() {
+  imageDisplay.value = null;
+  handleChange(null);
+  emit("unselect");
+}
 </script>
 
 <style lang="postcss" scoped>
