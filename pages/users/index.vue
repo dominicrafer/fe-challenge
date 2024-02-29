@@ -1,95 +1,77 @@
 <template>
-  <Table
-    :loading="pending"
-    :pages="
-      Math.ceil(data?.resource?.pagination.total_count / params.page_size)
-    "
+  <QBasicTable
+    :columns="columns"
+    :rows="(data?.resource?.data as UserDetailsObject[])"
+    @paginate="paginate"
+    :pagination="{
+      page: params.page,
+      page_size: params.page_size,
+      return_count: data?.resource?.pagination?.total_count,
+    }"
     @sort="usersSortDrawerVisible = true"
     @filter="usersFilterDrawerVisible = true"
-    @paginate="paginate"
+    :loading="pending"
     @search="searchUsers"
-    :exportable="false"
-    :tabs="[
-      {
-        name: 'mails',
-        icon: 'mail',
-        label: 'Mails',
-      },
-      {
-        name: 'alarms',
-        icon: 'alarm',
-        label: 'Alarms',
-      },
-    ]"
-    :activeTab="activeTab"
+    no-data-label="No data found."
   >
-    <template #table-data>
-      <table class="table__data">
-        <thead>
-          <tr>
-            <th align="left">Name</th>
-            <th align="left">Email</th>
-            <th align="left">Mobile Number</th>
-            <th align="left">Role</th>
-            <th align="center">Status</th>
-            <th align="left" class="date">Created At</th>
-            <th align="center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(userDetails, index) in data?.resource?.data" :key="index">
-            <td align="left">{{ userDetails.name }}</td>
-            <td align="left" width="200">{{ userDetails.email }}</td>
-            <td align="left">{{ userDetails.phone_number }}</td>
-            <td align="left">{{ userDetails.role }}</td>
-            <td align="center">
-              <Badge
-                :variant="
-                  userDetails.status === 'active' ? 'success' : 'secondary'
-                "
-                >{{ $_.startCase(userDetails.status) }}</Badge
-              >
-            </td>
-            <td align="left">
-              <p>
-                {{ $dayjs(userDetails.created_at).format("MMM DD, YYYY") }}
-              </p>
-              <p>
-                {{ $dayjs(userDetails.created_at).format("hh:mm A") }}
-              </p>
-            </td>
-            <td align="center">
-              <div class="table__data-actions flex gap-2">
-                <Button
-                  :to="{
-                    name: 'users-id',
-                    params: { id: userDetails.cognito_id },
-                  }"
-                  color="primary"
-                  label="View"
-                  icon="visibility"
-                />
-                <Button
-                  color="negative"
-                  label="Deactivate"
-                  v-if="userDetails.status === 'active'"
-                  @click="deactivateUser(userDetails)"
-                  icon="backspace"
-                />
-                <Button
-                  v-else
-                  color="positive"
-                  label="Activate"
-                  @click="updateUserStatus(userDetails)"
-                  icon="check_circle"
-                />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <template #body="props">
+      <q-tr :props="props">
+        <q-td key="name" :props="props">
+          {{ props.row.name }}
+        </q-td>
+        <q-td key="email" :props="props">
+          {{ props.row.email }}
+        </q-td>
+        <q-td key="phone_number" :props="props">
+          {{ props.row.phone_number }}
+        </q-td>
+        <q-td key="role" :props="props">
+          {{ props.row.role }}
+        </q-td>
+        <q-td key="status" :props="props">
+          <Badge
+            :color="props.row.status === 'active' ? 'positive' : 'secondary'"
+            >{{ $_.startCase(props.row.status) }}</Badge
+          >
+        </q-td>
+        <q-td key="created_at" :props="props">
+          <p>
+            {{ $dayjs(props.row.created_at).format("MMM DD, YYYY") }}
+          </p>
+          <p>
+            {{ $dayjs(props.row.created_at).format("hh:mm A") }}
+          </p>
+        </q-td>
+        <q-td key="actions" :props="props">
+          <div class="table__data-actions flex gap-2 flex-nowrap">
+            <Button
+              :to="{
+                name: 'users-id',
+                params: { id: props.row.cognito_id },
+              }"
+              color="primary"
+              label="View"
+              icon="visibility"
+            />
+            <Button
+              color="negative"
+              label="Deactivate"
+              v-if="props.row.status === 'active'"
+              @click="deactivateUser(props.row)"
+              icon="backspace"
+            />
+            <Button
+              v-else
+              color="positive"
+              label="Activate"
+              @click="updateUserStatus(props.row)"
+              icon="check_circle"
+            />
+          </div>
+        </q-td>
+      </q-tr>
     </template>
-  </Table>
+  </QBasicTable>
   <ConfirmationDialog
     v-model="deleteConfirmationDialogVisible"
     title="Deactivate User"
@@ -128,7 +110,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Params, Filters, RoleObject } from "./types";
+import type {
+  UserListParams,
+  Filters,
+  RoleObject,
+  UserDetailsObject,
+} from "@/types/users";
+import type {
+  Column,
+  PaginationParams,
+} from "@/types/q-basic-table";
 definePageMeta({
   layout: "default",
   name: "user-list",
@@ -151,7 +142,7 @@ let filters: Filters = {
 const searchFilters = ref([]);
 let sort = ref("created_at:desc");
 
-let params = reactive<Params>({
+let params = reactive<UserListParams>({
   page: 1,
   page_size: 10,
   return_count: true,
@@ -160,11 +151,55 @@ let params = reactive<Params>({
   in_filters: undefined,
   between_filters: undefined,
 });
+const columns: Column[] = [
+  {
+    name: "name",
+    label: "Name",
+    align: "left",
+    field: "name",
+  },
+  {
+    name: "email",
+    label: "Email",
+    align: "left",
+    field: "email",
+  },
+  {
+    name: "phone_number",
+    label: "Mobile Number",
+    align: "left",
+    field: "phone_number",
+  },
+  {
+    name: "role",
+    label: "Role",
+    align: "left",
+    field: "role",
+  },
+  {
+    name: "status",
+    label: "Status",
+    align: "left",
+    field: "status",
+  },
+  {
+    name: "created_at",
+    label: "Created At",
+    align: "left",
+    field: "created_at",
+  },
+  {
+    name: "actions",
+    align: "left",
+    label: "Actions",
+    field: "actions",
+  },
+];
+const { data, pending, refresh } = $api.users.getUsers(params);
 
-const { data, pending, refresh }: any = $api.users.getUsers(params);
-
-function paginate(page: number) {
-  params.page = page;
+function paginate(newPagination: PaginationParams) {
+  params.page = newPagination.page;
+  params.page_size = newPagination.rowsPerPage;
 }
 // PAGINATION
 
@@ -203,7 +238,7 @@ function applyFilters(appliedFilters: Filters) {
   // }
   if (appliedFilters.statuses.length) {
     params.in_filters = [
-      ...(<[]><unknown>params?.in_filters),
+      ...(<[]>(<unknown>params?.in_filters)),
       {
         key: "status",
         value: appliedFilters.statuses,

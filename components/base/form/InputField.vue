@@ -13,6 +13,9 @@
     <template #label v-if="$slots.label">
       <slot name="label"></slot>
     </template>
+    <template #append v-if="$slots.append">
+      <slot name="append"></slot>
+    </template>
   </q-input>
 </template>
 

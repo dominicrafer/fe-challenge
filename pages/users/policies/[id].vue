@@ -14,57 +14,46 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { PolicyPayload } from "~/types/policies";
+
 definePageMeta({
   layout: "default",
 });
-export default {
-  async setup(props) {
-    const { $api, $_ } = useNuxtApp();
-    const route = useRoute();
-    const { data, pending } = await $api.policies.getPolicyDetails(
-      route.params.id
-    );
-    const form = ref(null);
-    let errors = ref(null);
-    let policyDetails = {
-      policy: data.value.resource.policy,
-      description: data.value.resource.description,
-      actions: $_.map(data.value.resource.actions, (actionDetails) => {
-        return {
-          label: actionDetails.action,
-          value: actionDetails.action,
-        };
-      }),
-    };
-
-    async function submitHandler(data) {
-      const { $api, $toast } = useNuxtApp();
-      const { error } = await $api.policies.updatePolicy(route.params.id, data);
-      if (!error.value) {
-        const router = useRouter();
-        router.push("/users/policies");
-        $toast.success("Policy successfully updated.");
-      } else {
-        errors.value = error.value.data.errors;
-        if (error.value.data.errorCode !== "SERVER_ERROR") {
-          form.value.allowRouteLeave = false;
-        }
-        const errorList = document.getElementById("error-list");
-        setTimeout(() => {
-          errorList.scrollIntoView();
-        }, 200);
-      }
-    }
+const { $api, $_ } = useNuxtApp();
+const route: any = useRoute();
+const { data, pending } = await $api.policies.getPolicyDetails(route.params.id);
+const form = ref<Ref | null>(null);
+let errors = ref([]);
+let policyDetails = {
+  policy: data.value?.resource.policy,
+  description: data.value?.resource.description,
+  actions: $_.map(data.value?.resource.actions, (actionDetails) => {
     return {
-      pending,
-      policyDetails,
-      submitHandler,
-      errors,
-      form,
+      label: actionDetails.action,
+      value: actionDetails.action,
     };
-  },
+  }),
 };
+
+async function submitHandler(data: PolicyPayload) {
+  const { $api, $toast } = useNuxtApp();
+  const { error } = await $api.policies.updatePolicy(route.params.id, data);
+  if (!error.value) {
+    const router = useRouter();
+    router.push("/users/policies");
+    $toast.success("Policy successfully updated.");
+  } else {
+    errors.value = error.value.data.errors;
+    if (error.value.data.errorCode !== "SERVER_ERROR") {
+      form.value.allowRouteLeave = false;
+    }
+    const errorList: HTMLElement | any = document.getElementById("error-list");
+    setTimeout(() => {
+      errorList.scrollIntoView();
+    }, 200);
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

@@ -10,6 +10,7 @@
     label-slot
     :multiple="multiple"
     :loading="loading"
+    :use-chips="multiple"
   >
     <template #label>
       <span class="text-paprika">*</span>

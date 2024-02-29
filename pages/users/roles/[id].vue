@@ -14,51 +14,41 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { useRoute } from "vue-router";
+import type { RolePayload } from "~/types/roles";
 definePageMeta({
   layout: "default",
 });
-export default {
-  async setup(props) {
-    const { $api, $_ } = useNuxtApp();
-    const route = useRoute();
-    const form = ref(null);
-    const { data, pending } = await $api.roles.getRoleDetails(route.params.id);
-    let roleDetails = {
-      role: data.value.resource.role,
-      description: data.value.resource.description,
-      policies: data.value.resource.policies,
-    };
-    let errors = ref(null);
-    async function submitHandler(data) {
-      const { $api, $toast } = useNuxtApp();
-      const { error } = await $api.roles.updateRole(route.params.id, data);
-      if (!error.value) {
-        const router = useRouter();
-        router.push("/users/roles");
-        $toast.success("Role successfully updated.");
-      } else {
-        console.log(error.value);
-        errors.value = error.value.data.errors;
-        if (error.value.data.errorCode !== "SERVER_ERROR") {
-          form.value.allowRouteLeave = false;
-        }
-        const errorList = document.getElementById("error-list");
-        setTimeout(() => {
-          errorList.scrollIntoView();
-        }, 200);
-      }
-    }
-    return {
-      pending,
-      roleDetails,
-      submitHandler,
-      errors,
-      form,
-    };
-  },
+const { $api, $_ } = useNuxtApp();
+const route: any = useRoute();
+const form = ref<Ref | null>(null);
+const { data, pending } = await $api.roles.getRoleDetails(route.params.id);
+let roleDetails = {
+  role: data.value?.resource.role,
+  description: data.value?.resource.description,
+  policies: data.value?.resource.policies,
 };
+let errors = ref([]);
+async function submitHandler(data: RolePayload) {
+  const { $api, $toast } = useNuxtApp();
+  const { error } = await $api.roles.updateRole(route.params.id, data);
+  if (!error.value) {
+    const router = useRouter();
+    router.push("/users/roles");
+    $toast.success("Role successfully updated.");
+  } else {
+    console.log(error.value);
+    errors.value = error.value.data.errors;
+    if (error.value.data.errorCode !== "SERVER_ERROR") {
+      form.value.allowRouteLeave = false;
+    }
+    const errorList: HTMLElement | any = document.getElementById("error-list");
+    setTimeout(() => {
+      errorList.scrollIntoView();
+    }, 200);
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

@@ -12,36 +12,33 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { RolePayload } from "~/types/roles";
+
 definePageMeta({
   layout: "default",
 });
-export default {
-  setup(props) {
-    let errors = ref(null);
-    let isLoading = ref(false);
-    const form = ref(null);
-    async function submitHandler(data) {
-      const { $api, $toast } = useNuxtApp();
-      isLoading.value = true;
-      const { error } = await $api.roles.createRole(data);
-      isLoading.value = false;
-      if (!error.value) {
-        const router = useRouter();
-        router.push("/users/roles");
-        $toast.success("Role successfully created.");
-      } else {
-        errors.value = error.value.data.errors;
-        form.value.allowRouteLeave = false;
-        const errorList = document.getElementById("error-list");
-        setTimeout(() => {
-          errorList.scrollIntoView();
-        }, 200);
-      }
-    }
-    return { submitHandler, errors, isLoading, form };
-  },
-};
+let errors = ref([]);
+let isLoading = ref(false);
+const form = ref<Ref | any>(null);
+async function submitHandler(data: RolePayload) {
+  const { $api, $toast } = useNuxtApp();
+  isLoading.value = true;
+  const { error } = await $api.roles.createRole(data);
+  isLoading.value = false;
+  if (!error.value) {
+    const router = useRouter();
+    router.push("/users/roles");
+    $toast.success("Role successfully created.");
+  } else {
+    errors.value = error.value.data.errors;
+    form.value.allowRouteLeave = false;
+    const errorList: HTMLElement | any = document.getElementById("error-list");
+    setTimeout(() => {
+      errorList.scrollIntoView();
+    }, 200);
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

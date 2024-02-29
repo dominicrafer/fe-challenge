@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { UserCreatePayload } from "./types";
+import type { UserCreatePayload } from "@/types/users";
 
 definePageMeta({
   layout: "default",

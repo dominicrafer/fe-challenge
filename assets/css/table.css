@@ -1,41 +1,24 @@
 .sticky {
-  height: 550px;
+  /* height or max-height is important */
+  height: 600px;
+}
 
-  .q-table__top {
-    @apply bg-white;
-  }
+.sticky thead tr:first-child th {
+  /* bg color is important for th; just specify one */
+  /* background-color: #00b4ff; */
+  @apply bg-primary text-white font-bold
+}
 
-  thead tr:first-child th {
-    @apply bg-primary text-white;
-  }
+.sticky thead tr th {
+  position: sticky;
+  z-index: 1;
+}
 
-  th {
-    @apply text-sm font-semibold;
-  }
-
-  thead tr th {
-    position: sticky;
-    z-index: 1;
-    top: 0;
-  }
-
-  thead tr {
-    @apply hover:no-underline;
-  }
-
-  tr {
-    @apply hover:bg-slate-100;
-  }
-
-  &.q-table--loading thead tr:last-child th {
-    top: 48px;
-  }
-
-  tbody {
-    scroll-margin-top: 48px;
-    font-weight: normal;
-  }
-  .table-actions {
-    @apply space-x-2;
-  }
+.sticky thead tr:first-child th {
+  top: 0;
+}
+/* prevent scrolling behind sticky top row on focus */
+.sticky tbody {
+  /* height of all previous header rows */
+  scroll-margin-top: 48px;
 }

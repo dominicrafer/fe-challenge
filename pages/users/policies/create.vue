@@ -8,34 +8,31 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { PolicyPayload } from "~/types/policies";
+
 definePageMeta({
   layout: "default",
 });
-export default {
-  setup(props) {
-    const form = ref(null);
-    let errors = ref(null);
-    async function submitHandler(data) {
-      const { $api, $toast } = useNuxtApp();
-      const { error } = await $api.policies.createPolicy(data);
+const form = ref<Ref | null>(null);
+let errors = ref([]);
+async function submitHandler(data: PolicyPayload) {
+  const { $api, $toast } = useNuxtApp();
+  const { error } = await $api.policies.createPolicy(data);
 
-      if (!error.value) {
-        const router = useRouter();
-        router.push("/users/policies");
-        $toast.success("Policy successfully created.");
-      } else {
-        errors.value = error.value.data.errors;
-        form.value.allowRouteLeave = false;
-        const errorList = document.getElementById("error-list");
-        setTimeout(() => {
-          errorList.scrollIntoView();
-        }, 200);
-      }
-    }
-    return { submitHandler, errors, form };
-  },
-};
+  if (!error.value) {
+    const router = useRouter();
+    router.push("/users/policies");
+    $toast.success("Policy successfully created.");
+  } else {
+    errors.value = error.value.data.errors;
+    form.value.allowRouteLeave = false;
+    const errorList: HTMLElement | any = document.getElementById("error-list");
+    setTimeout(() => {
+      errorList.scrollIntoView();
+    }, 200);
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

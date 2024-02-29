@@ -77,15 +77,7 @@
               :loading="isSubmitting"
               >View Audit Trail</Button
             > -->
-            <Button
-              color="warning"
-              v-if="edit"
-              @click="resetPassword"
-              :loading="isSubmitting"
-              label="Reset Password"
-              disable
-              ></Button
-            >
+
             <Button
               color="positive"
               type="submit"
@@ -95,7 +87,7 @@
           </div>
         </div>
       </q-card>
-      
+
       <ConfirmationDialog
         :title="`${edit ? 'Cancel Updating User' : 'Cancel User Creation'}`"
         v-model="leaveWarningModalVisible"
@@ -112,137 +104,108 @@
   </VForm>
 </template>
 
-<script>
-export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-    userDetails: {
-      type: Object,
-      default() {
-        return {
-          first_name: null,
-          last_name: null,
-          email: null,
-          phone_number: '+639458288837',
-          department: null,
-          employee_number: null,
-          role: null,
-          partners: [],
-        };
-      },
-    },
-    submitHandler: {
-      type: Function,
-    },
-    edit: {
-      type: Boolean,
-      default: false,
+<script setup lang="ts">
+import type { RouteLocationNormalized } from "#vue-router";
+import type { UserCreatePayload } from "~/types/users";
+import type { RoleDetails, RoleObject } from "~/types/roles";
+
+const props = defineProps({
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  userDetails: {
+    type: Object,
+    default() {
+      return {
+        first_name: null,
+        last_name: null,
+        email: null,
+        phone_number: "+639458288837",
+        department: null,
+        employee_number: null,
+        role: null,
+        partners: [],
+      };
     },
   },
-  async setup(props, { expose }) {
-    const leaveWarningModalVisible = ref(false);
-    const leaveRoute = ref(null);
-    const allowRouteLeave = ref(false);
-    onBeforeRouteLeave((to, from, next) => {
-      if (allowRouteLeave.value) {
-        next();
-      } else {
-        leaveWarningModalVisible.value = true;
-        leaveRoute.value = to;
-      }
-    });
-    expose({ allowRouteLeave });
-    const { $api, $_, $toast } = useNuxtApp();
-    const route = useRoute();
-    console.log("props.userDetails", props.userDetails);
-    const formData = reactive(props.userDetails);
+  submitHandler: {
+    type: Function,
+  },
+  edit: {
+    type: Boolean,
+    default: false,
+  },
+});
+const leaveWarningModalVisible = ref(false);
+const leaveRoute = ref<null | RouteLocationNormalized>(null);
+const allowRouteLeave = ref(false);
+onBeforeRouteLeave((to, from, next) => {
+  if (allowRouteLeave.value) {
+    next();
+  } else {
+    leaveWarningModalVisible.value = true;
+    leaveRoute.value = to;
+  }
+});
+// expose({ allowRouteLeave });
+const { $api, $_, $toast } = useNuxtApp();
+console.log("props.userDetails", props.userDetails);
+const formData = reactive(props.userDetails);
 
-    console.log(formData, "FORM DATA");
-    const deleteConfirmationModalVisible = ref(false);
-    const auditTrailDrawerVisible = ref(false);
-
-    const dirtyFieldValidator = reactive({
-      first_name: false,
-      last_name: false,
-      email: false,
-      phone_number: false,
-      role: false,
-      partners: false,
-      employee_number: true,
-    });
-    let roleOptions = reactive([]);
-    const { data: roles, pending } = await $api.roles.getRoles();
-    roleOptions = $_.map(roles.value.resource.roles, (roleDetails) => {
+const dirtyFieldValidator = reactive({
+  first_name: false,
+  last_name: false,
+  email: false,
+  phone_number: false,
+  role: false,
+  partners: false,
+  employee_number: true,
+  password: false,
+});
+let roleOptions = ref<RoleObject[]>([]);
+const { data: roles, pending } = await $api.roles.getRoles();
+if (roles.value?.resource.roles.length) {
+  roleOptions.value = $_.map(
+    roles.value.resource.roles,
+    (roleDetails: RoleDetails) => {
       return {
         label: roleDetails.role,
         value: roleDetails.role,
       };
+    }
+  );
+}
+
+async function onSubmit(values: UserCreatePayload) {
+  console.log(values.role.valueOf)
+  allowRouteLeave.value = true;
+  let payload = {
+    ...values,
+    role: values.role.valueOf,
+  };
+  if (props.edit) {
+    let parsedPayload = {};
+    $_.forEach(dirtyFieldValidator, (isDirty, key) => {
+      if (isDirty) {
+        parsedPayload[key] = key === "role" ? values[key].value : values[key];
+      }
     });
-    async function onSubmit(values) {
-      allowRouteLeave.value = true;
-      let payload = {
-        ...values,
-        role: values.role.value,
-      };
-      if (props.edit) {
-        let parsedPayload = {};
-        $_.forEach(dirtyFieldValidator, (isDirty, key) => {
-          if (isDirty) {
-            parsedPayload[key] =
-              key === "role" ? values[key].value : values[key];
-          }
-        });
 
-        await props.submitHandler(parsedPayload);
-      } else {
-        await props.submitHandler(payload);
-      }
-    }
+    await props.submitHandler(parsedPayload);
+  } else {
+    await props.submitHandler(payload);
+  }
+}
 
-    async function resetPassword() {
-      pending.value = true;
-      const { data, error } = await $api.users.forgotPassword({
-        email: props.userDetails.email,
-      });
-      if (error.value) {
-        $toast.error($_.values(error.value.data.errors)[0]);
-      } else {
-        $toast.success(
-          "Password reset request successful. Email will be sent shortly to reset password.",
-          { autoClose: false }
-        );
-      }
-      pending.value = false;
-    }
-
-    function confirmLeave() {
-      const router = useRouter();
-      leaveWarningModalVisible.value = false;
-      allowRouteLeave.value = true;
-      router.push(leaveRoute.value);
-    }
-    const isFetchingPartners = ref(false);
-    let partnerOptions = reactive([]);
-
-    return {
-      roleOptions,
-      dirtyFieldValidator,
-      pending,
-      roles,
-      formData,
-      onSubmit,
-      resetPassword,
-      deleteConfirmationModalVisible,
-      leaveWarningModalVisible,
-      confirmLeave,
-      isFetchingPartners,
-      auditTrailDrawerVisible,
-    };
-  },
-};
+function confirmLeave() {
+  const router = useRouter();
+  leaveWarningModalVisible.value = false;
+  allowRouteLeave.value = true;
+  router.push(leaveRoute.value);
+}
+const isFetchingPartners = ref(false);
+let partnerOptions = reactive([]);
 </script>
 
 <style lang="postcss" scoped>

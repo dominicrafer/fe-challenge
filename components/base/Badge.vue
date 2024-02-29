@@ -1,5 +1,5 @@
 <template>
-  <q-badge :color="color" v-bind="$attrs" class="p-2 uppercase">
+  <q-badge :color="color" v-bind="$attrs" class="p-2 uppercase rounded-full">
     <slot />
   </q-badge>
 </template>

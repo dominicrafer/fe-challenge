@@ -4,11 +4,11 @@
     <Sidebar />
     <q-page-container>
       <q-page padding class="page-content">
-        <q-inner-loading
+        <!-- <q-inner-loading
           :showing="isLoading"
           color="primary"
           label="Please wait..."
-        ></q-inner-loading>
+        ></q-inner-loading> -->
         <NuxtPage />
       </q-page>
     </q-page-container>
