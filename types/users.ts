@@ -25,8 +25,9 @@ export type UserCreatePayload = {
   partners?: object[];
   password?: string;
   phone_number?: string;
-  role?: RoleObject | string;
+  role?: RoleObject | string | any;
 };
+export type UserCreatePayloadKeys = keyof UserCreatePayload;
 export type UserStatusUpdatePayload = {
   cognito_id: string;
 };

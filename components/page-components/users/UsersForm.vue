@@ -106,7 +106,7 @@
 
 <script setup lang="ts">
 import type { RouteLocationNormalized } from "#vue-router";
-import type { UserCreatePayload } from "~/types/users";
+import type { UserCreatePayload, UserCreatePayloadKeys } from "~/types/users";
 import type { RoleDetails, RoleObject } from "~/types/roles";
 
 const props = defineProps({
@@ -178,19 +178,21 @@ if (roles.value?.resource.roles.length) {
 }
 
 async function onSubmit(values: UserCreatePayload) {
-  console.log(values.role.valueOf)
   allowRouteLeave.value = true;
   let payload = {
     ...values,
-    role: values.role.valueOf,
+    role: values.role.value,
   };
   if (props.edit) {
-    let parsedPayload = {};
-    $_.forEach(dirtyFieldValidator, (isDirty, key) => {
-      if (isDirty) {
-        parsedPayload[key] = key === "role" ? values[key].value : values[key];
+    let parsedPayload: UserCreatePayload = {};
+    $_.forEach(
+      dirtyFieldValidator,
+      (isDirty: boolean, key: UserCreatePayloadKeys) => {
+        if (isDirty) {
+          parsedPayload[key] = key === "role" ? values[key].value : values[key];
+        }
       }
-    });
+    );
 
     await props.submitHandler(parsedPayload);
   } else {
