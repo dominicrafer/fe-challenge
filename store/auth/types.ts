@@ -1,4 +1,4 @@
-export type AuthState = {
+export interface AuthState {
     isAuthenticated: boolean;
     auth: {
         userDetails: {

@@ -113,13 +113,13 @@
 import type {
   UserListParams,
   Filters,
-  RoleObject,
   UserDetailsObject,
 } from "@/types/users";
 import type {
   Column,
   PaginationParams,
 } from "@/types/q-basic-table";
+import type { RoleObject } from "~/types/roles";
 definePageMeta({
   layout: "default",
   name: "user-list",

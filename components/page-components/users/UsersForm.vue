@@ -131,6 +131,7 @@ const props = defineProps({
   },
   submitHandler: {
     type: Function,
+    required: true
   },
   edit: {
     type: Boolean,
@@ -138,7 +139,7 @@ const props = defineProps({
   },
 });
 const leaveWarningModalVisible = ref(false);
-const leaveRoute = ref<null | RouteLocationNormalized>(null);
+const leaveRoute = ref<null | RouteLocationNormalized | Ref>(null);
 const allowRouteLeave = ref(false);
 onBeforeRouteLeave((to, from, next) => {
   if (allowRouteLeave.value) {
@@ -152,7 +153,6 @@ onBeforeRouteLeave((to, from, next) => {
 const { $api, $_, $toast } = useNuxtApp();
 console.log("props.userDetails", props.userDetails);
 const formData = reactive(props.userDetails);
-
 const dirtyFieldValidator = reactive({
   first_name: false,
   last_name: false,
@@ -181,15 +181,16 @@ async function onSubmit(values: UserCreatePayload) {
   allowRouteLeave.value = true;
   let payload = {
     ...values,
-    role: values.role.value,
+    role: values?.role?.value,
   };
   if (props.edit) {
-    let parsedPayload: UserCreatePayload = {};
+    let parsedPayload: any = {};
     $_.forEach(
       dirtyFieldValidator,
-      (isDirty: boolean, key: UserCreatePayloadKeys) => {
+      (isDirty: boolean, key) => {
         if (isDirty) {
-          parsedPayload[key] = key === "role" ? values[key].value : values[key];
+          parsedPayload[key] =
+            key === "role" ? values?.role?.value : values[key as UserCreatePayloadKeys];
         }
       }
     );

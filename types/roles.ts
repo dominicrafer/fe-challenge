@@ -33,6 +33,6 @@ export type RoleDetailsResponse = {
 };
 
 export type RoleObject = {
-  label: string;
-  value: string;
+  label: string | undefined;
+  value: string | undefined;
 };
