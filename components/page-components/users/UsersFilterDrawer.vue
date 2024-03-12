@@ -1,6 +1,6 @@
 <template>
   <Drawer title="Filter By" :show="show" @close="$emit('close')">
-    <VForm :initialValues="filters">
+    <VForm>
       <div class="form">
         <span class="form__filter-label">Search Filters</span>
         <div class="form__filters">
@@ -80,55 +80,46 @@
   </Drawer>
 </template>
 
-<script>
-export default {
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    appliedFilters: {
-      type: Object,
-      default() {
-        return {
-          filterBy: [],
-          statuses: [],
-          roles: [],
-        };
-      },
+<script setup lang="ts">
+import type { RoleDetails, RoleObject } from "~/types/roles";
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  appliedFilters: {
+    type: Object,
+    default() {
+      return {
+        filterBy: [],
+        statuses: [],
+        roles: [],
+      };
     },
   },
-  setup(props, { emit }) {
-    const { $api, $_ } = useNuxtApp();
-    let roleOptions = reactive([]);
-    const formData = ref(props.appliedFilters);
-    let isFetchingRoles = ref(false);
-    const test = ref([]);
-    watch(
-      () => props.show,
-      async (show) => {
-        if (show) {
-          isFetchingRoles.value = true;
-          const { data } = await $api.roles.getRoles();
-          $_.forEach(data.value.resource.roles, (roleDetails) => {
-            roleOptions.push({
-              label: roleDetails.role,
-              value: roleDetails.role,
-            });
+});
+const { $api, $_ } = useNuxtApp();
+let roleOptions: RoleObject[] = reactive([]);
+const formData = ref(props.appliedFilters);
+let isFetchingRoles = ref(false);
+watch(
+  () => props.show,
+  async (show) => {
+    if (show) {
+      isFetchingRoles.value = true;
+      const { data } = await $api.roles.getRoles();
+      if (data.value) {
+        $_.forEach(data.value.resource.roles, (roleDetails: RoleDetails) => {
+          roleOptions.push({
+            label: roleDetails.role,
+            value: roleDetails.role,
           });
-          isFetchingRoles.value = false;
-        }
+        });
       }
-    );
-
-    return {
-      formData,
-      roleOptions,
-      isFetchingRoles,
-      test
-    };
-  },
-};
+      isFetchingRoles.value = false;
+    }
+  }
+);
 </script>
 
 <style lang="postcss" scoped>

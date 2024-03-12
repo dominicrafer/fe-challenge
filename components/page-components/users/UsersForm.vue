@@ -131,7 +131,7 @@ const props = defineProps({
   },
   submitHandler: {
     type: Function,
-    required: true
+    required: true,
   },
   edit: {
     type: Boolean,
@@ -149,9 +149,7 @@ onBeforeRouteLeave((to, from, next) => {
     leaveRoute.value = to;
   }
 });
-// expose({ allowRouteLeave });
 const { $api, $_, $toast } = useNuxtApp();
-console.log("props.userDetails", props.userDetails);
 const formData = reactive(props.userDetails);
 const dirtyFieldValidator = reactive({
   first_name: false,
@@ -185,15 +183,14 @@ async function onSubmit(values: UserCreatePayload) {
   };
   if (props.edit) {
     let parsedPayload: any = {};
-    $_.forEach(
-      dirtyFieldValidator,
-      (isDirty: boolean, key) => {
-        if (isDirty) {
-          parsedPayload[key] =
-            key === "role" ? values?.role?.value : values[key as UserCreatePayloadKeys];
-        }
+    $_.forEach(dirtyFieldValidator, (isDirty: boolean, key) => {
+      if (isDirty) {
+        parsedPayload[key] =
+          key === "role"
+            ? values?.role?.value
+            : values[key as UserCreatePayloadKeys];
       }
-    );
+    });
 
     await props.submitHandler(parsedPayload);
   } else {
