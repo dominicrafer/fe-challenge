@@ -7,3 +7,4 @@ aws-exports.js
 .output
 .env
 dist
+bricks/**

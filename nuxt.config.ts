@@ -7,8 +7,14 @@ export default defineNuxtConfig({
   ssr: false,
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: true,
+    tsConfig: {
+      compilerOptions: {},
+      exclude: ["../bricks"],
+    },
   },
+  ignore: ["../bricks"],
+
   modules: [
     "@nuxtjs/tailwindcss",
     "nuxt-icon",
