@@ -7,4 +7,4 @@ aws-exports.js
 .output
 .env
 dist
-bricks/**
+web-boilerplate-bricks/**

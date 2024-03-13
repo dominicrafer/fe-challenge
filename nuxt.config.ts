@@ -10,10 +10,10 @@ export default defineNuxtConfig({
     typeCheck: true,
     tsConfig: {
       compilerOptions: {},
-      exclude: ["../bricks"],
+      exclude: ["../web-boilerplate-bricks"],
     },
   },
-  ignore: ["../bricks"],
+  ignore: ["../web-boilerplate-bricks"],
 
   modules: [
     "@nuxtjs/tailwindcss",
