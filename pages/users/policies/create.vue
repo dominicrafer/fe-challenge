@@ -10,10 +10,6 @@
 
 <script setup lang="ts">
 import type { PolicyPayload } from "~/types/policies";
-
-definePageMeta({
-  layout: "default",
-});
 const form = ref<Ref | null>(null);
 let errors = ref([]);
 async function submitHandler(data: PolicyPayload) {

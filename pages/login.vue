@@ -132,10 +132,6 @@ async function doConfirmLogin() {
     router.push("/");
   });
 }
-
-watch(email, (val) => {
-  console.log(email);
-});
 </script>
 
 <style lang="postcss" scoped>

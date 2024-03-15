@@ -77,10 +77,6 @@
 
 <script setup lang="ts">
 import type { Column } from '~/types/q-basic-table';
-
-definePageMeta({
-  layout: "default",
-});
 const { $api, $_, $toast } = useNuxtApp();
 // PAGINATION
 let previousEvaluatedKey = ref<any[]>([]);

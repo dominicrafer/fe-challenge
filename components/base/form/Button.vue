@@ -1,6 +1,6 @@
 <template>
   <q-btn v-bind="$attrs" class="button" :color="color">
-  <slot></slot>
+    <slot></slot>
   </q-btn>
 </template>
 

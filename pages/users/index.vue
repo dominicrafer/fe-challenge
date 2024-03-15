@@ -121,7 +121,6 @@ import type {
 } from "@/types/q-basic-table";
 import type { RoleObject } from "~/types/roles";
 definePageMeta({
-  layout: "default",
   name: "user-list",
 });
 const { $api, $_, $toast, $dayjs } = useNuxtApp();

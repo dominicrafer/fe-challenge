@@ -16,10 +16,6 @@
 
 <script setup lang="ts">
 import type { PolicyPayload } from "~/types/policies";
-
-definePageMeta({
-  layout: "default",
-});
 const { $api, $_ } = useNuxtApp();
 const route: any = useRoute();
 const { data, pending } = await $api.policies.getPolicyDetails(route.params.id);

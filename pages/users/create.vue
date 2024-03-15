@@ -14,10 +14,6 @@
 
 <script setup lang="ts">
 import type { UserCreatePayload } from "@/types/users";
-
-definePageMeta({
-  layout: "default",
-});
 const form = ref<Ref | null>(null);
 let errors = ref([]);
 let isLoading = ref(false);

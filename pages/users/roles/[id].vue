@@ -17,9 +17,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import type { RolePayload } from "~/types/roles";
-definePageMeta({
-  layout: "default",
-});
 const { $api, $_ } = useNuxtApp();
 const route: any = useRoute();
 const form = ref<Ref | null>(null);

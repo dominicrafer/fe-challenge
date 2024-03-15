@@ -118,7 +118,6 @@ export default {
     }
   },
   setup(props, { emit }) {
-    console.log(props.module);
     let page = ref(props.activatePage);
     let searchValue = ref("");
     const right = ref(props.checkBox);
@@ -135,13 +134,9 @@ export default {
     }
 
     function search() {
-      console.log("SEARCH");
-      // if (searchValue.value) {
       emit("search", searchValue.value);
-      // }
     }
     function downloadResponse() {
-      console.log("Download")
       emit("downloadResponse");
     }
     const showDownloadButton = computed(() => {
