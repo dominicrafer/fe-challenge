@@ -15,7 +15,6 @@ watchEffect(() => {
     page_size: 10,
     return_count: true,
   });
-  console.log(data, "DATA");
 });
 </script>
 <style lang="postcss" scoped></style>

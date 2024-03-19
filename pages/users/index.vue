@@ -228,7 +228,6 @@ function applyFilters(appliedFilters: Filters) {
   // params.in_filters = [];
   // params.between_filters = [];
   filters = appliedFilters;
-  console.log(appliedFilters, "appliedFilters");
   if (appliedFilters.statuses.length || appliedFilters.roles.length) {
     params.in_filters = [];
   }

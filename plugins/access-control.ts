@@ -36,7 +36,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     // Prevents click
     if (binding?.modifiers["action-permission"]) {
-      // console.log(binding, vnode, myPolicies);
       el.addEventListener(
         "click",
         (event: Event) => {

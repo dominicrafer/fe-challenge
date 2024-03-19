@@ -171,11 +171,6 @@ function mapToFormData(roleDetails: any) {
 // Select policy behaviour
 function selectPolicy(policyGroup: any, policyActionDetails: any) {
   const action = $_.split(policyActionDetails.slug, ":");
-  console.log(formData.policies);
-  console.log(
-    $_.includes(formData.policies, policyActionDetails.slug),
-    "$_.includes(formData.policies, policyActionDetails.slug)"
-  );
   if ($_.includes(formData.policies, policyActionDetails.slug)) {
     switch (action[1]) {
       case "delete":
@@ -240,7 +235,6 @@ function selectPolicy(policyGroup: any, policyActionDetails: any) {
   }
 }
 function selectAllPolicies(val: any) {
-  console.log($_.includes(val, "*:*"), '$_.includes(val, "*:*")');
   if ($_.includes(val, "*:*")) {
     let allPolicies = [];
     $_.forEach(policies.value.resource, (policyGroup) => {
@@ -265,7 +259,6 @@ async function onSubmit(values: any) {
           key === "policies" ? filterPolicies(values[key]) : values[key];
       }
     });
-    console.log(payload);
     await props.submitHandler(parsePayload(payload));
   } else {
     props.submitHandler(parsePayload(values));

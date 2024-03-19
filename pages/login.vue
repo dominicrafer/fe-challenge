@@ -98,10 +98,8 @@ const { login } = authStore;
 let user: any = null;
 async function doLogin() {
   isLoading.value = true;
-  console.log("dologin", email.value, password.value);
   await login(email.value, password.value)
     .then((res) => {
-      console.log(res, "RESPONSE!!");
       hasError.value = false;
       if (
         res.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED"
@@ -126,7 +124,6 @@ async function doLogin() {
 const { completeNewPassword } = authStore;
 const newPassword = ref("#####Vmsi123");
 async function doConfirmLogin() {
-  console.log("doconfirmlogin", user, email.value, newPassword.value);
   isLoading.value = true;
   await completeNewPassword(newPassword.value).then(() => {
     router.push("/");
@@ -170,3 +167,4 @@ async function doConfirmLogin() {
   }
 }
 </style>
+~/store

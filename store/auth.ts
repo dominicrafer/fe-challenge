@@ -1,5 +1,5 @@
 import type { FetchUserAttributesOutput } from "aws-amplify/auth";
-import type { AuthState } from "./types";
+import type { AuthState } from "../types/auth";
 import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore({
@@ -25,9 +25,7 @@ export const useAuthStore = defineStore({
   actions: {
     async login(email: string, password: string) {
       const { $auth, $api } = useNuxtApp();
-      console.log(email, password)
       const response = await $auth.signIn({ username: email, password });
-      console.log(response, "LOGIN RESPONSE");
       if (
         response.isSignedIn &&
         response.nextStep.signInStep !==
@@ -36,7 +34,6 @@ export const useAuthStore = defineStore({
         const session = await $auth.fetchAuthSession();
         const { email, phone_number, name }: any =
           await $auth.fetchUserAttributes();
-        console.log(session, "session");
         this.auth.token = session?.tokens?.idToken?.toString();
         this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
         await $api.roles.getCurrentUserRole().then((auth: any) => {
@@ -62,7 +59,6 @@ export const useAuthStore = defineStore({
       const response = await $auth.confirmSignIn({
         challengeResponse: password,
       });
-      console.log(response, "confirm sign in");
       if (response.isSignedIn) {
         const session = await $auth.fetchAuthSession();
         const { email, phone_number, name } =
@@ -91,8 +87,6 @@ export const useAuthStore = defineStore({
       try {
         await $auth.fetchUserAttributes().then(async (userDetails: FetchUserAttributesOutput) => {
           const session = await $auth.fetchAuthSession();
-          console.log(session, "session!");
-          console.log(userDetails, "fetchUserAttributes!");
           this.auth.token = session?.tokens?.idToken?.toString();
           this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
           await $api.roles.getCurrentUserRole().then((role: any) => {
@@ -112,7 +106,6 @@ export const useAuthStore = defineStore({
           });
         });
       } catch (error) {
-        console.log(error, "AUTH LOAD ERROR");
         this.clearSessionState();
       }
     },
@@ -130,7 +123,6 @@ export const useAuthStore = defineStore({
           this.auth.token = session?.tokens?.idToken?.toString();
           this.auth.tokenExpiration = session?.tokens?.idToken?.payload.exp;
         } catch (err) {
-          console.log(err, "REFRESH ERROR");
           this.isAuthenticated = false;
         }
       }

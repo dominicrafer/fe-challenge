@@ -16,7 +16,6 @@ export default defineNuxtPlugin(({ $dayjs }) => {
     expirationInMinutes < 20 &&
     authStore.isAuthenticated
   ) {
-    console.log("REFRESH TOKEN");
     authStore.refresh();
   } else if (
     expirationInMinutes &&

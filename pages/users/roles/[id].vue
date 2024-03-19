@@ -35,7 +35,6 @@ async function submitHandler(data: RolePayload) {
     router.push("/users/roles");
     $toast.success("Role successfully updated.");
   } else {
-    console.log(error.value);
     errors.value = error.value.data.errors;
     if (error.value.data.errorCode !== "SERVER_ERROR") {
       form.value.allowRouteLeave = false;
