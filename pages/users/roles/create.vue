@@ -14,10 +14,6 @@
 
 <script setup lang="ts">
 import type { RolePayload } from "~/types/roles";
-
-definePageMeta({
-  layout: "default",
-});
 let errors = ref([]);
 let isLoading = ref(false);
 const form = ref<Ref | any>(null);

@@ -49,9 +49,6 @@
 <script setup lang="ts">
 import { useSidebarStore } from "@/store/sidebar";
 const sidebarStore = useSidebarStore();
-definePageMeta({
-  name: "sidebar",
-});
 </script>
 
 <style lang="postcss">

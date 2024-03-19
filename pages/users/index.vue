@@ -120,9 +120,6 @@ import type {
   PaginationParams,
 } from "@/types/q-basic-table";
 import type { RoleObject } from "~/types/roles";
-definePageMeta({
-  name: "user-list",
-});
 const { $api, $_, $toast, $dayjs } = useNuxtApp();
 const usersFilterDrawerVisible = ref(false);
 const usersSortDrawerVisible = ref(false);

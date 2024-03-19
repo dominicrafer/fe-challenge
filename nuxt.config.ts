@@ -16,8 +16,8 @@ export default defineNuxtConfig({
   ignore: ["../web-boilerplate-bricks"],
 
   modules: [
+    'nuxt-icon',
     "@nuxtjs/tailwindcss",
-    "nuxt-icon",
     [
       "@nuxtjs/google-fonts",
       {

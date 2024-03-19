@@ -17,11 +17,5 @@ export default defineNuxtPlugin(({ $dayjs }) => {
     authStore.isAuthenticated
   ) {
     authStore.refresh();
-  } else if (
-    expirationInMinutes &&
-    expirationInMinutes > 20 &&
-    authStore.isAuthenticated
-  ) {
-    authStore.load();
   }
 });
