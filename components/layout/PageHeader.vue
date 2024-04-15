@@ -1,5 +1,5 @@
 <template>
-  <q-page-sticky expand position="top">
+  <q-page-sticky expand position="top" class="z-[100]">
     <q-toolbar class="page-header">
       <router-link v-if="backRoute && !$slots['left-panel']" :to="backRoute">
         <Icon name="mdi:arrow-left" width="24" height="24" />

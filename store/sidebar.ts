@@ -1,44 +1,20 @@
 import { defineStore } from "pinia";
 import { useWindowSize } from "@vueuse/core";
+import { type Sidebar } from "~/types/sidebar";
 export const useSidebarStore = defineStore({
   id: "sidebar",
   persist: false,
-  state: () => {
+  state: (): Sidebar => {
     const route = useRoute();
     const currentRoute = route.path.split("/")[1];
     return {
       collapsed: false,
       menus: [
         {
-          label: "Users",
-          name: "users",
-          icon: "person",
-          permission: "Users",
-          collapsed: currentRoute !== "users",
-          path: null,
-          submenus: [
-            {
-              name: "user-list",
-              label: "List",
-              path: "/users",
-              icon: "list",
-              permission: null,
-            },
-            {
-              name: "user-roles",
-              label: "Roles",
-              path: "/users/roles",
-              icon: "groups",
-              permission: null,
-            },
-            {
-              name: "user-policies",
-              label: "Policies",
-              path: "/users/policies",
-              icon: "vpn_key",
-              permission: null,
-            },
-          ],
+          label: "Challenge",
+          name: "fe-chall-3",
+          icon: "looks_3",
+          path: "/",
         },
       ],
       activeMenu: route.name,

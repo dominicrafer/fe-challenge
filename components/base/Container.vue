@@ -9,27 +9,28 @@
 defineProps({
   padding: {
     type: String,
+    default: "p-3"
   },
   width: {
     type: String,
-    default: "w-full",
+    default: "w-full"
   },
   height: {
     type: String,
-    default: "h-auto",
+    default: "h-auto"
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   loaderMessage: {
     type: String,
-    default: "Loading, please wait...",
+    default: "Loading, please wait..."
   },
   spinnerSize: {
     type: String,
-    default: "w-12 h-12 border-2",
-  },
+    default: "w-12 h-12 border-2"
+  }
 });
 </script>
 
