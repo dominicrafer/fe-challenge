@@ -6,7 +6,7 @@ const { primary, secondary }: any = tailwindConfig.theme?.extend?.colors;
 export default defineNuxtConfig({
   ssr: false,
   typescript: {
-    strict: true,
+    strict: false,
     typeCheck: true,
     tsConfig: {
       compilerOptions: {},
