@@ -91,4 +91,3 @@ export default {
   box-shadow: 0px 4px 12px rgba(41, 68, 37, 0.12);
 }
 </style>
-~/store
