@@ -1,3 +1,4 @@
+
 export default function () {
   const { $storage } = useNuxtApp();
   const uploadProgress = ref(0);

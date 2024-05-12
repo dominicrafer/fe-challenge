@@ -47,7 +47,7 @@
               <InputField name="contact" label="Contact" />
               <Icon name="simple-line-icons:plus" width="24" height="24" />
             </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" @click="$storage.list()">Submit</Button>
           </div>
           <SectionTitle title="Summary"></SectionTitle>
           <div class="p-2"></div>
@@ -59,6 +59,8 @@
 </template>
 
 <script setup lang="ts">
+const { $storage } = useNuxtApp();
+
 const form = ref({
   personal_information: {
     profile_picture: null, // required, file, png/jpg, 10mb max
@@ -95,8 +97,7 @@ const form = ref({
 });
 </script>
 <style lang="postcss" scoped>
-
 .section {
-  @apply p-2 space-y-3
+  @apply p-2 space-y-3;
 }
 </style>
